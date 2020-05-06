@@ -6,7 +6,6 @@ from django.shortcuts import render, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 
 def index(request: WSGIRequest):
-    print(type(request))
     return HttpResponse("Página principal")
 
 def feeds(request: WSGIRequest):
