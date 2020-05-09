@@ -8,11 +8,11 @@ from django.contrib.auth.models import User
 class Feed(models.Model):
     key = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
-    provider = models.CharField(max_length=32)
+    origin = models.CharField(max_length=32)
     user = models.ForeignKey(User, models.PROTECT)
 
     def __str__(self):
-        return self.provider + ': ' + self.title
+        return self.origin + ': ' + self.title
 
 class Item(models.Model):
     key = models.CharField(max_length=64)

@@ -5,8 +5,20 @@ Django views for app MisCosas
 from django.shortcuts import render, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 
+from .models import Feed, Item
+from .forms import FeedForm
+
 def index(request: WSGIRequest):
-    return HttpResponse("Página principal")
+    feeds = Feed.objects.all()
+    items = Item.objects.all()
+    form = FeedForm()
+    context = {
+        'title': 'Mis cosas',
+        'feeds_list': feeds,
+        'items_list': items,
+        'form': form,
+    }
+    return render(request, 'miscosas/index.html', context)
 
 def feeds(request: WSGIRequest):
     return HttpResponse("Página de alimentadores")
