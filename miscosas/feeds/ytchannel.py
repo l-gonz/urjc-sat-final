@@ -5,6 +5,7 @@ from xml.sax import make_parser
 import sys
 import string
 
+
 class YTHandler(ContentHandler):
     """Class to handle events fired by the SAX parser
 
@@ -24,7 +25,7 @@ class YTHandler(ContentHandler):
         'media:thumbnail': 'url'
     }
 
-    def __init__ (self):
+    def __init__(self):
         """Initialization of variables for the parser
         * inContent: reading target content (leaf strings)
         * content: target content being readed
@@ -39,13 +40,13 @@ class YTHandler(ContentHandler):
         self.channel_name = ""
         self.channel_url = ""
 
-    def startElement (self, name, attrs):
+    def startElement(self, name, attrs):
         self.inContent = (name in self.CONTENT_ELEMENTS or
-            name == 'name' or name == 'uri')
+                          name == 'name' or name == 'uri')
         if name in self.ATTR_ELEMENTS:
             self.current_video[name] = attrs.get(self.ATTR_ELEMENTS[name])
 
-    def endElement (self, name):
+    def endElement(self, name):
         if name == 'entry':
             self.videos.append(self.current_video)
             self.current_video = {}
@@ -55,13 +56,14 @@ class YTHandler(ContentHandler):
             self.channel_url = self.content
         elif name in self.CONTENT_ELEMENTS:
             self.current_video[name] = self.content
-        
+
         self.content = ""
         self.inContent = False
 
-    def characters (self, chars):
+    def characters(self, chars):
         if self.inContent:
             self.content = self.content + chars
+
 
 class YTChannel:
     """Class to get videos in a YouTube channel.

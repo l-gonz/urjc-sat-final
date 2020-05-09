@@ -1,0 +1,18 @@
+{% extends 'miscosas/base.html' %}
+
+{% block content %}
+    <h1> Feeds </h1>
+    {% include 'miscosas/feed_list.html' with list=feed_list only %}
+    <br>
+
+    <h1> Items </h1>
+    {% include 'miscosas/item_list.html' with list=item_list only %}
+    <br>
+
+    <h2>Add new feed</h2>
+    <form method="POST" action="/feeds">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Send</button>
+    </form>
+{% endblock %}

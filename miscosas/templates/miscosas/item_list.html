@@ -1,0 +1,9 @@
+{% if list %}
+    <ul class='simple-list'>
+    {% for item in list %}
+        <li><a href="/item/{{ item.pk }}">{{ item.feed.title }}: {{ item.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p class='no-content'>No items are available.</p>
+{% endif %}

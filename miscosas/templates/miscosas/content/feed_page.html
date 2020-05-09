@@ -1,0 +1,7 @@
+{% extends 'miscosas/base.html' %}
+
+{% block content %}
+    <h1> Items </h1>
+    {% include 'miscosas/item_list.html' with list=item_list only %}
+    <br>
+{% endblock %}
