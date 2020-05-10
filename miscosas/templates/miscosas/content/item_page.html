@@ -1,0 +1,18 @@
+{% extends 'miscosas/base.html' %}
+
+{% block content %}
+    <div class='item-detailed'>
+        <h1> {{ item.title }} </h1>
+        <p>
+            Link: <a href="{{ link }}">Go to YouTube</a><br>
+            Description: {{ item.description }}<br><br>
+            <img src="{{ item.picture }}"></img>
+        </p>
+    </div>
+
+    <h3>Feed:</h3>
+    {% include 'miscosas/feed_brief.html' with feed=item.feed only %}
+    <br>
+
+    <!-- Add comments here -->
+{% endblock %}

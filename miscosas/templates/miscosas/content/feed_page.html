@@ -1,7 +1,10 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    <h1> Items </h1>
+    <div class='feed-detailed'>
+        <h1> {{ feed.title }} </h1>
+    </div>
+    <h2> Items </h2>
     {% include 'miscosas/item_list.html' with list=item_list only %}
     <br>
 {% endblock %}

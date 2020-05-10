@@ -1,9 +1,9 @@
 {% if list %}
-    <ul class='simple-list'>
+    <div class='simple-list'>
     {% for feed in list %}
-        <li><a href="/feed/{{ feed.pk }}">{{ feed.origin }}: {{ feed.title }}</a></li>
+        {% include 'miscosas/feed_brief.html' with feed=feed only %}
     {% endfor %}
-    </ul>
+    </div>
 {% else %}
     <p class='no-content'>No feeds are available.</p>
 {% endif %}

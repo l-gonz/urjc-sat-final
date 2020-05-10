@@ -42,6 +42,7 @@ class Comment(models.Model):
 class UserData(models.Model):
     picture = models.URLField()
     django_user = models.OneToOneField(User, models.PROTECT)
+    # TODO: Add field to save selected feeds
 
     def __str__(self):
         return str(self.django_user)

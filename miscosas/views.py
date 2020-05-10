@@ -7,7 +7,7 @@ from django.core.handlers.wsgi import WSGIRequest
 
 from .models import Feed, Item
 from .forms import FeedForm
-from .feedhandler import get_youtube_feed
+from .feedhandler import FEEDS_DATA
 
 
 def index(request: WSGIRequest):
@@ -27,7 +27,8 @@ def feeds(request: WSGIRequest):
     if request.method == 'POST':
         try:
             key = request.POST['key']
-            if get_youtube_feed(key):
+            # TODO Send feed origin in form
+            if FEEDS_DATA['YouTube'].load(key):
                 return redirect(f'feed/{Feed.objects.get(key=key).pk}')
             else:
                 return not_found(request)
@@ -51,21 +52,28 @@ def feed(request: WSGIRequest, id: str):
     except (Feed.DoesNotExist, ValueError):
         return not_found(request)
 
-    items = Item.objects.filter(feed=feed)
     context = {
         'title': f'{feed.title} | Mis cosas',
-        'item_list': items,
+        'feed': feed,
+        'item_list': feed.item_set.all(),
     }
 
     return render(request, 'miscosas/content/feed_page.html', context)
 
 
-def items(request: WSGIRequest):
-    return HttpResponse("Página de items")
-
-
 def item(request: WSGIRequest, id: str):
-    return HttpResponse("Página de item")
+    try:
+        pk = int(id)
+        item = Item.objects.get(pk=pk)
+    except (Item.DoesNotExist, ValueError):
+        return not_found(request)
+
+    context = {
+        'title': f'{item.title} | {item.feed.title} | Mis cosas',
+        'item': item,
+        'link': FEEDS_DATA[item.feed.origin].get_item_url(item.key),
+    }
+    return render(request, 'miscosas/content/item_page.html', context)
 
 
 def users(request: WSGIRequest):
@@ -81,4 +89,8 @@ def about(request: WSGIRequest):
 
 
 def not_found(request):
-    return render(request, 'miscosas/content/not_found.html', status=404)
+    return render(
+        request,
+        'miscosas/content/not_found.html',
+        {'title': 'Page not found | Mis cosas'},
+        status=404)
