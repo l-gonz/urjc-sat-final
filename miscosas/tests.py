@@ -9,7 +9,7 @@ VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
 
 
-class TestGetViews(TestCase):
+class TestGetViewsEmpty(TestCase):
 
     def test_main_page(self):
         ''' Tests the index page with nothing on the database '''
@@ -100,6 +100,10 @@ class TestGetViewsContent(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "class='feed-brief'", count=1)
             self.assertContains(response, "class='item-detailed'", count=1)
+
+
+class TestGetViewsAuthenticated(TestCase):
+    pass
 
 
 class TestPostViews(TestCase):

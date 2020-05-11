@@ -1,0 +1,14 @@
+{% extends 'miscosas/base.html' %}
+
+{% block content %}
+
+    <hr>
+    <h4>Login</h4>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+    <hr>
+
+{% endblock %}

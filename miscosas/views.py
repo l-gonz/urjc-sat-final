@@ -4,21 +4,19 @@ Django views for app MisCosas
 
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
+from django.contrib.auth import login, authenticate
 
-from .models import Feed, Item
-from .forms import FeedForm
+from .models import *
+from .forms import *
 from .feedhandler import FEEDS_DATA
 
 
 def index(request: WSGIRequest):
-    feeds = Feed.objects.all()
-    items = Item.objects.all()
-    form = FeedForm()
     context = {
         'title': 'Mis cosas',
-        'feed_list': feeds,
-        'item_list': items,
-        'form': form,
+        'feed_list': Feed.objects.all(),
+        'item_list': Item.objects.all(),
+        'form': FeedForm(),
     }
     return render(request, 'miscosas/content/index.html', context)
 
@@ -77,15 +75,15 @@ def item(request: WSGIRequest, id: str):
 
 
 def users(request: WSGIRequest):
-    return HttpResponse("Página de usuarios")
+    return render(request, 'miscosas/content/users.html')
 
 
 def user(request: WSGIRequest, id: str):
-    return HttpResponse("Página de usuario")
+    return render(request, 'miscosas/content/user_page.html')
 
 
 def about(request: WSGIRequest):
-    return HttpResponse("Página de información")
+    return render(request, 'miscosas/content/about.html')
 
 
 def not_found(request):

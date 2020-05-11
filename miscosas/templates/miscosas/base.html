@@ -12,10 +12,34 @@
     </head>
     <body>
         <!-- Banner -->
+
         <!-- Navigation bar -->
+        <div id='navbar'>
+            <a href="/">Home</a>
+            <a href="/feeds">Feeds</a>
+            <a href="/users">Users</a>
+            <a href="/about">Info</a>
+        </div>
+
         <!-- User authentication box -->
-        {% block content %}
-        {% endblock %}
+        <div id='user_panel'>
+            {% if user.is_authenticated %}
+                <a href='/user/{{ user.username }}'>My page</a>
+                <a href='/logout'>Log out</a>
+            {% else %}
+                <a href='/login'>Log in</a>
+            {% endif %}
+        </div>
+
+        <!-- Content block -->
+        <div id='content'>
+            {% block content %}
+            {% endblock %}
+        </div>
+
         <!-- Footer -->
+        <div id='footer'>
+            <footer>This app uses data provided by <a href='https://youtube.com'>YouTube</a></footer>
+        </div>
     </body>
 </html>
