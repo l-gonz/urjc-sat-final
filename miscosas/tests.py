@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.template.loader import render_to_string
+from django.contrib.auth.models import User
 
 from .forms import *
 from .models import *
@@ -106,7 +106,7 @@ class TestGetViewsAuthenticated(TestCase):
     pass
 
 
-class TestPostViews(TestCase):
+class TestPostFeedViews(TestCase):
 
     def test_feed_form_right(self):
         ''' Tests posting the feed form with a valid key '''
@@ -122,7 +122,7 @@ class TestPostViews(TestCase):
     def test_feed_form_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
         form_data = {'key': INVALID_YOUTUBE_KEY}
-        form = FeedForm(data=form_data)
+        form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 
         response = self.client.post('/feeds', form.cleaned_data)
@@ -130,6 +130,67 @@ class TestPostViews(TestCase):
         self.assertListEqual(
             [t.name for t in response.templates],
             ['miscosas/content/not_found.html', 'miscosas/base.html'])
+
+
+class TestPostCommentViews(TestCase):
+
+    def setUp(self):
+        ''' Set up some items so that comments can be added '''
+        form = {'key': VALID_YOUTUBE_KEY}
+        self.client.post('/feeds', form)
+        user = User.objects.create_user('root', password='toor')
+        self.client.force_login(user)
+
+    def test_comment_form_rigth(self):
+        ''' Test posting a new comment '''
+        form = {
+            'title': 'Hola',
+            'content': 'This is my comment',
+            'action': 'comment'
+        }
+
+        response = self.client.post('/item/1', form)
+        self.assertEqual(Comment.objects.all().count(), 1)
+        self.assertContains(response, "class='simple-list'", count=1, status_code=200)
+
+    def test_comment_form_no_user(self):
+        ''' Test posting a new comment without being logged in '''
+        self.client.logout()
+        form = {
+            'title': 'Hola',
+            'content': 'This is my comment',
+            'action': 'comment'
+        }
+
+        response = self.client.post('/item/1', form)
+        self.assertContains(response, "class='no-content'", count=1, status_code=200)
+        self.assertEqual(Comment.objects.all().count(), 0)
+
+    def test_comment_invalid_item(self):
+        ''' Test posting a new comment on an invalid item '''
+        form = {
+            'title': 'Hola',
+            'content': 'This is my comment',
+            'action': 'comment'
+        }
+
+        response = self.client.post('/item/f56', form)
+        self.assertEqual(response.status_code, 404)
+        self.assertListEqual(
+            [t.name for t in response.templates],
+            ['miscosas/content/not_found.html', 'miscosas/base.html'])
+
+    def test_comment_too_long(self):
+        ''' Test posting a new comment on an invalid item '''
+        form = {
+            'title': 'Too big title of more than 64 characterssssssssssssssssssssssssssss12345678901234567890',
+            'content': 'This is my comment',
+            'action': 'comment'
+        }
+
+        response = self.client.post('/item/1', form)
+        self.assertEqual(Comment.objects.all().count(), 0)
+        self.assertContains(response, "class='no-content'", count=1, status_code=200)
 
 
 class TestFeedHandler(TestCase):
