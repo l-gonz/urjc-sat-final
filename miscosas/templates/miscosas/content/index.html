@@ -2,11 +2,11 @@
 
 {% block content %}
     <h1> Feeds </h1>
-    {% include 'miscosas/feed_list.html' with list=feed_list only %}
+    {% include 'miscosas/element/feed_list.html' with list=feed_list %}
     <br>
 
     <h1> Items </h1>
-    {% include 'miscosas/item_list.html' with list=item_list only %}
+    {% include 'miscosas/element/item_list.html' with list=item_list %}
     <br>
 
     <h2>Add new feed</h2>

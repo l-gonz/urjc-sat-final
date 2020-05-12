@@ -1,0 +1,7 @@
+{% if user.is_authenticated %}
+    <form method="POST" action="/item/{{ item.pk }}">
+        {% csrf_token %}
+        <button type="submit" name='action' value='upvote'>Upvote</button>
+        <button type="submit" name='action' value='downvote'>Downvote</button>
+    </form>
+{% endif %}

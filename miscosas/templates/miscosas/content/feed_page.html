@@ -5,6 +5,6 @@
         <h1> {{ feed.title }} </h1>
     </div>
     <h2> Items </h2>
-    {% include 'miscosas/item_list.html' with list=item_list only %}
+    {% include 'miscosas/element/item_list.html' with list=item_list %}
     <br>
 {% endblock %}

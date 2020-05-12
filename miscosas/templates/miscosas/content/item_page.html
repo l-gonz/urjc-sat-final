@@ -4,6 +4,9 @@
     <div class='item-detailed'>
         <h1> {{ item.title }} </h1>
         <p>
+            {% include 'miscosas/element/vote_form.html' %}
+            Upvotes: {{ item.upvote_count }}<br>
+            Downvotes: {{ item.downvote_count }}<br><br>
             Link: <a href="{{ link }}">Go to YouTube</a><br>
             Description: {{ item.description }}<br><br>
             <img src="{{ item.picture }}"></img>
@@ -11,11 +14,11 @@
     </div>
 
     <h3>Feed:</h3>
-    {% include 'miscosas/feed_brief.html' with feed=item.feed only %}
+    {% include 'miscosas/element/feed_brief.html' with feed=item.feed %}
     <br>
 
     <!-- Comments -->
-    {% include 'miscosas/comment_list.html' with list=comment_list only %}
+    {% include 'miscosas/element/comment_list.html' with list=comment_list %}
     {% if user.is_authenticated %}
         <h2>Add new comment</h2>
         <form method="POST" action="/item/{{ item.pk }}">

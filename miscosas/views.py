@@ -2,14 +2,13 @@
 Django views for app MisCosas
 """
 
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
-from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 
-from .models import *
-from .forms import *
-from .feedhandler import FEEDS_DATA
+from .models import Feed, Item, Comment
+from .forms import FeedForm, CommentForm
+from .feeds.feedhandler import FEEDS_DATA
 
 
 def index(request: WSGIRequest):
@@ -45,9 +44,9 @@ def feeds_page(request: WSGIRequest):
     return render(request, 'miscosas/content/feeds.html', context)
 
 
-def feed_page(request: WSGIRequest, id: str):
+def feed_page(request: WSGIRequest, feed_id: str):
     try:
-        pk = int(id)
+        pk = int(feed_id)
         feed = Feed.objects.get(pk=pk)
     except (Feed.DoesNotExist, ValueError):
         return not_found_page(request)
@@ -61,9 +60,9 @@ def feed_page(request: WSGIRequest, id: str):
     return render(request, 'miscosas/content/feed_page.html', context)
 
 
-def item_page(request: WSGIRequest, id: str):
+def item_page(request: WSGIRequest, item_id: str):
     try:
-        pk = int(id)
+        pk = int(item_id)
         item = Item.objects.get(pk=pk)
     except (Item.DoesNotExist, ValueError):
         return not_found_page(request)
@@ -78,9 +77,12 @@ def item_page(request: WSGIRequest, id: str):
                     user=request.user)
                 comment.full_clean()
                 comment.save()
-            elif request.POST['action'] == 'vote':
-                # read votes post form here
-                pass
+            elif request.POST['action'] == 'upvote':
+                item.downvotes.remove(request.user)
+                item.upvotes.add(request.user)
+            elif request.POST['action'] == 'downvote':
+                item.upvotes.remove(request.user)
+                item.downvotes.add(request.user)
         except (KeyError, ValidationError):
             # Ignore wrong post attempts
             pass
@@ -99,7 +101,7 @@ def users_page(request: WSGIRequest):
     return render(request, 'miscosas/content/users.html')
 
 
-def user_page(request: WSGIRequest, id: str):
+def user_page(request: WSGIRequest, user_id: str):
     return render(request, 'miscosas/content/user_page.html')
 
 

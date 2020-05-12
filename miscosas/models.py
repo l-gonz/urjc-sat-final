@@ -27,6 +27,16 @@ class Item(models.Model):
     def __str__(self):
         return str(self.feed) + ", " + self.title
 
+    @property
+    def upvote_count(self):
+        ''' Upvote count property for templates '''
+        return self.upvotes.count()
+
+    @property
+    def downvote_count(self):
+        ''' Downvote count property for templates '''
+        return self.downvotes.count()
+
 
 class Comment(models.Model):
     title = models.CharField(max_length=64)

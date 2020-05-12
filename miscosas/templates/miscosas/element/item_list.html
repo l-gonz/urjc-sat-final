@@ -1,7 +1,7 @@
 {% if list %}
     <div class='simple-list'>
     {% for item in list %}
-        {% include 'miscosas/item_brief.html' with item=item only %}
+        {% include 'miscosas/element/item_brief.html' %}
     {% endfor %}
     </div>
 {% else %}

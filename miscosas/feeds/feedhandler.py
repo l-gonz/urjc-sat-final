@@ -1,7 +1,7 @@
 import urllib
 
-from .models import Feed, Item
-from .feeds.ytchannel import YTChannel
+from miscosas.models import Feed, Item
+from .ytchannel import YTChannel
 
 
 class FeedData():

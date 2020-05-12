@@ -1,7 +1,7 @@
 {% if list %}
     <div class='simple-list'>
     {% for feed in list %}
-        {% include 'miscosas/feed_brief.html' with feed=feed only %}
+        {% include 'miscosas/element/feed_brief.html' %}
     {% endfor %}
     </div>
 {% else %}
