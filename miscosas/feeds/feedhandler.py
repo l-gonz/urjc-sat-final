@@ -74,7 +74,7 @@ def load_last_fm_feed(feed_key: str):
     ''' Adds a new feed from Last.fm to the database,
     downloading the data and making items from it'''
 
-    url = LAST_FM_FEED.data_url.format(feed=feed_key, api_key=MisCosasConfig.LAST_FM_API_KEY)
+    url = LAST_FM_FEED.data_url.format(feed=feed_key, api_key=MisCosasConfig.last_fm_api_key)
     try:
         xml_stream = urllib.request.urlopen(url)
     except urllib.error.HTTPError:
