@@ -90,7 +90,7 @@ def item_page(request: WSGIRequest, item_id: str):
     context = {
         'title': f'{item.title} | {item.feed.title} | Mis cosas',
         'item': item,
-        'link': FEEDS_DATA[item.feed.origin].get_item_url(item.key),
+        'link': FEEDS_DATA[item.feed.origin].get_item_url(item.feed.key, item.key),
         'comment_list': item.comment_set.all(),
         'form': CommentForm(),
     }

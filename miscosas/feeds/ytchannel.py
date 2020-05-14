@@ -2,8 +2,6 @@
 
 from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
-import sys
-import string
 
 
 class YTHandler(ContentHandler):
@@ -30,7 +28,7 @@ class YTHandler(ContentHandler):
         * inContent: reading target content (leaf strings)
         * content: target content being readed
         * videos: list of videos (<entry> elements) in the channel,
-            each video is a dictionary (title, link, id)
+            each video is a dictionary
         * current_video: the information from the current <entry>
         """
         self.inContent = False
@@ -38,7 +36,6 @@ class YTHandler(ContentHandler):
         self.videos = []
         self.current_video = {}
         self.channel_name = ""
-        self.channel_url = ""
 
     def startElement(self, name, attrs):
         self.inContent = (name in self.CONTENT_ELEMENTS or
@@ -52,8 +49,6 @@ class YTHandler(ContentHandler):
             self.current_video = {}
         elif name == 'name' and self.channel_name == "":
             self.channel_name = self.content
-        elif name == 'uri' and self.channel_url == "":
-            self.channel_url = self.content
         elif name in self.CONTENT_ELEMENTS:
             self.current_video[name] = self.content
 
@@ -83,6 +78,3 @@ class YTChannel:
 
     def name(self):
         return self.handler.channel_name
-
-    def url(self):
-        return self.handler.channel_url
