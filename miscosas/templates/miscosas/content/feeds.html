@@ -5,10 +5,5 @@
     {% include 'miscosas/element/feed_list.html' with list=feed_list %}
     <br>
 
-    <h2>Add new feed</h2>
-    <form method="POST" action="/feeds">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Send</button>
-    </form>
+    {% include 'miscosas/element/feed_forms.html' %}
 {% endblock %}

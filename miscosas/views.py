@@ -25,8 +25,8 @@ def feeds_page(request: WSGIRequest):
     if request.method == 'POST':
         try:
             key = request.POST['key']
-            # TODO Send feed origin in form
-            if FEEDS_DATA['YouTube'].load(key):
+            origin = request.POST['origin']
+            if FEEDS_DATA[origin].load(key):
                 return redirect(f'feed/{Feed.objects.get(key=key).pk}')
             else:
                 return not_found_page(request)
@@ -55,6 +55,7 @@ def feed_page(request: WSGIRequest, feed_id: str):
         'title': f'{feed.title} | Mis cosas',
         'feed': feed,
         'item_list': feed.item_set.all(),
+        'link': FEEDS_DATA[feed.origin].get_feed_url(feed.key),
     }
 
     return render(request, 'miscosas/content/feed_page.html', context)

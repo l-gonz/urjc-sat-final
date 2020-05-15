@@ -7,12 +7,15 @@ from miscosas.models import Item, Feed, Comment
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
 
+VALID_LAST_FM_KEY = 'Cher'
+INVALID_LAST_FM_KEY = 'hfds8f7d'
+
 
 class TestPostFeedViews(TestCase):
 
-    def test_feed_form_right(self):
+    def test_feed_youtube_right(self):
         ''' Tests posting the feed form with a valid key '''
-        form_data = {'key': VALID_YOUTUBE_KEY}
+        form_data = {'key': VALID_YOUTUBE_KEY, 'origin': 'YouTube'}
         form = FeedForm(data=form_data)
         self.assertTrue(form.is_valid())
 
@@ -21,9 +24,32 @@ class TestPostFeedViews(TestCase):
         self.assertEqual(Feed.objects.count(), 1)
         self.assertEqual(Item.objects.count(), 15)
 
-    def test_feed_form_wrong(self):
+    def test_feed_youtube_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
-        form_data = {'key': INVALID_YOUTUBE_KEY}
+        form_data = {'key': INVALID_YOUTUBE_KEY, 'origin': 'YouTube'}
+        form = FeedForm(form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertEqual(response.status_code, 404)
+        self.assertListEqual(
+            [t.name for t in response.templates],
+            ['miscosas/content/not_found.html', 'miscosas/base.html'])
+
+    def test_feed_last_fm_right(self):
+        ''' Tests posting the feed form with a valid key '''
+        form_data = {'key': VALID_LAST_FM_KEY, 'origin': 'last.fm'}
+        form = FeedForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertRedirects(response, '/feed/1')
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 15)
+
+    def test_feed_last_fm_wrong(self):
+        ''' Tests posting the feed form with an invalid key '''
+        form_data = {'key': INVALID_LAST_FM_KEY, 'origin': 'last.fm'}
         form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 
@@ -38,7 +64,7 @@ class TestPostCommentViews(TestCase):
 
     def setUp(self):
         ''' Set up some items so that comments can be added '''
-        form = {'key': VALID_YOUTUBE_KEY}
+        form = {'key': VALID_YOUTUBE_KEY, 'origin': 'YouTube'}
         self.client.post('/feeds', form)
         user = User.objects.create_user('root', password='toor')
         self.client.force_login(user)
@@ -99,7 +125,7 @@ class TestPostVoteForm(TestCase):
 
     def setUp(self):
         ''' Set up some items so that comments can be added '''
-        form = {'key': VALID_YOUTUBE_KEY}
+        form = {'key': VALID_YOUTUBE_KEY, 'origin': 'YouTube'}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
         self.client.force_login(self.user)

@@ -17,3 +17,5 @@ class MisCosasConfig(AppConfig):
             last_fm_api_key = json.load(f)['lastfm']
     except FileNotFoundError:
         print(ERROR_MESSAGE, file=sys.stderr)
+    except KeyError:
+        print("'secret.json' does not have a key for every web API in use")

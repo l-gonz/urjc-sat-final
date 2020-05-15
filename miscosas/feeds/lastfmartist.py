@@ -29,16 +29,20 @@ class LastFmHandler(ContentHandler):
         self.content = ""
         self.albums = []
         self.current_album = {}
+        self.name = ""
 
     def startElement(self, name, attrs):
-        self.in_content = ((name == 'name' and not self.in_artist) or
+        self.in_content = (name == 'name' or
                           (name == 'image' and attrs['size'] == 'large'))
         if name == 'artist':
             self.in_artist = True
 
     def endElement(self, name):
-        if name in self.ALBUM_TAGS and self.in_content:
-            self.current_album[name] = self.content
+        if not self.in_artist:
+            if name in self.ALBUM_TAGS:
+                self.current_album[name] = self.content
+        elif name == 'name':
+            self.name = self.content
         if name == 'album':
             self.albums.append(self.current_album)
             self.current_album = {}
@@ -68,3 +72,6 @@ class LastFmArtist():
 
     def albums(self):
         return self.handler.albums
+
+    def name(self):
+        return self.handler.name

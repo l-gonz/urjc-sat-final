@@ -50,7 +50,7 @@ def load_youtube_feed(feed_key: str):
         return False
 
     channel = YTChannel(xml_stream)
-    feed, _ = Feed.objects.get_or_create(
+    feed, _ = Feed.objects.update_or_create(
         key=feed_key,
         origin=YOUTUBE_FEED.name,
         defaults={
@@ -85,7 +85,7 @@ def load_last_fm_feed(feed_key: str):
         key=feed_key,
         origin=LAST_FM_FEED.name,
         defaults={
-            'title': feed_key,
+            'title': artist.name(),
         })
 
     for album in artist.albums():
@@ -119,4 +119,5 @@ LAST_FM_FEED = FeedData(
 
 FEEDS_DATA = {
     YOUTUBE_FEED.name: YOUTUBE_FEED,
+    LAST_FM_FEED.name: LAST_FM_FEED,
 }
