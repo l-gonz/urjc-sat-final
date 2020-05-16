@@ -12,7 +12,7 @@ class FeedData():
     def __init__(self, name, feed_url, item_url, data_url, icon_src, load_function):
         ''' Name and urls for accessing the feed.
 
-        Urls need a {key} field for formatting. '''
+        Urls need {feed} or {item} fields for formatting. '''
 
         self.name = name
         self.feed_url = feed_url

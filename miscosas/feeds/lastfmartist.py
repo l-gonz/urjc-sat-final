@@ -33,16 +33,16 @@ class LastFmHandler(ContentHandler):
 
     def startElement(self, name, attrs):
         self.in_content = (name == 'name' or
-                          (name == 'image' and attrs['size'] == 'large'))
+                          (name == 'image' and attrs['size'] == 'extralarge'))
         if name == 'artist':
             self.in_artist = True
 
     def endElement(self, name):
-        if not self.in_artist:
-            if name in self.ALBUM_TAGS:
+        if self.in_content and name in self.ALBUM_TAGS:
+            if self.in_artist:
+                self.name = self.content
+            else:
                 self.current_album[name] = self.content
-        elif name == 'name':
-            self.name = self.content
         if name == 'album':
             self.albums.append(self.current_album)
             self.current_album = {}
