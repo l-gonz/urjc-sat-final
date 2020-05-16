@@ -4,6 +4,8 @@ Models for app MisCosas
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Feed(models.Model):
@@ -43,16 +45,33 @@ class Comment(models.Model):
     content = models.CharField(max_length=256)
     date = models.DateTimeField(auto_now=True)
     item = models.ForeignKey(Item, models.CASCADE)
-    user = models.ForeignKey(User, models.PROTECT)
+    user = models.ForeignKey(User, models.CASCADE)
 
     def __str__(self):
         return self.title
 
 
-class UserData(models.Model):
-    picture = models.URLField()
-    django_user = models.OneToOneField(User, models.PROTECT)
-    # TODO: Add field to save selected feeds
+class Profile(models.Model):
+    user = models.OneToOneField(User, models.CASCADE)
+    picture = models.URLField(default='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png')
+    feeds = models.ManyToManyField(Feed, related_name='feeds')
 
     def __str__(self):
-        return str(self.django_user)
+        return str(self.user)
+
+    @property
+    def vote_count(self):
+        return self.user.upvotes.count() + self.user.downvotes.count()
+
+    @property
+    def feed_count(self):
+        return self.feeds.count()
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

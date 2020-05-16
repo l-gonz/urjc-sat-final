@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
 
-from .models import Feed, Item, Comment
+from .models import Feed, Item, Comment, User
 from .forms import FeedForm, CommentForm
 from .feeds.feedhandler import FEEDS_DATA
 
@@ -23,16 +23,16 @@ def index(request: WSGIRequest):
 
 def feeds_page(request: WSGIRequest):
     if request.method == 'POST':
-        try:
-            key = request.POST['key']
-            origin = request.POST['origin']
+        form = FeedForm(request.POST)
+        if form.is_valid():
+            key = form.cleaned_data['key']
+            origin = form.cleaned_data['origin']
             if FEEDS_DATA[origin].load(key):
+                if request.user.is_authenticated:
+                    request.user.profile.feeds.add(Feed.objects.get(key=key))
                 return redirect(f'feed/{Feed.objects.get(key=key).pk}')
             else:
                 return not_found_page(request)
-        except KeyError:
-            # Ignore wrong post attempts
-            pass
 
     feeds = Feed.objects.all()
     form = FeedForm()
@@ -71,13 +71,15 @@ def item_page(request: WSGIRequest, item_id: str):
     if request.method == 'POST' and request.user.is_authenticated:
         try:
             if request.POST['action'] == 'comment':
-                comment = Comment(
-                    title=request.POST['title'],
-                    content=request.POST['content'],
-                    item=item,
-                    user=request.user)
-                comment.full_clean()
-                comment.save()
+                form = CommentForm(request.POST)
+                if form.is_valid():
+                    comment = Comment(
+                        title=form.title,
+                        content=form.content,
+                        item=item,
+                        user=request.user)
+                    comment.full_clean()
+                    comment.save()
             elif request.POST['action'] == 'upvote':
                 item.downvotes.remove(request.user)
                 item.upvotes.add(request.user)
@@ -99,7 +101,11 @@ def item_page(request: WSGIRequest, item_id: str):
 
 
 def users_page(request: WSGIRequest):
-    return render(request, 'miscosas/content/users.html')
+    context = {
+        'title': 'Users | Mis cosas',
+        'user_list': User.objects.all().select_related('profile'),
+    }
+    return render(request, 'miscosas/content/users.html', context)
 
 
 def user_page(request: WSGIRequest, user_id: str):

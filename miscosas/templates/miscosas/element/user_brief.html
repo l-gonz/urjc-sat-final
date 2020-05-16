@@ -1,0 +1,5 @@
+<div class='user-brief'>
+    <img src='{{ user.profile.picture }}' height='40' width='40'>
+    <h3><a href='/user/{{user.username}}'>{{ user.username }}</a></h3>
+    Votes: {{ user.profile.vote_count }} - Feeds selected: {{ user.profile.feed_count }}
+</div>

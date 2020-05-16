@@ -1,5 +1,14 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    Users page
+    <h1>Users</h1>
+    {% if user_list %}
+        <div class='simple-list'>
+        {% for user in user_list %}
+            {% include 'miscosas/element/user_brief.html' %}
+        {% endfor %}
+        </div>
+    {% else %}
+        <p class='no-content'>No user are registered.</p>
+    {% endif %}
 {% endblock %}
