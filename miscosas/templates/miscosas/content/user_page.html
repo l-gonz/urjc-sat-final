@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>{{ user.username }}</h1>
-    <img src='{{ user.profile.picture }}' width='100' height='100'>
+    <img src="/media/{{ user.profile.picture }}" width='100' height='100'>
     <h2>Selected feeds</h2>
     {% include 'miscosas/element/feed_list.html' with list=feed_list %}
     <h2>Voted items</h2>
@@ -10,4 +10,12 @@
     {% include 'miscosas/element/item_list.html' with list=downvoted_item_list %}
     <h2>Commented items</h2>
     {% include 'miscosas/element/item_list.html' with list=commented_item_list %}
+    <hr>
+    <h2>Settings</h2>
+    Upload file:
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
 {% endblock %}

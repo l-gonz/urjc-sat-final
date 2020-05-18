@@ -7,7 +7,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
 
 from .models import Feed, Item, Comment, User
-from .forms import FeedForm, CommentForm
+from .forms import FeedForm, CommentForm, ProfileForm
 from .feeds.feedhandler import FEEDS_DATA
 
 
@@ -114,12 +114,19 @@ def user_page(request: WSGIRequest, username: str):
     except (User.DoesNotExist, ValueError):
         return not_found_page(request)
 
+    if request.method == 'POST' and request.user.is_authenticated and user.username == request.user.username:
+        user.profile.picture.delete()
+        form = ProfileForm(request.POST, request.FILES, instance=user.profile)
+        if form.is_valid():
+            form.save()
+
     context = {
         'title': f'{user.username} | Mis cosas',
         'feed_list': user.profile.feeds.all(),
         'upvoted_item_list': user.upvotes.all(),
         'downvoted_item_list': user.downvotes.all(),
         'commented_item_list': user.comments.all(),
+        'form': ProfileForm(),
     }
     return render(request, 'miscosas/content/user_page.html', context)
 
