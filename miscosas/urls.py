@@ -11,7 +11,7 @@ urlpatterns = [
     path('feed/<str:feed_id>', views.feed_page),
     path('item/<str:item_id>', views.item_page),
     path('users', views.users_page),
-    path('user/<str:user_id>', views.user_page),
+    path('user/<str:username>', views.user_page),
     path('about', views.about_page),
     path('', views.index),
 ]

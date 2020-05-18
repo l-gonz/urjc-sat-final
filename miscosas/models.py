@@ -45,7 +45,7 @@ class Comment(models.Model):
     content = models.CharField(max_length=256)
     date = models.DateTimeField(auto_now=True)
     item = models.ForeignKey(Item, models.CASCADE)
-    user = models.ForeignKey(User, models.CASCADE)
+    user = models.ForeignKey(User, models.CASCADE, related_name='comments')
 
     def __str__(self):
         return self.title

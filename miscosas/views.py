@@ -108,8 +108,20 @@ def users_page(request: WSGIRequest):
     return render(request, 'miscosas/content/users.html', context)
 
 
-def user_page(request: WSGIRequest, user_id: str):
-    return render(request, 'miscosas/content/user_page.html')
+def user_page(request: WSGIRequest, username: str):
+    try:
+        user = User.objects.get(username=username)
+    except (User.DoesNotExist, ValueError):
+        return not_found_page(request)
+
+    context = {
+        'title': f'{user.username} | Mis cosas',
+        'feed_list': user.profile.feeds.all(),
+        'upvoted_item_list': user.upvotes.all(),
+        'downvoted_item_list': user.downvotes.all(),
+        'commented_item_list': user.comments.all(),
+    }
+    return render(request, 'miscosas/content/user_page.html', context)
 
 
 def about_page(request: WSGIRequest):
