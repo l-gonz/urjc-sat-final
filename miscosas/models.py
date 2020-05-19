@@ -44,7 +44,7 @@ class Comment(models.Model):
     title = models.CharField(max_length=64)
     content = models.CharField(max_length=256)
     date = models.DateTimeField(auto_now=True)
-    item = models.ForeignKey(Item, models.CASCADE)
+    item = models.ForeignKey(Item, models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, models.CASCADE, related_name='comments')
 
     def __str__(self):
@@ -54,7 +54,6 @@ class Comment(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, models.CASCADE)
     picture = models.ImageField(default='/media/blanck-profile-picture')
-    feeds = models.ManyToManyField(Feed, related_name='feeds')
 
     def __str__(self):
         return str(self.user)
@@ -64,8 +63,8 @@ class Profile(models.Model):
         return self.user.upvotes.count() + self.user.downvotes.count()
 
     @property
-    def feed_count(self):
-        return self.feeds.count()
+    def comment_count(self):
+        return self.user.comments.count()
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

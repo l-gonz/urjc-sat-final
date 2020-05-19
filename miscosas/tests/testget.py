@@ -47,6 +47,11 @@ class TestGetViewsEmpty(TestCase):
                 ['miscosas/content/not_found.html', 'miscosas/base.html']
             )
 
+    def test_users_page(self):
+        ''' Tests the users page with nothing on the database '''
+        response = self.client.get('/users')
+        self.assertContains(response, "class='no-content'", count=1, status_code=200)
+
 
 class TestGetViewsContent(TestCase):
 

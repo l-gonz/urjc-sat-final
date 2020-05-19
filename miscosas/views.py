@@ -28,8 +28,6 @@ def feeds_page(request: WSGIRequest):
             key = form.cleaned_data['key']
             origin = form.cleaned_data['origin']
             if FEEDS_DATA[origin].load(key):
-                if request.user.is_authenticated:
-                    request.user.profile.feeds.add(Feed.objects.get(key=key))
                 return redirect(f'feed/{Feed.objects.get(key=key).pk}')
             else:
                 return not_found_page(request)
@@ -74,8 +72,8 @@ def item_page(request: WSGIRequest, item_id: str):
                 form = CommentForm(request.POST)
                 if form.is_valid():
                     comment = Comment(
-                        title=form.title,
-                        content=form.content,
+                        title=request.POST['title'],
+                        content=request.POST['content'],
                         item=item,
                         user=request.user)
                     comment.full_clean()
@@ -94,7 +92,7 @@ def item_page(request: WSGIRequest, item_id: str):
         'title': f'{item.title} | {item.feed.title} | Mis cosas',
         'item': item,
         'link': FEEDS_DATA[item.feed.origin].get_item_url(item.feed.key, item.key),
-        'comment_list': item.comment_set.all(),
+        'comment_list': item.comments.all(),
         'form': CommentForm(),
     }
     return render(request, 'miscosas/content/item_page.html', context)
@@ -122,10 +120,9 @@ def user_page(request: WSGIRequest, username: str):
 
     context = {
         'title': f'{user.username} | Mis cosas',
-        'feed_list': user.profile.feeds.all(),
         'upvoted_item_list': user.upvotes.all(),
         'downvoted_item_list': user.downvotes.all(),
-        'commented_item_list': user.comments.all(),
+        'commented_item_list': Item.objects.filter(comments__user=user).distinct(),
         'form': ProfileForm(),
     }
     return render(request, 'miscosas/content/user_page.html', context)
