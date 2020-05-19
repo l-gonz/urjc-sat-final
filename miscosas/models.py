@@ -2,6 +2,8 @@
 Models for app MisCosas
 """
 
+import os
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -52,11 +54,41 @@ class Comment(models.Model):
 
 
 class Profile(models.Model):
+    DEFAULT_PICTURE = 'blank-profile-picture.png'
+
+    LIGHTMODE = 'LM'
+    DARKMODE = 'DM'
+    THEMES = [
+        (LIGHTMODE, 'Light mode'),
+        (DARKMODE, 'Dark mode'),
+    ]
+
+    SMALL_FONT = 'sm'
+    MEDIUM_FONT = 'md'
+    LARGE_FONT = 'lg'
+    FONT_SIZES = [
+        (SMALL_FONT, 'Small'),
+        (MEDIUM_FONT, 'Medium'),
+        (LARGE_FONT, 'Large'),
+    ]
+
     user = models.OneToOneField(User, models.CASCADE)
-    picture = models.ImageField(default='/media/blanck-profile-picture')
+    _picture = models.ImageField(blank=True, null=True)
+    theme = models.CharField(max_length=2, choices=THEMES, default=LIGHTMODE)
+    font_size = models.CharField(max_length=2, choices=FONT_SIZES, default=MEDIUM_FONT)
 
     def __str__(self):
         return str(self.user)
+
+    @property
+    def picture(self):
+        try:
+            if os.path.isfile(self._picture.path):
+                return self._picture
+            Profile.objects.filter(pk=self.pk).update(_picture=None)
+            return self.DEFAULT_PICTURE
+        except ValueError:
+            return self.DEFAULT_PICTURE
 
     @property
     def vote_count(self):
@@ -66,6 +98,7 @@ class Profile(models.Model):
     def comment_count(self):
         return self.user.comments.count()
 
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -74,3 +107,29 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+@receiver(models.signals.post_delete, sender=Profile)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding Profile object is deleted.
+    """
+    if instance.picture and instance.picture != Profile.DEFAULT_PICTURE:
+        if os.path.isfile(instance.picture.path):
+            os.remove(instance.picture.path)
+
+@receiver(models.signals.pre_save, sender=Profile)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """
+    Deletes old file from filesystem
+    when corresponding Profile object is updated
+    with new file.
+    """
+    try:
+        old_file = Profile.objects.get(pk=instance.pk).picture
+        new_file = instance.picture
+        if old_file != new_file and old_file != Profile.DEFAULT_PICTURE:
+            if os.path.isfile(old_file.path):
+                os.remove(old_file.path)
+    except Profile.DoesNotExist:
+        return False

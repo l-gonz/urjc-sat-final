@@ -108,22 +108,27 @@ def users_page(request: WSGIRequest):
 
 def user_page(request: WSGIRequest, username: str):
     try:
-        user = User.objects.get(username=username)
+        owner = User.objects.get(username=username)
     except (User.DoesNotExist, ValueError):
         return not_found_page(request)
 
-    if request.method == 'POST' and request.user.is_authenticated and user.username == request.user.username:
-        user.profile.picture.delete()
-        form = ProfileForm(request.POST, request.FILES, instance=user.profile)
+    user_match = request.user.is_authenticated and owner.username == request.user.username
+
+    if request.method == 'POST' and user_match:
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
 
+    #TODO Show error if profile.picture image does not exist
+
     context = {
-        'title': f'{user.username} | Mis cosas',
-        'upvoted_item_list': user.upvotes.all(),
-        'downvoted_item_list': user.downvotes.all(),
-        'commented_item_list': Item.objects.filter(comments__user=user).distinct(),
-        'form': ProfileForm(),
+        'title': f'{owner.username} | Mis cosas',
+        'owner': owner,
+        'upvoted_item_list': owner.upvotes.all(),
+        'downvoted_item_list': owner.downvotes.all(),
+        'commented_item_list': Item.objects.filter(comments__user=owner).distinct(),
+        'form': ProfileForm(instance=owner.profile),
+        'user_match': user_match,
     }
     return render(request, 'miscosas/content/user_page.html', context)
 

@@ -21,4 +21,7 @@ class CommentForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['picture']
+        exclude = ['user']
+        labels = {
+            "_picture": "Profile picture"
+        }
