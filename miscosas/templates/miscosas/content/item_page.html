@@ -20,11 +20,13 @@
     <!-- Comments -->
     {% include 'miscosas/element/comment_list.html' with list=comment_list %}
     {% if user.is_authenticated %}
-        <h2>Add new comment</h2>
-        <form method="POST" action="/item/{{ item.pk }}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" name='action' value='comment'>Send</button>
-        </form>
+        <div class='comment-form'>
+            <h2>Add new comment</h2>
+            <form method="POST" action="/item/{{ item.pk }}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" name='action' value='comment'>Send</button>
+            </form>
+        </div>
     {% endif %}
 {% endblock %}

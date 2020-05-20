@@ -52,7 +52,7 @@ def feed_page(request: WSGIRequest, feed_id: str):
     context = {
         'title': f'{feed.title} | Mis cosas',
         'feed': feed,
-        'item_list': feed.item_set.all(),
+        'item_list': feed.items.all(),
         'link': FEEDS_DATA[feed.origin].get_feed_url(feed.key),
     }
 

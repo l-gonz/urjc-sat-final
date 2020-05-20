@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from miscosas.forms import FeedForm
-from miscosas.models import Item, Feed, Comment
+from miscosas.models import Item, Feed, Comment, Profile
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
@@ -138,7 +138,6 @@ class TestPostVoteForm(TestCase):
         self.assertEqual(self.item.upvote_count, 0)
         self.assertEqual(self.item.downvote_count, 0)
 
-
     def test_vote_first_time(self):
         ''' Tests voting without having voted before '''
         self.client.post(f'/item/{self.item.pk}', {'action': 'upvote'})
@@ -169,3 +168,45 @@ class TestPostVoteForm(TestCase):
         self.client.post(f'/item/484', {'action': 'downvote'})
         self.assertEqual(self.item.upvote_count, 0)
         self.assertEqual(self.item.downvote_count, 0)
+
+
+class TestPostProfileForm(TestCase):
+
+    def setUp(self):
+        ''' Add some users to test profile '''
+
+        self.user = User.objects.create_user('root', password='toor')
+        self.other_user = User.objects.create_user('aaa', password='aaa')
+        self.client.force_login(self.user)
+
+    def test_change_font_size(self):
+        form = {
+            'theme': self.user.profile.theme,
+            'font_size': Profile.LARGE_FONT,
+        }
+
+        response = self.client.post('/user/' + self.user.username, form)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.get(username=self.user.username).profile.font_size, Profile.LARGE_FONT)
+
+    def test_change_theme(self):
+        form = {
+            'theme': Profile.DARKMODE,
+            'font_size': self.user.profile.font_size,
+        }
+
+        response = self.client.post('/user/' + self.user.username, form)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.get(username=self.user.username).profile.theme, Profile.DARKMODE)
+
+    def test_post_wrong_user(self):
+        form = {
+            'theme': Profile.DARKMODE,
+            'font_size': Profile.LARGE_FONT,
+        }
+
+        response = self.client.post('/user/' + self.other_user.username, form)
+        self.assertEqual(response.status_code, 200)
+        profile = User.objects.get(username=self.other_user.username).profile
+        self.assertEqual(profile.font_size, Profile.MEDIUM_FONT)
+        self.assertEqual(profile.theme, Profile.LIGHTMODE)

@@ -4,12 +4,18 @@
     <h1>{{ owner.username }}</h1>
     <img src='/media/{{ owner.profile.picture }}' width='100' height='100'>
     <h2>Voted items</h2>
-    {% include 'miscosas/element/item_list.html' with list=upvoted_item_list %}
-    {% include 'miscosas/element/item_list.html' with list=downvoted_item_list %}
-    <h2>Commented items</h2>
-    {% include 'miscosas/element/item_list.html' with list=commented_item_list %}
-
+    <div class='upvoted-items'>
+        {% include 'miscosas/element/item_list.html' with list=upvoted_item_list %}
+    </div>
+    <div class='downvoted-items'>
+        {% include 'miscosas/element/item_list.html' with list=downvoted_item_list %}
+    </div>
+    <div class='commented-items'>
+        <h2>Commented items</h2>
+        {% include 'miscosas/element/item_list.html' with list=commented_item_list %}
+    </div>
     {% if user_match %}
+    <div class='settings-form'>
         <hr>
         <h2>Settings</h2>
         <form method="post" enctype="multipart/form-data">
@@ -17,5 +23,6 @@
             {{ form.as_p }}
             <button type="submit">Save</button>
         </form>
+    </div>
     {% endif %}
 {% endblock %}

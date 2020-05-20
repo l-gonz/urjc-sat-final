@@ -22,7 +22,7 @@ class Feed(models.Model):
 class Item(models.Model):
     key = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
-    feed = models.ForeignKey(Feed, models.CASCADE)
+    feed = models.ForeignKey(Feed, models.CASCADE, related_name="items")
     upvotes = models.ManyToManyField(User, related_name="upvotes")
     downvotes = models.ManyToManyField(User, related_name="downvotes")
     description = models.TextField(blank=True, default='')

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from miscosas.models import Item, Feed
+from miscosas.models import Item, Feed, User, Profile
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
@@ -13,7 +13,7 @@ class TestGetViewsEmpty(TestCase):
 
         response = self.client.get('/')
         self.assertContains(response, "class='no-content'", count=2)
-        self.assertContains(response, "<form", count=1)
+        self.assertContains(response, "class='feed-form'", count=1)
 
     def test_feeds_page(self):
         ''' Tests the feeds page with nothing on the database '''
@@ -21,7 +21,7 @@ class TestGetViewsEmpty(TestCase):
         response = self.client.get('/feeds')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "class='no-content'", count=1)
-        self.assertContains(response, "<form", count=1)
+        self.assertContains(response, "class='feed-form'", count=1)
 
     def test_feed_page(self):
         ''' Tests a feed page with nothing on the database '''
@@ -69,7 +69,8 @@ class TestGetViewsContent(TestCase):
         self.assertContains(response, "class='simple-list'", count=2)
         self.assertContains(response, "class='item-brief'", count=Item.objects.count())
         self.assertContains(response, "class='feed-brief'", count=Feed.objects.count())
-        self.assertContains(response, "<form", count=1)
+        self.assertContains(response, "class='feed-form'", count=1)
+        self.assertContains(response, "class='vote-form'", count=0)
 
     def test_feeds_page(self):
         ''' Tests the feeds page after some feeds are added '''
@@ -78,7 +79,7 @@ class TestGetViewsContent(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "class='simple-list'", count=1)
         self.assertContains(response, "class='feed-brief'", count=Feed.objects.count())
-        self.assertContains(response, "<form", count=1)
+        self.assertContains(response, "class='feed-form'", count=1)
 
     def test_feed_page(self):
         ''' Tests the feed page after some feeds are added '''
@@ -90,7 +91,8 @@ class TestGetViewsContent(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "class='feed-detailed'", count=1)
             self.assertContains(response, "class='simple-list'", count=1)
-            self.assertContains(response, "class='item-brief'", count=feed.item_set.count())
+            self.assertContains(response, "class='item-brief'", count=feed.items.count())
+            self.assertContains(response, "class='vote-form'", count=0)
 
     def test_item_page(self):
         ''' Tests an item page after some feeds are added '''
@@ -102,7 +104,70 @@ class TestGetViewsContent(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "class='feed-brief'", count=1)
             self.assertContains(response, "class='item-detailed'", count=1)
+            self.assertContains(response, "class='vote-form'", count=0)
+            self.assertContains(response, "class='comment-form'", count=0)
 
 
 class TestGetViewsAuthenticated(TestCase):
-    pass
+
+    def setUp(self):
+        ''' Posts some forms to have content available '''
+
+        form = {'key': VALID_YOUTUBE_KEY, 'origin': 'YouTube'}
+        self.client.post('/feeds', form)
+        self.user = User.objects.create_user('root', password='toor')
+        self.other_user = User.objects.create_user('aaa', password='aaa')
+        self.client.force_login(self.user)
+        self.item = Item.objects.get(pk=10)
+        self.feed = Feed.objects.get(pk=1)
+
+    def test_main_page(self):
+        ''' Tests user lists on main menu '''
+        #TODO: Check user specific lists
+        response = self.client.get('/')
+        self.assertContains(response, "class='vote-form'", count=Item.objects.count())
+
+    def test_feed_page(self):
+        ''' Tests vote forms on feed page '''
+        response = self.client.get('/feed/1')
+        self.assertContains(response, "class='vote-form'", count=self.feed.items.count())
+
+    def test_item_page(self):
+        ''' Tests vote and comment forms on item page '''
+        response = self.client.get('/item/' + str(self.item.pk))
+        self.assertContains(response, "class='vote-form'", count=1)
+        self.assertContains(response, "class='comment-form'", count=1)
+
+    def test_users_page(self):
+        ''' Tests user list '''
+        response = self.client.get('/users')
+        self.assertContains(response, "class='user-brief'", count=2)
+        self.assertContains(response, "img", count=2)
+
+    def test_own_user_page(self):
+        ''' Tests user page of logged user '''
+        response = self.client.get('/user/' + self.user.username)
+        self.assertContains(response, "class='settings-form'", count=1)
+        self.assertContains(response, Profile.DEFAULT_PICTURE, count=1)
+
+    def test_own_user_page_items(self):
+        ''' Tests items in the user page of logged user '''
+
+        self.client.post('/item/1', {'action': 'upvote'})
+        self.client.post('/item/3', {'action': 'upvote'})
+        self.client.post('/item/10', {'action': 'downvote'})
+        self.client.post('/item/3', {'title': 'Hey', 'content': 'This is body', 'action': 'comment'})
+        response = self.client.get('/user/' + self.user.username)
+
+        self.assertContains(response, "class='upvoted-items'", count=1)
+        self.assertContains(response, "class='downvoted-items'", count=1)
+        self.assertContains(response, "class='commented-items'", count=1)
+        self.assertContains(response, "class='item-brief' href='/item/1'", count=1)
+        self.assertContains(response, "class='item-brief' href='/item/3'", count=2)
+        self.assertContains(response, "class='item-brief' href='/item/10'", count=1)
+        self.assertContains(response, "class='vote-form'", count=4)
+
+    def test_other_user_page(self):
+        ''' Tests user page of a different user '''
+        response = self.client.get('/user/' + self.other_user.username)
+        self.assertContains(response, "class='settings-form'", count=0)
