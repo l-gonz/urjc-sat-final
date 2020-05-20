@@ -5,6 +5,8 @@ Django views for app MisCosas
 from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
+from django.db.models import Q, F
+from django.db.models.functions import Length
 
 from .models import Feed, Item, Comment, User
 from .forms import FeedForm, CommentForm, ProfileForm
@@ -12,10 +14,16 @@ from .feeds.feedhandler import FEEDS_DATA
 
 
 def index(request: WSGIRequest):
+    # Selects the 10 items that have been voted the most, discarding items with no votes
+    items = (Item.objects
+             .annotate(up_len=Length('upvotes'), dw_len=Length('downvotes'))
+             .filter(Q(up_len__gt=0) | Q(dw_len__gt=0))
+             .order_by(F('up_len') - F('dw_len'), '-up_len')[:10])
+
     context = {
         'title': 'Mis cosas',
-        'feed_list': Feed.objects.all(),
-        'item_list': Item.objects.all(),
+        'feed_list': Feed.objects.filter(chosen=True),
+        'item_list': items,
         'form': FeedForm(),
     }
     return render(request, 'miscosas/content/index.html', context)
@@ -49,6 +57,15 @@ def feed_page(request: WSGIRequest, feed_id: str):
     except (Feed.DoesNotExist, ValueError):
         return not_found_page(request)
 
+    if request.method == 'POST':
+        try:
+            if request.POST['action'] == 'unchoose':
+                feed.chosen = False
+                feed.save()
+        except (KeyError, ValidationError):
+            # Ignore wrong post attempts
+            pass
+
     context = {
         'title': f'{feed.title} | Mis cosas',
         'feed': feed,
@@ -81,9 +98,11 @@ def item_page(request: WSGIRequest, item_id: str):
             elif request.POST['action'] == 'upvote':
                 item.downvotes.remove(request.user)
                 item.upvotes.add(request.user)
+                # TODO Redirect to origin page
             elif request.POST['action'] == 'downvote':
                 item.upvotes.remove(request.user)
                 item.downvotes.add(request.user)
+                # TODO Redirect to origin page
         except (KeyError, ValidationError):
             # Ignore wrong post attempts
             pass

@@ -14,6 +14,7 @@ class Feed(models.Model):
     key = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
     origin = models.CharField(max_length=32)
+    chosen = models.BooleanField(default=True)
 
     def __str__(self):
         return self.origin + ': ' + self.title

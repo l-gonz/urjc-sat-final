@@ -4,12 +4,19 @@
     <div class='feed-detailed'>
         <h1> {{ feed.title }} </h1>
         <a href="{{ link }}">Go to page</a>
-        <form action='/feeds' method='POST'>
-            {% csrf_token %}
-            <input type="hidden" name='key' value='{{ feed.key }}'>
-            <input type="hidden" name='origin' value='{{ feed.origin }}'>
-            <button type='submit'>Reload</button>
-        </form>
+        {% if feed.chosen %}
+            <form action='/feed/{{ feed.pk }}' method='POST'>
+                {% csrf_token %}
+                <button type='submit' name='action' value='unchoose'>Unchoose this feed</button>
+            </form>
+        {% else %}
+            <form action='/feeds' method='POST'>
+                {% csrf_token %}
+                <input type="hidden" name='key' value='{{ feed.key }}'>
+                <input type="hidden" name='origin' value='{{ feed.origin }}'>
+                <button type='submit'>Choose this feed</button>
+            </form>
+        {% endif %}
     </div>
     <h2> Items </h2>
     {% include 'miscosas/element/item_list.html' with list=item_list %}

@@ -66,11 +66,15 @@ class TestGetViewsContent(TestCase):
 
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "class='simple-list'", count=2)
-        self.assertContains(response, "class='item-brief'", count=Item.objects.count())
+        self.assertContains(response, "class='simple-list'", count=1)
+        self.assertContains(response, "class='no-content'", count=1)
+        self.assertContains(response, "class='item-brief'", count=0)
         self.assertContains(response, "class='feed-brief'", count=Feed.objects.count())
         self.assertContains(response, "class='feed-form'", count=1)
         self.assertContains(response, "class='vote-form'", count=0)
+
+    #TODO
+    #def test_main_page_with_votes(self):
 
     def test_feeds_page(self):
         ''' Tests the feeds page after some feeds are added '''
@@ -123,9 +127,19 @@ class TestGetViewsAuthenticated(TestCase):
 
     def test_main_page(self):
         ''' Tests user lists on main menu '''
-        #TODO: Check user specific lists
+        scores = [
+            i.upvote_count - i.downvote_count
+            for i in Item.objects.all()
+            if i.upvote_count > 0 and i.downvote_count > 0
+        ][:10]
+
         response = self.client.get('/')
-        self.assertContains(response, "class='vote-form'", count=Item.objects.count())
+        self.assertContains(response, "class='vote-form'", count=len(scores))
+        self.assertContains(response, "class='simple-list'", count=1)
+        self.assertContains(response, "class='no-content'", count=2)
+
+    #TODO
+    #def test_main_page_with_votes(self):
 
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''

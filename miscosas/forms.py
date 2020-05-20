@@ -18,6 +18,7 @@ class CommentForm(forms.Form):
     title = forms.CharField()
     content = forms.CharField(widget=forms.Textarea)
 
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile

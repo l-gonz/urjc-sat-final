@@ -55,6 +55,7 @@ def load_youtube_feed(feed_key: str):
         origin=YOUTUBE_FEED.name,
         defaults={
             'title': channel.name(),
+            'chosen': True,
         })
 
     for video in channel.videos():
@@ -86,6 +87,7 @@ def load_last_fm_feed(feed_key: str):
         origin=LAST_FM_FEED.name,
         defaults={
             'title': artist.name(),
+            'chosen': True
         })
 
     for album in artist.albums():
