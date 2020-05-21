@@ -8,22 +8,27 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, F
 from django.db.models.functions import Length
 
-from .models import Feed, Item, Comment, User
+from .models import Feed, Item, Comment, User, Vote
 from .forms import FeedForm, CommentForm, ProfileForm
 from .feeds.feedhandler import FEEDS_DATA
 
 
 def index(request: WSGIRequest):
-    # Selects the 10 items that have been voted the most, discarding items with no votes
-    items = (Item.objects
-             .annotate(up_len=Length('upvotes'), dw_len=Length('downvotes'))
-             .filter(Q(up_len__gt=0) | Q(dw_len__gt=0))
-             .order_by(F('up_len') - F('dw_len'), '-up_len')[:10])
+    # Selects the items that have been voted the most
+    # from all the items that have been voted
+    items = list(Item.objects.filter(votes__isnull=False).distinct())
+    items.sort(key=lambda i: i.upvote_count, reverse=True)
+    items.sort(key=lambda i: i.upvote_count - i.downvote_count, reverse=True)
+
+    latest_votes = []
+    if request.user.is_authenticated:
+        latest_votes = [v.item for v in Vote.objects.filter(user=request.user).order_by('-date')]
 
     context = {
         'title': 'Mis cosas',
         'feed_list': Feed.objects.filter(chosen=True),
-        'item_list': items,
+        'item_list': items[:10],
+        'latest_votes': latest_votes[:5],
         'form': FeedForm(),
     }
     return render(request, 'miscosas/content/index.html', context)
@@ -95,13 +100,13 @@ def item_page(request: WSGIRequest, item_id: str):
                         user=request.user)
                     comment.full_clean()
                     comment.save()
-            elif request.POST['action'] == 'upvote':
-                item.downvotes.remove(request.user)
-                item.upvotes.add(request.user)
-                # TODO Redirect to origin page
-            elif request.POST['action'] == 'downvote':
-                item.upvotes.remove(request.user)
-                item.downvotes.add(request.user)
+            elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
+                positive = request.POST['action'] == 'upvote'
+                vote = Vote.objects.filter(item=item, user=request.user, positive=(not positive)).delete()
+                try:
+                    Vote.objects.get(item=item, user=request.user)
+                except Vote.DoesNotExist:
+                    Vote(positive=positive, user=request.user, item=item).save()
                 # TODO Redirect to origin page
         except (KeyError, ValidationError):
             # Ignore wrong post attempts
@@ -143,8 +148,8 @@ def user_page(request: WSGIRequest, username: str):
     context = {
         'title': f'{owner.username} | Mis cosas',
         'owner': owner,
-        'upvoted_item_list': owner.upvotes.all(),
-        'downvoted_item_list': owner.downvotes.all(),
+        'upvoted_item_list': Item.objects.filter(votes__user=owner, votes__positive=True),
+        'downvoted_item_list': Item.objects.filter(votes__user=owner, votes__positive=False),
         'commented_item_list': Item.objects.filter(comments__user=owner).distinct(),
         'form': ProfileForm(instance=owner.profile),
         'user_match': user_match,

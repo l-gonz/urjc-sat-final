@@ -1,6 +1,8 @@
+import datetime
+
 from django.test import TestCase
 
-from miscosas.models import Item, Feed, User, Profile
+from miscosas.models import Item, Feed, User, Profile, Vote
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
@@ -138,8 +140,21 @@ class TestGetViewsAuthenticated(TestCase):
         self.assertContains(response, "class='simple-list'", count=1)
         self.assertContains(response, "class='no-content'", count=2)
 
-    #TODO
-    #def test_main_page_with_votes(self):
+    def test_main_page_with_votes(self):
+        ''' Tests main page after some items have been voted '''
+        user_votes = [[1, 5, 6, 10, 14, 15], [2, 3, 7, 12]]
+        other_user_votes = [[2, 3, 5, 12], [4, 6, 10, 13]]
+        for i in user_votes:
+            for j in i:
+                Vote(item=Item.objects.get(pk=j), user=self.user, positive=(i == user_votes[0])).save()
+        for i in other_user_votes:
+            for j in i:
+                Vote(item=Item.objects.get(pk=j), user=self.other_user, positive=(i == other_user_votes[0])).save()
+
+        response = self.client.get('/')
+        self.assertContains(response, "class='simple-list'", count=3)
+        self.assertContains(response, "class='item-brief'", count=15)
+
 
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''

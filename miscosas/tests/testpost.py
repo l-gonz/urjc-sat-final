@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from miscosas.forms import FeedForm
-from miscosas.models import Item, Feed, Comment, Profile
+from miscosas.models import Item, Feed, Comment, Profile, Vote
 from miscosas.feeds.feedhandler import YOUTUBE_FEED, LAST_FM_FEED
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
@@ -136,15 +136,19 @@ class TestPostVoteForm(TestCase):
         ''' Tests voting without being logged in '''
         self.client.logout()
         self.client.post(f'/item/{self.item.pk}', {'action': 'downvote'})
+        self.assertEqual(Vote.objects.count(), 0)
         self.assertEqual(self.item.upvote_count, 0)
         self.assertEqual(self.item.downvote_count, 0)
 
     def test_vote_first_time(self):
         ''' Tests voting without having voted before '''
         self.client.post(f'/item/{self.item.pk}', {'action': 'upvote'})
+        self.assertEqual(Vote.objects.count(), 1)
+        self.assertEqual(Vote.objects.get().item, self.item)
+        self.assertEqual(Vote.objects.get().user, self.user)
         self.assertEqual(self.item.upvote_count, 1)
         self.assertEqual(self.item.downvote_count, 0)
-        self.assertTrue(self.item.upvotes.filter(pk=self.user.pk).exists())
+        self.assertEqual(self.user.profile.vote_count, 1)
 
     def test_vote_again(self):
         ''' Tests voting twice the same item '''
@@ -152,23 +156,23 @@ class TestPostVoteForm(TestCase):
         self.client.post(f'/item/{self.item.pk}', {'action': 'upvote'})
         self.assertEqual(self.item.upvote_count, 1)
         self.assertEqual(self.item.downvote_count, 0)
-        self.assertTrue(self.item.upvotes.filter(pk=self.user.pk).exists())
+        self.assertEqual(self.user.profile.vote_count, 1)
+        self.assertEqual(Vote.objects.count(), 1)
 
     def test_vote_change(self):
         ''' Tests changing the vote on an item '''
         self.client.post(f'/item/{self.item.pk}', {'action': 'downvote'})
-        self.assertEqual(self.item.upvote_count, 0)
-        self.assertEqual(self.item.downvote_count, 1)
+        self.assertFalse(Vote.objects.get().positive)
 
         self.client.post(f'/item/{self.item.pk}', {'action': 'upvote'})
-        self.assertEqual(self.item.upvote_count, 1)
-        self.assertEqual(self.item.downvote_count, 0)
+        self.assertTrue(Vote.objects.get().positive)
+
+        self.assertEqual(Vote.objects.count(), 1)
 
     def test_vote_invalid_item(self):
         ''' Tests voting on an invalid item '''
         self.client.post(f'/item/484', {'action': 'downvote'})
-        self.assertEqual(self.item.upvote_count, 0)
-        self.assertEqual(self.item.downvote_count, 0)
+        self.assertEqual(Vote.objects.count(), 0)
 
 
 class TestPostProfileForm(TestCase):

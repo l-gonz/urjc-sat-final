@@ -24,8 +24,6 @@ class Item(models.Model):
     key = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
     feed = models.ForeignKey(Feed, models.CASCADE, related_name="items")
-    upvotes = models.ManyToManyField(User, related_name="upvotes")
-    downvotes = models.ManyToManyField(User, related_name="downvotes")
     description = models.TextField(blank=True, default='')
     picture = models.URLField(blank=True, default='')
 
@@ -35,12 +33,22 @@ class Item(models.Model):
     @property
     def upvote_count(self):
         ''' Upvote count property for templates '''
-        return self.upvotes.count()
+        return self.votes.filter(positive=True).count()
 
     @property
     def downvote_count(self):
         ''' Downvote count property for templates '''
-        return self.downvotes.count()
+        return self.votes.filter(positive=False).count()
+
+
+class Vote(models.Model):
+    positive = models.BooleanField()
+    date = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, models.CASCADE, related_name='votes')
+    item = models.ForeignKey(Item, models.CASCADE, related_name='votes')
+
+    class Meta:
+        unique_together = ('user', 'item',)
 
 
 class Comment(models.Model):
@@ -93,7 +101,7 @@ class Profile(models.Model):
 
     @property
     def vote_count(self):
-        return self.user.upvotes.count() + self.user.downvotes.count()
+        return self.user.votes.count()
 
     @property
     def comment_count(self):
