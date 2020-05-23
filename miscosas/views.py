@@ -102,12 +102,13 @@ def item_page(request: WSGIRequest, item_id: str):
                     comment.save()
             elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
                 positive = request.POST['action'] == 'upvote'
-                vote = Vote.objects.filter(item=item, user=request.user, positive=(not positive)).delete()
+                Vote.objects.filter(item=item, user=request.user, positive=(not positive)).delete()
                 try:
                     Vote.objects.get(item=item, user=request.user)
                 except Vote.DoesNotExist:
                     Vote(positive=positive, user=request.user, item=item).save()
-                # TODO Redirect to origin page
+            path = request.POST['path']
+            return redirect(path)
         except (KeyError, ValidationError):
             # Ignore wrong post attempts
             pass
