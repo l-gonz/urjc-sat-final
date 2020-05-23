@@ -159,7 +159,8 @@ def user_page(request: WSGIRequest, username: str):
 
 
 def about_page(request: WSGIRequest):
-    return render(request, 'miscosas/content/about.html')
+    context = {'title': 'About | Mis Cosas'}
+    return render(request, 'miscosas/content/about.html', context)
 
 
 def not_found_page(request):

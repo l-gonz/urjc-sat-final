@@ -1,5 +1,18 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    About page
+    <h1>Mis Cosas</h1>
+    <p> By Laura González Fernández </p>
+    <p>
+        This web app allows you to manage feeds from different sources in the internet.
+        You can select which feeds you are interested in to track their updates.
+        The <a href='/'>home</a> page shows the items that are most popular with the users
+        and the feeds that have been chosen.
+        Once a feed has been selected and its information recovered, everyone can see the items it contains.
+        If you no longer wish to see feeds in the main page, you can deselect them and they will only be available
+        in the <a href='/feeds'>feeds</a> page.
+        As a registered user, you can also vote the items that you like and add comments to their page.
+        All your votes and comments a user has made will appear in their user page.
+        You can see a list of all the users in the web app <a href='/users'>here</a>.
+    </p>
 {% endblock %}
