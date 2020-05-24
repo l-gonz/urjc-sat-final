@@ -13,11 +13,11 @@ from django.dispatch import receiver
 class Feed(models.Model):
     key = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
-    origin = models.CharField(max_length=32)
+    source = models.CharField(max_length=32)
     chosen = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.origin + ': ' + self.title
+        return self.source + ': ' + self.title
 
 
 class Item(models.Model):
@@ -93,7 +93,7 @@ class Profile(models.Model):
     def picture(self):
         try:
             if os.path.isfile(self._picture.path):
-                return self._picture
+                return self._picture.name
             Profile.objects.filter(pk=self.pk).update(_picture=None)
             return self.DEFAULT_PICTURE
         except ValueError:

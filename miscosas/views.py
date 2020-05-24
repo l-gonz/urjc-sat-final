@@ -11,6 +11,7 @@ from django.db.models.functions import Length
 from .models import Feed, Item, Comment, User, Vote
 from .forms import FeedForm, CommentForm, ProfileForm
 from .feeds.feedhandler import FEEDS_DATA
+from .feeds.xlmpage import render_document
 
 
 def index(request: WSGIRequest):
@@ -26,12 +27,13 @@ def index(request: WSGIRequest):
 
     context = {
         'title': 'Mis cosas',
-        'feed_list': Feed.objects.filter(chosen=True),
-        'item_list': items[:10],
-        'latest_votes': latest_votes[:5],
+        'popular_items': items[:10],
+        'chosen_feeds': Feed.objects.filter(chosen=True),
+        'user_latest_votes': latest_votes[:5],
         'form': FeedForm(),
     }
-    return render(request, 'miscosas/content/index.html', context)
+
+    return render_or_document(request, 'miscosas/content/index.html', context)
 
 
 def feeds_page(request: WSGIRequest):
@@ -39,20 +41,18 @@ def feeds_page(request: WSGIRequest):
         form = FeedForm(request.POST)
         if form.is_valid():
             key = form.cleaned_data['key']
-            origin = form.cleaned_data['origin']
-            if FEEDS_DATA[origin].load(key):
+            source = form.cleaned_data['source']
+            if FEEDS_DATA[source].load(key):
                 return redirect(f'feed/{Feed.objects.get(key=key).pk}')
             else:
                 return not_found_page(request)
 
-    feeds = Feed.objects.all()
-    form = FeedForm()
     context = {
         'title': 'Feeds | Mis cosas',
-        'feed_list': feeds,
-        'form': form,
+        'all_feeds': Feed.objects.all(),
+        'form': FeedForm(),
     }
-    return render(request, 'miscosas/content/feeds.html', context)
+    return render_or_document(request, 'miscosas/content/feeds.html', context)
 
 
 def feed_page(request: WSGIRequest, feed_id: str):
@@ -75,10 +75,10 @@ def feed_page(request: WSGIRequest, feed_id: str):
         'title': f'{feed.title} | Mis cosas',
         'feed': feed,
         'item_list': feed.items.all(),
-        'link': FEEDS_DATA[feed.origin].get_feed_url(feed.key),
+        'link': FEEDS_DATA[feed.source].get_feed_url(feed.key),
     }
 
-    return render(request, 'miscosas/content/feed_page.html', context)
+    return render_or_document(request, 'miscosas/content/feed_page.html', context)
 
 
 def item_page(request: WSGIRequest, item_id: str):
@@ -116,11 +116,11 @@ def item_page(request: WSGIRequest, item_id: str):
     context = {
         'title': f'{item.title} | {item.feed.title} | Mis cosas',
         'item': item,
-        'link': FEEDS_DATA[item.feed.origin].get_item_url(item.feed.key, item.key),
+        'link': FEEDS_DATA[item.feed.source].get_item_url(item.feed.key, item.key),
         'comment_list': item.comments.all(),
         'form': CommentForm(),
     }
-    return render(request, 'miscosas/content/item_page.html', context)
+    return render_or_document(request, 'miscosas/content/item_page.html', context)
 
 
 def users_page(request: WSGIRequest):
@@ -128,7 +128,7 @@ def users_page(request: WSGIRequest):
         'title': 'Users | Mis cosas',
         'user_list': User.objects.all().select_related('profile'),
     }
-    return render(request, 'miscosas/content/users.html', context)
+    return render_or_document(request, 'miscosas/content/users.html', context)
 
 
 def user_page(request: WSGIRequest, username: str):
@@ -155,11 +155,11 @@ def user_page(request: WSGIRequest, username: str):
         'form': ProfileForm(instance=owner.profile),
         'user_match': user_match,
     }
-    return render(request, 'miscosas/content/user_page.html', context)
+    return render_or_document(request, 'miscosas/content/user_page.html', context)
 
 
 def about_page(request: WSGIRequest):
-    context = {'title': 'About | Mis Cosas'}
+    context = {'title': 'About | Mis cosas'}
     return render(request, 'miscosas/content/about.html', context)
 
 
@@ -169,3 +169,10 @@ def not_found_page(request):
         'miscosas/content/not_found.html',
         {'title': 'Page not found | Mis cosas'},
         status=404)
+
+
+def render_or_document(request, template, context):
+    ''' Renders the response in the requested format '''
+    if request.GET.get('format'):
+        return render_document(request, context, request.GET['format'])
+    return render(request, template, context)

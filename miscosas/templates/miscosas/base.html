@@ -37,6 +37,13 @@
             {% endblock %}
         </div>
 
+        <div id='documents'>
+            <form method="GET" action="{{ request.path }}">
+                <button type="submit" name='format' value='xml'>Download as XLM file</button>
+                <button type="submit" name='format' value='json'>Download as JSON file</button>
+            </form>
+        </div>
+
         <!-- Footer -->
         <div id='footer'>
             <footer>This app uses data provided by <a href='https://youtube.com'>YouTube</a> and <a href='https://last.fm'>last.fm</a>.</footer>

@@ -16,7 +16,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_youtube_right(self):
         ''' Tests posting the feed form with a valid key '''
-        form_data = {'key': VALID_YOUTUBE_KEY, 'origin': YOUTUBE_FEED.name}
+        form_data = {'key': VALID_YOUTUBE_KEY, 'source': YOUTUBE_FEED.name}
         form = FeedForm(data=form_data)
         self.assertTrue(form.is_valid())
 
@@ -27,7 +27,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_youtube_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
-        form_data = {'key': INVALID_YOUTUBE_KEY, 'origin': YOUTUBE_FEED.name}
+        form_data = {'key': INVALID_YOUTUBE_KEY, 'source': YOUTUBE_FEED.name}
         form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 
@@ -39,7 +39,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_last_fm_right(self):
         ''' Tests posting the feed form with a valid key '''
-        form_data = {'key': VALID_LAST_FM_KEY, 'origin': LAST_FM_FEED.name}
+        form_data = {'key': VALID_LAST_FM_KEY, 'source': LAST_FM_FEED.name}
         form = FeedForm(data=form_data)
         self.assertTrue(form.is_valid())
 
@@ -50,7 +50,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_last_fm_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
-        form_data = {'key': INVALID_LAST_FM_KEY, 'origin': LAST_FM_FEED.name}
+        form_data = {'key': INVALID_LAST_FM_KEY, 'source': LAST_FM_FEED.name}
         form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 
@@ -65,7 +65,7 @@ class TestPostCommentViews(TestCase):
 
     def setUp(self):
         ''' Set up some items so that comments can be added '''
-        form = {'key': VALID_YOUTUBE_KEY, 'origin': YOUTUBE_FEED.name}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': YOUTUBE_FEED.name}
         self.client.post('/feeds', form)
         user = User.objects.create_user('root', password='toor')
         self.client.force_login(user)
@@ -126,7 +126,7 @@ class TestPostVoteForm(TestCase):
 
     def setUp(self):
         ''' Set up some items so that votes can be added '''
-        form = {'key': VALID_YOUTUBE_KEY, 'origin': YOUTUBE_FEED.name}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': YOUTUBE_FEED.name}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
         self.client.force_login(self.user)
@@ -221,9 +221,9 @@ class TestPostFeedChoose(TestCase):
 
     def setUp(self):
         ''' Set up some feeds so that votes can be added '''
-        form = {'key': VALID_YOUTUBE_KEY, 'origin': YOUTUBE_FEED.name}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': YOUTUBE_FEED.name}
         self.client.post('/feeds', form)
-        form = {'key': VALID_LAST_FM_KEY, 'origin': LAST_FM_FEED.name}
+        form = {'key': VALID_LAST_FM_KEY, 'source': LAST_FM_FEED.name}
         self.client.post('/feeds', form)
 
     def test_unchoose_feed(self):
@@ -239,7 +239,7 @@ class TestPostFeedChoose(TestCase):
     def test_rechoose_feed(self):
         form = {'action': 'unchoose'}
         self.client.post('/feed/1', form)
-        form = {'key': VALID_YOUTUBE_KEY, 'origin': YOUTUBE_FEED.name}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': YOUTUBE_FEED.name}
         self.client.post('/feeds', form)
 
         self.assertTrue(Feed.objects.get(pk=1).chosen)

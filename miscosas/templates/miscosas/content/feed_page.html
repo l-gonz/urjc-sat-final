@@ -13,7 +13,7 @@
             <form action='/feeds' method='POST'>
                 {% csrf_token %}
                 <input type="hidden" name='key' value='{{ feed.key }}'>
-                <input type="hidden" name='origin' value='{{ feed.origin }}'>
+                <input type="hidden" name='source' value='{{ feed.source }}'>
                 <button type='submit'>Choose this feed</button>
             </form>
         {% endif %}

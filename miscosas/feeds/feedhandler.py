@@ -7,7 +7,7 @@ from .lastfmartist import LastFmArtist
 
 
 class FeedData():
-    ''' Stores information from a feed origin. '''
+    ''' Stores information from a feed source. '''
 
     def __init__(self, name, feed_url, item_url, data_url, icon_src, load_function):
         ''' Name and urls for accessing the feed.
@@ -52,7 +52,7 @@ def load_youtube_feed(feed_key: str):
     channel = YTChannel(xml_stream)
     feed, _ = Feed.objects.update_or_create(
         key=feed_key,
-        origin=YOUTUBE_FEED.name,
+        source=YOUTUBE_FEED.name,
         defaults={
             'title': channel.name(),
             'chosen': True,
@@ -84,7 +84,7 @@ def load_last_fm_feed(feed_key: str):
     artist = LastFmArtist(xml_stream)
     feed, _ = Feed.objects.get_or_create(
         key=feed_key,
-        origin=LAST_FM_FEED.name,
+        source=LAST_FM_FEED.name,
         defaults={
             'title': artist.name(),
             'chosen': True

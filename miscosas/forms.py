@@ -10,7 +10,7 @@ from .feeds.feedhandler import FEEDS_DATA
 CHOICES = [(key, key) for key in FEEDS_DATA]
 
 class FeedForm(forms.Form):
-    origin = forms.CharField(widget=forms.Select(choices=CHOICES))
+    source = forms.CharField(widget=forms.Select(choices=CHOICES))
     key = forms.CharField()
 
 

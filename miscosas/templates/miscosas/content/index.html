@@ -1,17 +1,18 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    <h1> Most popular items </h1>
-    {% include 'miscosas/element/item_list.html' with list=item_list %}
+    <h1> Mis cosas </h1>
+    <h2> Most popular items </h2>
+    {% include 'miscosas/element/item_list.html' with list=popular_items %}
     <br>
 
-    <h1> Feeds </h1>
-    {% include 'miscosas/element/feed_list.html' with list=feed_list %}
+    <h2> Feeds </h2>
+    {% include 'miscosas/element/feed_list.html' with list=chosen_feeds %}
     <br>
 
     {% if user.is_authenticated %}
-        <h1> Your latest votes </h1>
-        {% include 'miscosas/element/item_list.html' with list=latest_votes %}
+        <h2> Your latest votes </h2>
+        {% include 'miscosas/element/item_list.html' with list=user_latest_votes %}
     {% endif %}
     <br>
 
