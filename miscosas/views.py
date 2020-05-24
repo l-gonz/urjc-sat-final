@@ -5,13 +5,11 @@ Django views for app MisCosas
 from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
-from django.db.models import Q, F
-from django.db.models.functions import Length
 
 from .models import Feed, Item, Comment, User, Vote
 from .forms import FeedForm, CommentForm, ProfileForm
 from .feeds.feedhandler import FEEDS_DATA
-from .feeds.xlmpage import render_document
+from .feeds.serializepage import render_document
 
 
 def index(request: WSGIRequest):

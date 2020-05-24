@@ -1,9 +1,13 @@
 from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.dom import minidom
+import json
 from collections.abc import Iterable
 
 from django.http.response import HttpResponse, Http404
+from django.core.serializers import serialize
 from django.core.handlers.wsgi import WSGIRequest
+from django.db.models.query import QuerySet
+from django.db.models import Model
 
 from miscosas.models import Feed, Item, Comment, User
 from .feedhandler import FEEDS_DATA
@@ -38,10 +42,6 @@ def render_xml(request: WSGIRequest, context: dict):
         elif isinstance(context[name], User):
             xml.append(user_xml(request, context[name], True))
     return HttpResponse(prettify(xml), content_type='text/xml')
-
-def render_json(request: WSGIRequest, context: dict):
-    json = ''
-    return HttpResponse(json, content_type='text/json')
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -89,3 +89,51 @@ def user_xml(request: WSGIRequest, user: User, detailed: bool):
     if not detailed:
         SubElement(element, 'link', href=request.build_absolute_uri('/user/' + user.username))
     return element
+
+def render_json(request: WSGIRequest, context: dict):
+    delete_key = []
+    for name in context:
+        if isinstance(context[name], QuerySet):
+            if any(isinstance(i, Item) for i in context[name]):
+                extra = [item_votes_json(item) for item in context[name]]
+                context[name] = [{**d, **e} for d, e in zip(list(context[name].values()), extra)]
+            elif any(isinstance(i, User) for i in context[name]):
+                extra = [user_profile_json(user) for user in context[name]]
+                context[name] = [{**d, **e} for d, e in zip(list(context[name].values('username')), extra)]
+            else:
+                context[name] = list(context[name].values())
+        elif isinstance(context[name], Model):
+            if isinstance(context[name], Item):
+                data = json.loads(serialize('json', [context[name]]))[0]['fields']
+                context[name] = {**data, **item_votes_json(context[name])}
+            elif isinstance(context[name], User):
+                data = json.loads(serialize('json', [context[name]]))[0]['fields']
+                context[name] = {'username': data['username'], **user_profile_json(context[name])}
+            else:
+                context[name] = json.loads(serialize('json', [context[name]]))[0]['fields']
+        elif isinstance(context[name], list):
+            data = json.loads(serialize('json', context[name]))
+            if any(isinstance(i, Item) for i in context[name]):
+                extra = [item_votes_json(item) for item in context[name]]
+                context[name] = [{**(d['fields']), **e} for d, e in zip(data, extra)]
+            else:
+                context[name] = [d['fields'] for d in data]
+        elif not isinstance(context[name], str):
+            delete_key.append(name)
+
+    for key in delete_key:
+        del context[key]
+    return HttpResponse(json.dumps(context, indent=4), content_type="application/json")
+
+def item_votes_json(item):
+    return {
+        'upvotes': item.upvote_count,
+        'downvotes': item.downvote_count
+    }
+
+def user_profile_json(user):
+    return {
+        'picture': user.profile.picture,
+        'votes': user.votes.count(),
+        'comments': user.comments.count(),
+    }
