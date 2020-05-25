@@ -1,4 +1,6 @@
 import datetime
+import json
+from xml.etree import ElementTree
 
 from django.test import TestCase
 
@@ -6,6 +8,9 @@ from miscosas.models import Item, Feed, User, Profile, Vote
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
+
+XML = "?format=xml"
+JSON = "?format=json"
 
 
 class TestGetViewsEmpty(TestCase):
@@ -74,9 +79,6 @@ class TestGetViewsContent(TestCase):
         self.assertContains(response, "class='feed-brief'", count=Feed.objects.count())
         self.assertContains(response, "class='feed-form'", count=1)
         self.assertContains(response, "class='vote-form'", count=0)
-
-    #TODO
-    #def test_main_page_with_votes(self):
 
     def test_feeds_page(self):
         ''' Tests the feeds page after some feeds are added '''
@@ -155,7 +157,6 @@ class TestGetViewsAuthenticated(TestCase):
         self.assertContains(response, "class='simple-list'", count=3)
         self.assertContains(response, "class='item-brief'", count=15)
 
-
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''
         response = self.client.get('/feed/1')
@@ -200,3 +201,165 @@ class TestGetViewsAuthenticated(TestCase):
         ''' Tests user page of a different user '''
         response = self.client.get('/user/' + self.other_user.username)
         self.assertContains(response, "class='settings-form'", count=0)
+
+
+class TestGetPagesAsXml(TestCase):
+
+    def setUp(self):
+        form = {'key': VALID_YOUTUBE_KEY, 'source': 'YouTube'}
+        self.client.post('/feeds', form)
+        self.user = User.objects.create_user('root', password='toor')
+
+    def test_main_page(self):
+        response = self.client.get('/' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_main_page_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_main_page_no_content(self):
+        Feed.objects.get().delete()
+        response = self.client.get('/' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_feeds_page(self):
+        response = self.client.get('/feeds' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_feed_page_no_content(self):
+        Feed.objects.get().delete()
+        response = self.client.get('/feed/1' + XML)
+        self.assertEqual(response.status_code, 404)
+        self.assertListEqual(
+            [t.name for t in response.templates],
+            ['miscosas/content/not_found.html', 'miscosas/base.html']
+        )
+
+    def test_feed_page(self):
+        response = self.client.get('/feed/1' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_item_page(self):
+        response = self.client.get('/item/1' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_item_page_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/item/1' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_users_page(self):
+        response = self.client.get('/users' + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_user_page(self):
+        response = self.client.get('/user/' + self.user.username + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+    def test_own_user_page(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/user/' + self.user.username + XML)
+        self.assertEqual(response['content-type'], 'text/xml')
+        self.assertEqual(response.status_code, 200)
+        ElementTree.fromstring(response.content)
+
+
+class TestGetPagesAsJson(TestCase):
+
+    def setUp(self):
+        form = {'key': VALID_YOUTUBE_KEY, 'source': 'YouTube'}
+        self.client.post('/feeds', form)
+        self.user = User.objects.create_user('root', password='toor')
+
+    def test_main_page(self):
+        response = self.client.get('/' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_main_page_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_main_page_no_content(self):
+        Feed.objects.get().delete()
+        response = self.client.get('/' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_feeds_page(self):
+        response = self.client.get('/feeds' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_feed_page_no_content(self):
+        Feed.objects.get().delete()
+        response = self.client.get('/feed/1' + JSON)
+        self.assertEqual(response.status_code, 404)
+        self.assertListEqual(
+            [t.name for t in response.templates],
+            ['miscosas/content/not_found.html', 'miscosas/base.html']
+        )
+
+    def test_feed_page(self):
+        response = self.client.get('/feed/1' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_item_page(self):
+        response = self.client.get('/item/1' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_item_page_logged_in(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/item/1' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_users_page(self):
+        response = self.client.get('/users' + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_user_page(self):
+        response = self.client.get('/user/' + self.user.username + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)
+
+    def test_own_user_page(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/user/' + self.user.username + JSON)
+        self.assertEqual(response['content-type'], 'application/json')
+        self.assertEqual(response.status_code, 200)
+        json.loads(response.content)

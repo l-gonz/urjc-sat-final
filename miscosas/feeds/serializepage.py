@@ -13,14 +13,16 @@ from miscosas.models import Feed, Item, Comment, User
 from .feedhandler import FEEDS_DATA
 
 def render_document(request: WSGIRequest, context: dict, format: str) -> HttpResponse:
+    """ Returns the page requested as a document. """
     if format == 'xml':
         return render_xml(request, context)
     elif format == 'json':
         return render_json(request, context)
     else:
-        return Http404("Error")
+        return Http404("Not supported")
 
 def render_xml(request: WSGIRequest, context: dict):
+    """ Returns the page context as XML. """
     xml = Element('page')
     SubElement(xml, 'link', href=request.build_absolute_uri(request.path))
     for name in context:
@@ -44,13 +46,13 @@ def render_xml(request: WSGIRequest, context: dict):
     return HttpResponse(prettify(xml), content_type='text/xml')
 
 def prettify(elem):
-    """Return a pretty-printed XML string for the Element.
-    """
+    """ Returns a pretty-printed XML string for the Element. """
     rough_string = tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 
 def feed_xml(request: WSGIRequest, feed: Feed, detailed: bool):
+    """ Returns a Feed model as XML.  """
     element = Element('feed')
     SubElement(element, 'title').text = feed.title
     SubElement(element, 'source').text = feed.source
@@ -62,6 +64,7 @@ def feed_xml(request: WSGIRequest, feed: Feed, detailed: bool):
     return element
 
 def item_xml(request: WSGIRequest, item: Item, detailed: bool):
+    """ Returns an Item model as XML. """
     element = Element('item')
     SubElement(element, 'title').text = item.title
     if detailed:
@@ -77,6 +80,7 @@ def item_xml(request: WSGIRequest, item: Item, detailed: bool):
     return element
 
 def comment_xml(comment: Comment):
+    """ Returns a Comment model as XML. """
     element = Element('comment')
     SubElement(element, 'title').text = comment.title
     SubElement(element, 'content').text = comment.content
@@ -84,6 +88,7 @@ def comment_xml(comment: Comment):
     return element
 
 def user_xml(request: WSGIRequest, user: User, detailed: bool):
+    """ Returns a User model as XML. """
     element = Element('user')
     SubElement(element, 'name').text = user.username
     if not detailed:
@@ -91,6 +96,7 @@ def user_xml(request: WSGIRequest, user: User, detailed: bool):
     return element
 
 def render_json(request: WSGIRequest, context: dict):
+    """ Returns the page context as JSON. """
     delete_key = []
     for name in context:
         if isinstance(context[name], QuerySet):
@@ -126,12 +132,14 @@ def render_json(request: WSGIRequest, context: dict):
     return HttpResponse(json.dumps(context, indent=4), content_type="application/json")
 
 def item_votes_json(item):
+    """ Returns dictionary with Item model extra field. """
     return {
         'upvotes': item.upvote_count,
         'downvotes': item.downvote_count
     }
 
 def user_profile_json(user):
+    """ Returns dictionary with User model extra field. """
     return {
         'picture': user.profile.picture,
         'votes': user.votes.count(),

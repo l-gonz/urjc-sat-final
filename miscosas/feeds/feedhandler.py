@@ -1,5 +1,6 @@
 import urllib
 
+from project.secretkeys import LAST_FM_API_KEY
 from miscosas.models import Feed, Item
 from miscosas.apps import MisCosasConfig
 from .ytchannel import YTChannel
@@ -75,7 +76,7 @@ def load_last_fm_feed(feed_key: str):
     ''' Adds a new feed from Last.fm to the database,
     downloading the data and making items from it'''
 
-    url = LAST_FM_FEED.data_url.format(feed=feed_key, api_key=MisCosasConfig.last_fm_api_key)
+    url = LAST_FM_FEED.data_url.format(feed=feed_key, api_key=LAST_FM_API_KEY)
     try:
         xml_stream = urllib.request.urlopen(url)
     except urllib.error.HTTPError:

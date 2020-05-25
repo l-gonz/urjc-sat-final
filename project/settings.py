@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import json
 
+from .secretkeys import PROJECT_KEY
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,13 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# Production key
-try:
-    with open('secret.json') as f:
-        SECRET_KEY = json.load(f)['django_project']
-# Development key
-except FileNotFoundError:
-    SECRET_KEY = "j_1w)x=io^$5u=9=w=mh1m4umq&h3i*3(r6+y9eg)rfr5p0ne8"
+SECRET_KEY = PROJECT_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
