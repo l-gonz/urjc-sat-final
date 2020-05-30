@@ -1,0 +1,77 @@
+body {
+    margin: 0px;
+    background-color: whitesmoke;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body.DM {
+    background-color: rgb(30, 30, 30);
+    color: whitesmoke;
+}
+
+body.sm { font-size: 80% }
+body.lg { font-size: 120% }
+
+a {
+    color: mediumslateblue;
+    text-decoration: none; }
+a:hover { color: darkslategrey; }
+
+#banner {
+    height: 30%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    margin-top: 42px;
+}
+
+#banner h1 {
+    text-align: center;
+    position: absolute;
+    color: white;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 300%;
+    text-transform: uppercase;
+    font-family: Georgia;
+}
+
+#user-panel {
+    font-size: 110%;
+    background-color: darkslategrey;
+}
+
+#footer {
+    font-size: 80%;
+    background-color: rgba(47, 79, 79, 0.1);
+    color: darkslategrey;
+    padding: 8px 18px 16px;
+    text-align: end;
+}
+
+.DM #footer{ color: wheat; }
+
+#navbar {
+    font-size: 130%;
+    background-color: darkslategrey;
+    text-transform: uppercase;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    padding: 8px;
+    width: 100%;
+}
+
+#navbar a, #user-panel a { color: darkseagreen; }
+#navbar a:hover, #user-panel a:hover { color: darksalmon; }
+
+#content {
+    margin: 16px;
+    margin-top: 32px;
+    padding: 16px;
+    border: 1px solid darkslategrey;
+    border-radius: 12px;
+    background-color: rgba(47, 79, 79, 0.1);
+}
