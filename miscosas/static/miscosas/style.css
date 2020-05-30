@@ -2,6 +2,7 @@ body {
     margin: 0px;
     background-color: whitesmoke;
     font-family: "Segoe UI", Arial, sans-serif;
+    cursor: default;
 }
 
 body.DM {
@@ -18,12 +19,14 @@ a {
 a:hover { color: darkslategrey; }
 
 #banner {
-    height: 30%;
+    height: 15%;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    position: relative;
-    margin-top: 42px;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    display: block;
 }
 
 #banner h1 {
@@ -41,6 +44,8 @@ a:hover { color: darkslategrey; }
 #user-panel {
     font-size: 110%;
     background-color: darkslategrey;
+    float: right;
+    height: 100%;
 }
 
 #footer {
@@ -54,22 +59,32 @@ a:hover { color: darkslategrey; }
 .DM #footer{ color: wheat; }
 
 #navbar {
-    font-size: 130%;
     background-color: darkslategrey;
-    text-transform: uppercase;
-    overflow: hidden;
     position: fixed;
-    top: 0;
-    padding: 8px;
+    top: 15%;
     width: 100%;
+    height: 40px;
 }
 
-#navbar a, #user-panel a { color: darkseagreen; }
-#navbar a:hover, #user-panel a:hover { color: darksalmon; }
+#navbar > a,i{
+    color: darkseagreen;
+    padding: 0px 16px;
+    font-size: 130%;
+    text-transform: uppercase;
+    line-height: 1.8;
+}
+#navbar a:hover{
+    color: darksalmon;
+    text-decoration: underline;
+}
+.disabled-nav-item {
+    color: darksalmon !important;
+    text-decoration: None !important;
+}
 
 #content {
     margin: 16px;
-    margin-top: 32px;
+    margin-top: 200px;
     padding: 16px;
     border: 1px solid darkslategrey;
     border-radius: 12px;

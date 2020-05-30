@@ -5,9 +5,17 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <!-- Bootstrap CSS
-        <link rel="stylesheet" href="{% static 'miscosas/bootstrap.min.css' %}"> -->
-
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        <!-- Material Design Icons -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- Material Design Icons -->
         <link rel="stylesheet" href="{% static 'miscosas/style.css' %}" type="text/css">
 
         <title>{{ title }}</title>
@@ -19,22 +27,27 @@
         </div>
 
         <!-- Navigation bar -->
-        <div id="navbar">
-            <a href="/">Home</a>
-            <a href="/feeds">Feeds</a>
-            <a href="/users">Users</a>
-            <a href="/about">About</a>
-        </div>
+        <nav id="navbar">
+            <a {%if request.path == "/"%}class="disabled-nav-item"{%else%}href="/"{%endif%}>Home</a>
+            <a {%if request.path == "/feeds"%}class="disabled-nav-item"{%else%}href="/feeds"{%endif%}>Feeds</a>
+            <a {%if request.path == "/users"%}class="disabled-nav-item"{%else%}href="/users"{%endif%}>Users</a>
+            <a {%if request.path == "/about"%}class="disabled-nav-item"{%else%}href="/about"{%endif%}>About</a>
 
-        <!-- User authentication box -->
-        <div id="user-panel">
-            {% if user.is_authenticated %}
-                <a href="/user/{{ user.username }}">My page</a>
-                <a href="/logout">Log out</a>
-            {% else %}
-                <a href="/login">Log in</a>
-            {% endif %}
-        </div>
+            <!-- User authentication box -->
+            <div id="user-panel" class="dropdown">
+                <button class="btn" type="button" data-toggle="dropdown">
+                    <i class="material-icons">person</i>
+                </button>
+                <div class="dropdown-menu">
+                    {% if user.is_authenticated %}
+                        <a class="dropdown-item" href="/user/{{ user.username }}">My page</a>
+                        <a class="dropdown-item" href="/logout">Log out</a>
+                    {% else %}
+                        <a class="dropdown-item" href="/login">Log in</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
 
         <!-- Content block -->
         <div id="content">
@@ -42,12 +55,14 @@
             {% endblock %}
         </div>
 
-        <div id="documents">
-            <form method="GET" action="{{ request.path }}">
-                <button type="submit" name="format" value="xml">Download as XLM file</button>
-                <button type="submit" name="format" value="json">Download as JSON file</button>
-            </form>
-        </div>
+        {% if request.path != "/login/"%}
+            <div id="documents">
+                <form method="GET" action="{{ request.path }}">
+                    <button type="submit" name="format" value="xml">Download as XLM file</button>
+                    <button type="submit" name="format" value="json">Download as JSON file</button>
+                </form>
+            </div>
+        {%endif%}
 
         <!-- Footer -->
         <hr>
