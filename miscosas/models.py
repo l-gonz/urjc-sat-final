@@ -40,6 +40,16 @@ class Item(models.Model):
         ''' Downvote count property for templates '''
         return self.votes.filter(positive=False).count()
 
+    @property
+    def upvoters(self):
+        ups = self.votes.filter(positive=True)
+        return [vote.user.pk for vote in ups]
+
+    @property
+    def downvoters(self):
+        downs = self.votes.filter(positive=False)
+        return [vote.user.pk for vote in downs]
+
 
 class Vote(models.Model):
     positive = models.BooleanField()

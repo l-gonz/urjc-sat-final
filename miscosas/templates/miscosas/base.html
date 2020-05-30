@@ -15,6 +15,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
         <!-- Material Design Icons -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
         <!-- Material Design Icons -->
         <link rel="stylesheet" href="{% static 'miscosas/style.css' %}" type="text/css">
 
@@ -55,7 +56,7 @@
             {% endblock %}
         </div>
 
-        {% if request.path != "/login/"%}
+        {% if documents %}
             <div id="documents">
                 <form method="GET" action="{{ request.path }}">
                     <button type="submit" name="format" value="xml">Download as XLM file</button>

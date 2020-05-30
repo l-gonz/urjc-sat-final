@@ -13,11 +13,6 @@ body.DM {
 body.sm { font-size: 80% }
 body.lg { font-size: 120% }
 
-a {
-    color: mediumslateblue;
-    text-decoration: none; }
-a:hover { color: darkslategrey; }
-
 #banner {
     height: 15%;
     background-position: center;
@@ -55,7 +50,6 @@ a:hover { color: darkslategrey; }
     padding: 8px 18px 16px;
     text-align: end;
 }
-
 .DM #footer{ color: wheat; }
 
 #navbar {
@@ -66,7 +60,7 @@ a:hover { color: darkslategrey; }
     height: 40px;
 }
 
-#navbar > a,i{
+#navbar > a {
     color: darkseagreen;
     padding: 0px 16px;
     font-size: 130%;
@@ -76,6 +70,10 @@ a:hover { color: darkslategrey; }
 #navbar a:hover{
     color: darksalmon;
     text-decoration: underline;
+}
+#navbar i {
+    color: darkseagreen;
+    padding: 0px 8px;
 }
 .disabled-nav-item {
     color: darksalmon !important;
@@ -90,3 +88,33 @@ a:hover { color: darkslategrey; }
     border-radius: 12px;
     background-color: rgba(47, 79, 79, 0.1);
 }
+
+a {
+    color: mediumslateblue;
+    text-decoration: none; }
+a:hover { color: darkslategrey; }
+
+button {
+    color: #fff;
+    background-color: darkslategrey;
+    border-color: darkslategrey;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    padding: .2rem .70rem;
+    border-radius: .25rem;
+}
+button:hover { opacity: 0.8; }
+.vote-form button {
+    font-size: 24px;
+}
+.item-brief .vote-form * {
+    font-size: 14px;
+}
+
+.item-brief > * {
+    padding: 0px 16px;
+}
+
+.feed-detailed button { float: right; }
+.feed-detailed { margin-top: -16px; }

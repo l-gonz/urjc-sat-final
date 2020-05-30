@@ -2,8 +2,7 @@
 
 {% block content %}
     <div class='feed-detailed'>
-        <h1> {{ feed.title }} </h1>
-        <a href="{{ link }}">Go to page</a>
+
         {% if feed.chosen %}
             <form action='/feed/{{ feed.pk }}' method='POST'>
                 {% csrf_token %}
@@ -17,8 +16,13 @@
                 <button type='submit'>Choose this feed</button>
             </form>
         {% endif %}
+
+        <h1> {{ feed.title }}
+            <span class="badge">
+                <a href="{{ link }}"><i class="material-icons">launch</i></a>
+            </span> </h1>
+
     </div>
     <h2> Items </h2>
     {% include 'miscosas/element/item_list.html' with list=item_list %}
-    <br>
 {% endblock %}

@@ -1,8 +1,8 @@
-<div class="row item-brief">
-    <a class='item-brief' href='/item/{{ item.pk }}'>
-        {{ item.feed.title }}: {{ item.title }}
-    </a>
-    Upvotes: {{ item.upvote_count }}
-    Downvotes: {{ item.downvote_count }}
+<hr>
+<div class="item-brief row">
+    <h5><a href='/item/{{ item.pk }}'>
+        {{ item.title }}
+    </a></h5>
+    <p>{{ item.feed.title }}</p>
     {% include 'miscosas/element/vote_form.html' %}
 </div>

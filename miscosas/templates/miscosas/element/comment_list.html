@@ -1,10 +1,10 @@
 {% if list %}
     <div class='simple-list'>
         {% for comment in list %}
-            <hr>
             <h5>{{ comment.title }}</h5>
             <p><i>By {{ comment.user.username }} - {{ comment.date }}</i><p>
             <p>{{ comment.content }}</p>
+            <hr>
         {% endfor %}
     </div>
 {% else %}

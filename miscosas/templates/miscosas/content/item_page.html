@@ -2,28 +2,26 @@
 
 {% block content %}
     <div class='item-detailed'>
-        <h1> {{ item.title }} </h1>
-        <p>
-            {% include 'miscosas/element/vote_form.html' %}
-            Upvotes: {{ item.upvote_count }}<br>
-            Downvotes: {{ item.downvote_count }}<br><br>
-            Link: <a href="{{ link }}">Go to page</a><br>
-            Description: {{ item.description }}<br><br>
-            {% if item.feed.source == 'YouTube' %}
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ item.key }}"
-                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-            {%else%}
-                <img src="{{ item.picture }}"></img>
-            {% endif %}
-        </p>
+        <h1> {{ item.title }} <span class="badge">
+            <a href="{{ link }}"><i class="material-icons">launch</i></a>
+            </span></h1>
+
+        <h4>{% include 'miscosas/element/feed_brief.html' with feed=item.feed %}</h4>
+
+        {% include 'miscosas/element/vote_form.html' %}
+
+        {% if item.feed.source == 'YouTube' %}
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ item.key }}"
+            frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        {%else%}
+            <img src="{{ item.picture }}"></img>
+        {% endif %}
+        <p>{{ item.description }}</p>
     </div>
 
-    <h3>Feed:</h3>
-    {% include 'miscosas/element/feed_brief.html' with feed=item.feed %}
-    <br>
-
     <!-- Comments -->
+    <hr>
     {% include 'miscosas/element/comment_list.html' with list=comment_list %}
     {% if user.is_authenticated %}
         <div class='comment-form'>

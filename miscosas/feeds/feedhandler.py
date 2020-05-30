@@ -83,7 +83,7 @@ def load_last_fm_feed(feed_key: str):
         return False
 
     artist = LastFmArtist(xml_stream)
-    feed, _ = Feed.objects.get_or_create(
+    feed, _ = Feed.objects.update_or_create(
         key=feed_key,
         source=LAST_FM_FEED.name,
         defaults={

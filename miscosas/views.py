@@ -2,7 +2,7 @@
 Django views for app MisCosas
 """
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
 
@@ -171,6 +171,7 @@ def not_found_page(request):
 
 def render_or_document(request, template, context):
     ''' Renders the response in the requested format '''
+    context['documents'] = True
     if request.GET.get('format'):
         return render_document(request, context, request.GET['format'])
     return render(request, template, context)
