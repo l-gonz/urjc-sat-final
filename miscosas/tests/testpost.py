@@ -154,10 +154,10 @@ class TestPostVoteForm(TestCase):
         ''' Tests voting twice the same item '''
         self.client.post(f'/item/{self.item.pk}', {'action': 'upvote'})
         self.client.post(f'/item/{self.item.pk}', {'action': 'upvote'})
-        self.assertEqual(self.item.upvote_count, 1)
+        self.assertEqual(self.item.upvote_count, 0)
         self.assertEqual(self.item.downvote_count, 0)
-        self.assertEqual(self.user.profile.vote_count, 1)
-        self.assertEqual(Vote.objects.count(), 1)
+        self.assertEqual(self.user.profile.vote_count, 0)
+        self.assertEqual(Vote.objects.count(), 0)
 
     def test_vote_change(self):
         ''' Tests changing the vote on an item '''

@@ -99,7 +99,7 @@ class TestGetViewsContent(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "class='feed-detailed'", count=1)
             self.assertContains(response, "class='simple-list'", count=1)
-            self.assertContains(response, "class='item-brief'", count=feed.items.count())
+            self.assertContains(response, "item-brief", count=feed.items.count())
             self.assertContains(response, "class='vote-form'", count=0)
 
     def test_item_page(self):
@@ -155,7 +155,7 @@ class TestGetViewsAuthenticated(TestCase):
 
         response = self.client.get('/')
         self.assertContains(response, "class='simple-list'", count=3)
-        self.assertContains(response, "class='item-brief'", count=15)
+        self.assertContains(response, "item-brief", count=15)
 
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''
@@ -171,7 +171,7 @@ class TestGetViewsAuthenticated(TestCase):
     def test_users_page(self):
         ''' Tests user list '''
         response = self.client.get('/users')
-        self.assertContains(response, "class='user-brief'", count=2)
+        self.assertContains(response, "class='user-brief", count=2)
         self.assertContains(response, "img", count=2)
 
     def test_own_user_page(self):
@@ -192,10 +192,11 @@ class TestGetViewsAuthenticated(TestCase):
         self.assertContains(response, "class='upvoted-items'", count=1)
         self.assertContains(response, "class='downvoted-items'", count=1)
         self.assertContains(response, "class='commented-items'", count=1)
-        self.assertContains(response, "class='item-brief' href='/item/1'", count=1)
-        self.assertContains(response, "class='item-brief' href='/item/3'", count=2)
-        self.assertContains(response, "class='item-brief' href='/item/10'", count=1)
+        self.assertContains(response, "item-brief", count=4)
         self.assertContains(response, "class='vote-form'", count=4)
+        self.assertContains(response, "href='/item/1'", count=1)
+        self.assertContains(response, "href='/item/3'", count=2)
+        self.assertContains(response, "href='/item/10'", count=1)
 
     def test_other_user_page(self):
         ''' Tests user page of a different user '''
