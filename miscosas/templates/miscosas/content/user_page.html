@@ -1,8 +1,11 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    <h1>{{ owner.username }}</h1>
-    <img src='/media/{{ owner.profile.picture }}' width='100' height='100'>
+    <h1>
+        <span class="badge">
+            <img class="profile-picture" src='/media/{{ owner.profile.picture }}' width='100' height='100'>
+        </span> {{ owner.username }} </h1>
+
     <h2>Voted items</h2>
     <div class='upvoted-items'>
         {% include 'miscosas/element/item_list.html' with list=upvoted_item_list %}

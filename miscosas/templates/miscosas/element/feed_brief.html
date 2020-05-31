@@ -1,2 +1,12 @@
-<a class='feed-brief' href="/feed/{{ feed.pk }}">{{ feed.source }}: {{ feed.title }}</a>
-<br>
+<hr>
+<div class='feed-brief'>
+    <h5><a href="/feed/{{ feed.pk }}">{{ feed.source }}: {{ feed.title }}</a>
+    <span class="badge">
+    {% if feed.chosen %}
+        <form action='/feed/{{ feed.pk }}' method='POST'>
+            {% csrf_token %}
+            <button type='submit' name='action' value='unchoose'>Unchoose this feed</button>
+        </form>
+    {% endif %}
+    </span></h5>
+</div>

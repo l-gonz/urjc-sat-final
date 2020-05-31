@@ -22,4 +22,9 @@
 
         </form>
     </div>
+{% else %}
+    <div>
+        <span>{{item.upvote_count}} <i class="material-icons-outlined">thumb_up</i></span>
+        <span>{{item.downvote_count}} <i class="material-icons-outlined">thumb_down</i></span>
+    </div>
 {% endif %}

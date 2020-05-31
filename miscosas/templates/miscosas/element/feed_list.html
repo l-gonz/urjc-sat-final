@@ -2,12 +2,6 @@
     <div class='simple-list'>
     {% for feed in list %}
         {% include 'miscosas/element/feed_brief.html' %}
-        {% if feed.chosen %}
-            <form action='/feed/{{ feed.pk }}' method='POST'>
-                {% csrf_token %}
-                <button type='submit' name='action' value='unchoose'>Unchoose this feed</button>
-            </form>
-        {% endif %}
     {% endfor %}
     </div>
 {% else %}

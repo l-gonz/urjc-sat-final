@@ -103,18 +103,42 @@ button {
     border: 1px solid transparent;
     padding: .2rem .70rem;
     border-radius: .25rem;
+    display: inline-block;
 }
-button:hover { opacity: 0.8; }
-.vote-form button {
-    font-size: 24px;
-}
-.item-brief .vote-form * {
-    font-size: 14px;
-}
+button:hover { color: salmon; }
 
-.item-brief > * {
-    padding: 0px 16px;
-}
+.vote-form button { font-size: 24px; }
+.item-brief .vote-form * { font-size: 14px; }
+.item-brief > *, .feed-brief > * { padding: 0px 16px; }
+.item-brief * { vertical-align: middle; }
 
 .feed-detailed button { float: right; }
 .feed-detailed { margin-top: -16px; }
+
+.feed-brief form {
+    margin-bottom: 0px;
+    margin-left: 16px;
+}
+
+.simple-list hr { margin-top: 0px; }
+.simple-list div { margin-left: 8px; }
+.simple-list {
+    border: 1px solid rgba(0,0,0,.1);
+    border-top: 0px;
+    margin-bottom: 16px;
+}
+
+.user-brief { padding-left: 16px; }
+.user-brief img { margin-bottom: 16px; }
+.user-brief p, .user-brief h5 {
+    padding-left: 32px;
+    vertical-align: middle;
+}
+
+.profile-picture {
+    border: 1px solid rgba(48, 80, 80, 0.5);
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+}

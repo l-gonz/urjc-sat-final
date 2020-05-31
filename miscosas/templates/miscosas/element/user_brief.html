@@ -1,5 +1,6 @@
-<div class='user-brief'>
-    <img src='/media/{{ user.profile.picture }}' height='40' width='40'>
-    <h3><a href='/user/{{user.username}}'>{{ user.username }}</a></h3>
-    Votes: {{ user.profile.vote_count }} - Comments: {{ user.profile.comment_count }}
+<hr>
+<div class='user-brief row'>
+    <img class="profile-picture" src='/media/{{ user.profile.picture }}' height='40' width='40'>
+    <h5><a href='/user/{{user.username}}'>{{ user.username }}</a></h5>
+    <p>Votes: {{ user.profile.vote_count }} - Comments: {{ user.profile.comment_count }}</p>
 </div>
