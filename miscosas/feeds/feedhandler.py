@@ -76,14 +76,14 @@ def load_last_fm_feed(feed_key: str):
     ''' Adds a new feed from Last.fm to the database,
     downloading the data and making items from it'''
 
-    url = LAST_FM_FEED.data_url.format(feed=feed_key, api_key=LAST_FM_API_KEY)
+    url = LAST_FM_FEED.data_url.format(feed=urllib.parse.quote(feed_key), api_key=LAST_FM_API_KEY)
     try:
         xml_stream = urllib.request.urlopen(url)
     except urllib.error.HTTPError:
         return False
 
     artist = LastFmArtist(xml_stream)
-    feed, _ = Feed.objects.update_or_create(
+    feed, created = Feed.objects.update_or_create(
         key=feed_key,
         source=LAST_FM_FEED.name,
         defaults={

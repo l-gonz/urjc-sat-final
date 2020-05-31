@@ -1,4 +1,5 @@
 {% extends 'miscosas/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <div class='item-detailed'>
@@ -29,7 +30,7 @@
             <h2>Add new comment</h2>
             <form method="POST" action="/item/{{ item.pk }}">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ form|crispy }}
                 <button type="submit" name='action' value='comment'>Send</button>
             </form>
         </div>

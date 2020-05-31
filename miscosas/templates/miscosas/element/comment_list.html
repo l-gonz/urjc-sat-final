@@ -1,10 +1,14 @@
 {% if list %}
     <div class='simple-list'>
         {% for comment in list %}
-            <h5>{{ comment.title }}</h5>
-            <p><i>By {{ comment.user.username }} - {{ comment.date }}</i><p>
-            <p>{{ comment.content }}</p>
             <hr>
+            <div class="container">
+                <div class="row">
+                    <h5 >{{ comment.title }}</h5>
+                    <p class="col-md-3 small"><i>By {{ comment.user.username }} - {{ comment.date }}</i><p>
+                </div>
+                <p>{{ comment.content }}</p>
+            </div>
         {% endfor %}
     </div>
 {% else %}

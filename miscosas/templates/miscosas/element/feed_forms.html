@@ -1,8 +1,9 @@
+{% load crispy_forms_tags %}
 <div class='feed-form'>
     <h2>Add new feed</h2>
     <form method="POST" action="/feeds">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
         <button type="submit">Send</button>
     </form>
 </div>
