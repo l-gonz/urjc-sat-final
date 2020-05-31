@@ -15,7 +15,8 @@ from .feeds.serializepage import render_document
 def index(request: WSGIRequest):
     # Selects the items that have been voted the most
     # from all the items that have been voted
-    items = list(Item.objects.filter(votes__isnull=False).distinct())
+    items = list(Item.objects.filter(votes__isnull=False))
+    items = [item for item in items if item.upvote_count > 0]
     items.sort(key=lambda i: i.upvote_count, reverse=True)
     items.sort(key=lambda i: i.upvote_count - i.downvote_count, reverse=True)
 
@@ -100,9 +101,12 @@ def item_page(request: WSGIRequest, item_id: str):
                     comment.save()
             elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
                 positive = request.POST['action'] == 'upvote'
-                Vote.objects.filter(item=item, user=request.user, positive=(not positive)).delete()
                 try:
-                    Vote.objects.get(item=item, user=request.user)
+                    vote = Vote.objects.get(item=item, user=request.user)
+                    old_state = vote.positive;
+                    vote.delete()
+                    if old_state != positive:
+                        Vote(positive=positive, user=request.user, item=item).save()
                 except Vote.DoesNotExist:
                     Vote(positive=positive, user=request.user, item=item).save()
             path = request.POST['path']
