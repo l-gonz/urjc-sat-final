@@ -25,6 +25,9 @@
         <p>From: {{ feed.source }}</p>
 
     </div>
-    <h2> Items </h2>
+    <div class="container row">
+        <h2 class="col-md-11"> Items </h2>
+        <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
+    </div>
     {% include 'miscosas/element/item_list.html' with list=item_list %}
 {% endblock %}

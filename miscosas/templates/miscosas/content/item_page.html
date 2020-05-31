@@ -27,7 +27,7 @@
     {% include 'miscosas/element/comment_list.html' with list=comment_list %}
     {% if user.is_authenticated %}
         <div class='comment-form'>
-            <h2>Add new comment</h2>
+            <h4>Add new comment</h4>
             <form method="POST" action="/item/{{ item.pk }}">
                 {% csrf_token %}
                 {{ form|crispy }}

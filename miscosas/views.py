@@ -12,6 +12,9 @@ from .feeds.feedhandler import FEEDS_DATA
 from .feeds.serializepage import render_document
 
 
+ENTRIES_PER_PAGE = 10
+
+
 def index(request: WSGIRequest):
     # Selects the items that have been voted the most
     # from all the items that have been voted
@@ -26,7 +29,7 @@ def index(request: WSGIRequest):
 
     context = {
         'title': 'Mis cosas',
-        'popular_items': items[:10],
+        'popular_items': items[:ENTRIES_PER_PAGE],
         'chosen_feeds': Feed.objects.filter(chosen=True),
         'user_latest_votes': latest_votes[:5],
         'form': FeedForm(),
@@ -46,10 +49,15 @@ def feeds_page(request: WSGIRequest):
             else:
                 return not_found_page(request)
 
+    feeds = Feed.objects.all()
+    pages = pagination(request, feeds)
+
     context = {
         'title': 'Feeds | Mis cosas',
-        'all_feeds': Feed.objects.all(),
+        'all_feeds': pages['set'],
         'form': FeedForm(),
+        'pages': pages['pages'],
+        'current_page': pages['current_page'],
     }
     return render_or_document(request, 'miscosas/content/feeds.html', context)
 
@@ -70,11 +78,15 @@ def feed_page(request: WSGIRequest, feed_id: str):
             # Ignore wrong post attempts
             pass
 
+    pages = pagination(request, feed.items.all())
+
     context = {
         'title': f'{feed.title} | Mis cosas',
         'feed': feed,
-        'item_list': feed.items.all(),
+        'item_list': pages['set'],
         'link': FEEDS_DATA[feed.source].get_feed_url(feed.key),
+        'pages': pages['pages'],
+        'current_page': pages['current_page'],
     }
 
     return render_or_document(request, 'miscosas/content/feed_page.html', context)
@@ -115,20 +127,30 @@ def item_page(request: WSGIRequest, item_id: str):
             # Ignore wrong post attempts
             pass
 
+    comments = item.comments.all().order_by('-date')
+    pages = pagination(request, comments)
+
     context = {
         'title': f'{item.title} | {item.feed.title} | Mis cosas',
         'item': item,
         'link': FEEDS_DATA[item.feed.source].get_item_url(item.feed.key, item.key),
-        'comment_list': item.comments.all(),
+        'comment_list': pages['set'],
         'form': CommentForm(),
+        'pages': pages['pages'],
+        'current_page': pages['current_page'],
     }
     return render_or_document(request, 'miscosas/content/item_page.html', context)
 
 
 def users_page(request: WSGIRequest):
+    users = User.objects.all().select_related('profile')
+    pages = pagination(request, users)
+
     context = {
         'title': 'Users | Mis cosas',
-        'user_list': User.objects.all().select_related('profile'),
+        'user_list': pages['set'],
+        'pages': pages['pages'],
+        'current_page': pages['current_page'],
     }
     return render_or_document(request, 'miscosas/content/users.html', context)
 
@@ -179,3 +201,20 @@ def render_or_document(request, template, context):
     if request.GET.get('format'):
         return render_document(request, context, request.GET['format'])
     return render(request, template, context)
+
+def pagination(request, set):
+    pages = range(1, set.count() // ENTRIES_PER_PAGE + 2)
+    if len(set) % 10 == 0 and len(pages) > 1:
+        pages = pages[:-1]
+    try:
+        current_page = int(request.GET.get('page', 1))
+    except ValueError:
+        current_page = 1
+    item_i = ENTRIES_PER_PAGE * (current_page - 1)
+    item_f = item_i + ENTRIES_PER_PAGE
+
+    return {
+        'set': set[item_i:item_f],
+        'pages': pages,
+        'current_page': current_page,
+    }

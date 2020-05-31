@@ -1,7 +1,10 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    <h1> Feeds </h1>
+    <div class="container row">
+        <h1 class="col-md-11"> Feeds </h1>
+        <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
+    </div>
     {% include 'miscosas/element/feed_list.html' with list=all_feeds %}
 
     {% include 'miscosas/element/feed_forms.html' %}

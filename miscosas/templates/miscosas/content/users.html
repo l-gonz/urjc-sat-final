@@ -1,7 +1,10 @@
 {% extends 'miscosas/base.html' %}
 
 {% block content %}
-    <h1>Users</h1>
+    <div class="container row">
+        <h1 class="col-md-11"> Users </h1>
+        <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
+    </div>
     {% if user_list %}
         <div class='simple-list'>
         {% for user in user_list %}

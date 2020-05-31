@@ -22,12 +22,13 @@ body.lg { font-size: 120% }
     top: 0px;
     width: 100%;
     display: block;
+    z-index: 1;
 }
 
 #banner h1 {
     text-align: center;
     position: absolute;
-    color: white;
+    color: whitesmoke;
     top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -58,6 +59,7 @@ body.lg { font-size: 120% }
     top: 15%;
     width: 100%;
     height: 40px;
+    z-index: 1;
 }
 
 #navbar > a {
@@ -100,7 +102,7 @@ a {
 a:hover { color: darkslategrey; }
 
 button {
-    color: #fff;
+    color: whitesmoke;
     background-color: darkslategrey;
     border-color: darkslategrey;
     text-align: center;
@@ -146,4 +148,21 @@ button:hover { color: salmon; }
 
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1rem;
+}
+
+.page-link {
+    background-color: darkslategrey;
+    color: whitesmoke;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.page-link.current {
+    color: salmon;
+    background-color: #2f4f4fcf;
+}
+a.page-link:hover {
+    color: salmon;
+    background-color: darkslategrey;
+}
+.pagination {
+    text-align: left;
 }
