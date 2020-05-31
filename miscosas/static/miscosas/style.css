@@ -89,6 +89,11 @@ body.lg { font-size: 120% }
     background-color: rgba(47, 79, 79, 0.1);
 }
 
+#documents {
+    text-align: right;
+    margin-right: 16px;
+}
+
 a {
     color: mediumslateblue;
     text-decoration: none; }

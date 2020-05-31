@@ -3,12 +3,10 @@
 {% block content %}
     <div class='item-detailed'>
         <h1> {{ item.title }} <span class="badge">
-            <a href="{{ link }}"><i class="material-icons">launch</i></a>
+            <a href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
             </span></h1>
 
         <h4>{% include 'miscosas/element/feed_brief.html' with feed=item.feed %}</h4>
-
-        {% include 'miscosas/element/vote_form.html' %}
 
         {% if item.feed.source == 'YouTube' %}
             <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ item.key }}"
@@ -17,6 +15,9 @@
         {%else%}
             <img src="{{ item.picture }}"></img>
         {% endif %}
+
+        <br><br>
+        {% include 'miscosas/element/vote_form.html' %}
         <p>{{ item.description }}</p>
     </div>
 

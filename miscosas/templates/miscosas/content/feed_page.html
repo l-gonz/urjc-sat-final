@@ -19,8 +19,10 @@
 
         <h1> {{ feed.title }}
             <span class="badge">
-                <a href="{{ link }}"><i class="material-icons">launch</i></a>
+                <a href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
             </span> </h1>
+
+        <p>From: {{ feed.source }}</p>
 
     </div>
     <h2> Items </h2>
