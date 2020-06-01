@@ -1,5 +1,6 @@
 {% extends 'miscosas/base.html' %}
 
+{% block title %}Mis cosas{% endblock %}
 {% block content %}
     <h2> Most popular items </h2>
     {% include 'miscosas/element/item_list.html' with list=popular_items %}

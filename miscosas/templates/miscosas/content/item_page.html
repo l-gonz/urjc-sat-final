@@ -1,6 +1,7 @@
 {% extends 'miscosas/base.html' %}
 {% load crispy_forms_tags %}
 
+{% block title %}{{item.title}} | {{item.feed.title}} | Mis cosas{% endblock %}
 {% block content %}
     <div class='item-detailed'>
         <h1> {{ item.title }} <span class="badge">

@@ -19,7 +19,7 @@
         <!-- Material Design Icons -->
         <link rel="stylesheet" href="{% static 'miscosas/style.css' %}" type="text/css">
 
-        <title>{{ title }}</title>
+        <title>{% block title %}{% endblock %}</title>
     </head>
     <body class="{{user.profile.theme}} {{user.profile.font_size}}">
         <!-- Banner -->

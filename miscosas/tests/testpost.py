@@ -33,9 +33,8 @@ class TestPostFeedViews(TestCase):
 
         response = self.client.post('/feeds', form.cleaned_data)
         self.assertEqual(response.status_code, 404)
-        self.assertListEqual(
-            [t.name for t in response.templates],
-            ['miscosas/content/not_found.html', 'miscosas/base.html'])
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
 
     def test_feed_last_fm_right(self):
         ''' Tests posting the feed form with a valid key '''
@@ -56,10 +55,8 @@ class TestPostFeedViews(TestCase):
 
         response = self.client.post('/feeds', form.cleaned_data)
         self.assertEqual(response.status_code, 404)
-        self.assertListEqual(
-            [t.name for t in response.templates],
-            ['miscosas/content/not_found.html', 'miscosas/base.html'])
-
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
 
 class TestPostCommentViews(TestCase):
 
@@ -105,9 +102,8 @@ class TestPostCommentViews(TestCase):
 
         response = self.client.post('/item/f56', form)
         self.assertEqual(response.status_code, 404)
-        self.assertListEqual(
-            [t.name for t in response.templates],
-            ['miscosas/content/not_found.html', 'miscosas/base.html'])
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
 
     def test_comment_too_long(self):
         ''' Tests posting a new comment on an invalid item '''

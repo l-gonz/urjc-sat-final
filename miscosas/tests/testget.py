@@ -37,10 +37,8 @@ class TestGetViewsEmpty(TestCase):
         for key in test_strings:
             response = self.client.get(f'/feed/{key}')
             self.assertEqual(response.status_code, 404)
-            self.assertListEqual(
-                [t.name for t in response.templates],
-                ['miscosas/content/not_found.html', 'miscosas/base.html']
-            )
+            self.assertIn('miscosas/content/not_found.html',
+                [t.name for t in response.templates])
 
     def test_item_page(self):
         ''' Tests an item page with nothing on the database '''
@@ -49,10 +47,8 @@ class TestGetViewsEmpty(TestCase):
         for key in test_strings:
             response = self.client.get(f'/item/{key}')
             self.assertEqual(response.status_code, 404)
-            self.assertListEqual(
-                [t.name for t in response.templates],
-                ['miscosas/content/not_found.html', 'miscosas/base.html']
-            )
+            self.assertIn('miscosas/content/not_found.html',
+                [t.name for t in response.templates])
 
     def test_users_page(self):
         ''' Tests the users page with nothing on the database '''
@@ -99,7 +95,7 @@ class TestGetViewsContent(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "class='feed-detailed'", count=1)
             self.assertContains(response, "class='simple-list'", count=1)
-            self.assertContains(response, "item-brief", count=feed.items.count())
+            self.assertContains(response, "item-brief", count=10)
             self.assertContains(response, "class='vote-form'", count=0)
 
     def test_item_page(self):
@@ -160,7 +156,7 @@ class TestGetViewsAuthenticated(TestCase):
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''
         response = self.client.get('/feed/1')
-        self.assertContains(response, "class='vote-form'", count=self.feed.items.count())
+        self.assertContains(response, "class='vote-form'", count=10)
 
     def test_item_page(self):
         ''' Tests vote and comment forms on item page '''
@@ -241,10 +237,8 @@ class TestGetPagesAsXml(TestCase):
         Feed.objects.get().delete()
         response = self.client.get('/feed/1' + XML)
         self.assertEqual(response.status_code, 404)
-        self.assertListEqual(
-            [t.name for t in response.templates],
-            ['miscosas/content/not_found.html', 'miscosas/base.html']
-        )
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
 
     def test_feed_page(self):
         response = self.client.get('/feed/1' + XML)
@@ -322,10 +316,8 @@ class TestGetPagesAsJson(TestCase):
         Feed.objects.get().delete()
         response = self.client.get('/feed/1' + JSON)
         self.assertEqual(response.status_code, 404)
-        self.assertListEqual(
-            [t.name for t in response.templates],
-            ['miscosas/content/not_found.html', 'miscosas/base.html']
-        )
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
 
     def test_feed_page(self):
         response = self.client.get('/feed/1' + JSON)

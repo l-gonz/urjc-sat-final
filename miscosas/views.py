@@ -5,6 +5,7 @@ Django views for app MisCosas
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
+from django.db.models.query import QuerySet
 
 from .models import Feed, Item, Comment, User, Vote
 from .forms import FeedForm, CommentForm, ProfileForm
@@ -28,7 +29,6 @@ def index(request: WSGIRequest):
         latest_votes = [v.item for v in Vote.objects.filter(user=request.user).order_by('-date')]
 
     context = {
-        'title': 'Mis cosas',
         'popular_items': items[:ENTRIES_PER_PAGE],
         'chosen_feeds': Feed.objects.filter(chosen=True),
         'user_latest_votes': latest_votes[:5],
@@ -53,7 +53,6 @@ def feeds_page(request: WSGIRequest):
     pages = pagination(request, feeds)
 
     context = {
-        'title': 'Feeds | Mis cosas',
         'all_feeds': pages['set'],
         'form': FeedForm(),
         'pages': pages['pages'],
@@ -81,7 +80,6 @@ def feed_page(request: WSGIRequest, feed_id: str):
     pages = pagination(request, feed.items.all())
 
     context = {
-        'title': f'{feed.title} | Mis cosas',
         'feed': feed,
         'item_list': pages['set'],
         'link': FEEDS_DATA[feed.source].get_feed_url(feed.key),
@@ -131,7 +129,6 @@ def item_page(request: WSGIRequest, item_id: str):
     pages = pagination(request, comments)
 
     context = {
-        'title': f'{item.title} | {item.feed.title} | Mis cosas',
         'item': item,
         'link': FEEDS_DATA[item.feed.source].get_item_url(item.feed.key, item.key),
         'comment_list': pages['set'],
@@ -147,7 +144,6 @@ def users_page(request: WSGIRequest):
     pages = pagination(request, users)
 
     context = {
-        'title': 'Users | Mis cosas',
         'user_list': pages['set'],
         'pages': pages['pages'],
         'current_page': pages['current_page'],
@@ -168,10 +164,7 @@ def user_page(request: WSGIRequest, username: str):
         if form.is_valid():
             form.save()
 
-    #TODO Show error if profile.picture image does not exist
-
     context = {
-        'title': f'{owner.username} | Mis cosas',
         'owner': owner,
         'upvoted_item_list': Item.objects.filter(votes__user=owner, votes__positive=True),
         'downvoted_item_list': Item.objects.filter(votes__user=owner, votes__positive=False),
@@ -183,26 +176,25 @@ def user_page(request: WSGIRequest, username: str):
 
 
 def about_page(request: WSGIRequest):
-    context = {'title': 'About | Mis cosas'}
-    return render(request, 'miscosas/content/about.html', context)
+    return render(request, 'miscosas/content/about.html')
 
 
-def not_found_page(request):
-    return render(
-        request,
-        'miscosas/content/not_found.html',
-        {'title': 'Page not found | Mis cosas'},
-        status=404)
+def not_found_page(request: WSGIRequest):
+    return render(request, 'miscosas/content/not_found.html', status=404)
 
 
-def render_or_document(request, template, context):
+def render_or_document(request: WSGIRequest, template: str, context: dict):
     ''' Renders the response in the requested format '''
     context['documents'] = True
     if request.GET.get('format'):
         return render_document(request, context, request.GET['format'])
     return render(request, template, context)
 
-def pagination(request, set):
+
+def pagination(request: WSGIRequest, set: QuerySet):
+    ''' Divides the entries in a query set in pages
+
+    Returns a dictionary with data for the context '''
     pages = range(1, set.count() // ENTRIES_PER_PAGE + 2)
     if len(set) % 10 == 0 and len(pages) > 1:
         pages = pages[:-1]
