@@ -28,32 +28,7 @@
         </div>
 
         <!-- Navigation bar -->
-        <div class="flex-container">
-        <nav id="navbar">
-            <a {%if request.path == "/"%}class="disabled-nav-item"{%else%}href="/"{%endif%}>Home</a>
-            <a {%if request.path == "/feeds"%}class="disabled-nav-item"{%else%}href="/feeds"{%endif%}>Feeds</a>
-            <a {%if request.path == "/users"%}class="disabled-nav-item"{%else%}href="/users"{%endif%}>Users</a>
-            <a {%if request.path == "/about"%}class="disabled-nav-item"{%else%}href="/about"{%endif%}>About</a>
-
-            <!-- User authentication box -->
-            <div id="user-panel" class="dropdown">
-                <button class="btn" type="button" data-toggle="dropdown">
-                    <i class="material-icons">person</i>
-                </button>
-                <div class="dropdown-menu">
-                    {% if user.is_authenticated %}
-                        <a class="dropdown-item" href="/user/{{ user.username }}">My page</a>
-                        {% if user.is_superuser %}
-                            <a class="dropdown-item" href="/admin">Admin</a>
-                        {% endif %}
-                        <a class="dropdown-item" href="/logout">Log out</a>
-                    {% else %}
-                        <a class="dropdown-item" href="/login">Log in</a>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
-        </div>
+        {% include 'miscosas/element/navbar.html' %}
 
         <div class="container">
             <!-- Content block -->

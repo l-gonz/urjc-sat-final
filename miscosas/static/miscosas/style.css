@@ -43,6 +43,7 @@ body.lg { font-size: 120% }
     float: right;
     height: 100%;
 }
+#user-panel > a { color: darkseagreen; }
 
 #footer {
     font-size: 80%;
