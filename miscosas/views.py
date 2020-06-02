@@ -6,9 +6,10 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
+from django.contrib.auth import login
 
 from .models import Feed, Item, Comment, User, Vote
-from .forms import FeedForm, CommentForm, ProfileForm
+from .forms import FeedForm, CommentForm, ProfileForm, RegistrationForm
 from .feeds.feedhandler import FEEDS_DATA
 from .feeds.serializepage import render_document
 
@@ -181,6 +182,18 @@ def about_page(request: WSGIRequest):
 
 def not_found_page(request: WSGIRequest):
     return render(request, 'miscosas/content/not_found.html', status=404)
+
+
+def signup(request: WSGIRequest):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect(request.GET.get('next', '/user/' + user.username))
+    else:
+        form = RegistrationForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
 
 def render_or_document(request: WSGIRequest, template: str, context: dict):

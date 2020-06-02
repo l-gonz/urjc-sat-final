@@ -11,6 +11,7 @@ urlpatterns = [
     # Auth
     path('login/', auth_views.LoginView.as_view()),
     path('logout/', auth_views.LogoutView.as_view()),
+    path('signup/', views.signup),
     # App
     path('feeds', views.feeds_page),
     path('feed/<str:feed_id>', views.feed_page),

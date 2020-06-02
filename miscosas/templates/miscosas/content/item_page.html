@@ -32,8 +32,11 @@
             <form method="POST" action="/item/{{ item.pk }}">
                 {% csrf_token %}
                 {{ form|crispy }}
+                <br>
                 <button type="submit" name='action' value='comment'>Send</button>
             </form>
         </div>
+    {% else %}
+    <p><a href="/login?next={{request.path}}">Log in</a> or <a href="/signup?next={{request.path}}">sign up</a> to leave a comment.</p>
     {% endif %}
 {% endblock %}

@@ -117,8 +117,12 @@ button:hover { color: salmon; }
 
 .vote-form button { font-size: 24px; }
 .item-brief .vote-form * { font-size: 14px; }
-.item-brief > *, .feed-brief > * { padding: 0px 16px; }
+.item-brief a, .feed-brief > * { padding: 0px 16px; }
 .item-brief * { vertical-align: middle; }
+.item-brief { width: 100%; }
+.item-brief > div { margin-right: 32px; }
+
+.item-detailed .votes { margin-bottom: 16px; }
 
 .feed-detailed button { float: right; }
 .feed-detailed { margin-top: -16px; }

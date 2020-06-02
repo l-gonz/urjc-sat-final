@@ -21,11 +21,11 @@
     </div>
     {% if user_match %}
     <div class='settings-form'>
-        <hr>
         <h2>Settings</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|crispy }}
+            <br>
             <button type="submit">Save</button>
         </form>
     </div>

@@ -1,8 +1,10 @@
 <hr>
-<div class="item-brief row">
-    <h5><a href='/item/{{ item.pk }}'>
-        {{ item.title }}
-    </a></h5>
-    <p>{{ item.feed.title }}</p>
+<div class="item-brief row d-flex justify-content-between">
+    <span class="row">
+        <h5><a href='/item/{{ item.pk }}'>
+            {{ item.title }}
+        </a></h5>
+        <p>{{ item.feed.title }}</p>
+    </span>
     {% include 'miscosas/element/vote_form.html' %}
 </div>
