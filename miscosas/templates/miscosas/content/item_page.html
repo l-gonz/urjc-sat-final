@@ -1,5 +1,4 @@
 {% extends 'miscosas/base.html' %}
-{% load crispy_forms_tags %}
 
 {% block title %}{{item.title}} | {{item.feed.title}} | Mis cosas{% endblock %}
 {% block content %}
@@ -26,12 +25,22 @@
     <!-- Comments -->
     <hr>
     {% include 'miscosas/element/comment_list.html' with list=comment_list %}
+
     {% if user.is_authenticated %}
         <div class='comment-form'>
             <h4>Add new comment</h4>
             <form method="POST" action="/item/{{ item.pk }}">
                 {% csrf_token %}
-                {{ form|crispy }}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{field.help_text|safe}}</small>
+                        {% endif %}
+                        {{ field.errors }}
+                    </div>
+                {% endfor %}
                 <br>
                 <button type="submit" name='action' value='comment'>Send</button>
             </form>

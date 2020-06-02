@@ -1,22 +1,25 @@
 {% extends 'miscosas/base.html' %}
-{% load crispy_forms_tags %}
 
 {% block title %} Signup {% endblock %}
 {% block content %}
     <h4>Sign up</h4>
     <form method="post">
         {% csrf_token %}
-        {% if form.subject.errors %}
-            <ol role="alertdialog">
-                {% for error in form.subject.errors %}
-                <li role="alert alert-danger">{{ error|escape }}</li>
-                {% endfor %}
-            </ol>
-        {% endif %}
 
-        {{ form|crispy }}
-        <br>
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{field.help_text|safe}}</small>
+                {% endif %}
+
+                {% for error in field.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
         <button type="submit">Sign up</button>
     </form>
-    <a href="/login">Already have an accout? Log in here</a>
+    <a href="/login">Already have an accout? Log in here.</a>
 {% endblock %}

@@ -16,8 +16,12 @@ class FeedForm(forms.Form):
 
 
 class CommentForm(forms.Form):
-    title = forms.CharField(max_length=64)
-    content = forms.CharField(widget=forms.Textarea, max_length=256)
+    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class':'form-control'}))
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class':'form-control',
+            'rows':4}),
+        max_length=256)
 
 
 class ProfileForm(forms.ModelForm):
@@ -37,3 +41,4 @@ class RegistrationForm(UserCreationForm):
 
         for fieldname in ['username', 'password1', 'password2']:
             self.fields[fieldname].help_text = None
+            self.fields[fieldname].widget.attrs['class'] = 'form-control'
