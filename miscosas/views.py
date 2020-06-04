@@ -2,13 +2,13 @@
 Django views for app MisCosas
 """
 
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.contrib.auth import login
 
-from .models import Feed, Item, Comment, User, Vote
+from .models import Feed, Item, User, Vote
 from .forms import FeedForm, CommentForm, ProfileForm, RegistrationForm
 from .feeds.feedhandler import FEEDS_DATA
 from .feeds.serializepage import render_document
@@ -43,10 +43,9 @@ def feeds_page(request: WSGIRequest):
     if request.method == 'POST':
         form = FeedForm(request.POST)
         if form.is_valid():
-            key = form.cleaned_data['key']
-            source = form.cleaned_data['source']
-            if FEEDS_DATA[source].load(key):
-                return redirect(f'feed/{Feed.objects.get(key=key).pk}')
+            feed = form.save(commit=False)
+            if FEEDS_DATA[feed.source].load(feed.key):
+                return redirect(f'feed/{Feed.objects.get(key=feed.key).pk}')
             else:
                 return not_found_page(request)
 
@@ -86,6 +85,7 @@ def feed_page(request: WSGIRequest, feed_id: str):
         'link': FEEDS_DATA[feed.source].get_feed_url(feed.key),
         'pages': pages['pages'],
         'current_page': pages['current_page'],
+        'source': Feed.SOURCES[feed.source],
     }
 
     return render_or_document(request, 'miscosas/content/feed_page.html', context)
@@ -103,18 +103,15 @@ def item_page(request: WSGIRequest, item_id: str):
             if request.POST['action'] == 'comment':
                 form = CommentForm(request.POST)
                 if form.is_valid():
-                    comment = Comment(
-                        title=request.POST['title'],
-                        content=request.POST['content'],
-                        item=item,
-                        user=request.user)
-                    comment.full_clean()
+                    comment = form.save(commit=False)
+                    comment.user = request.user
+                    comment.item = item
                     comment.save()
             elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
                 positive = request.POST['action'] == 'upvote'
                 try:
                     vote = Vote.objects.get(item=item, user=request.user)
-                    old_state = vote.positive;
+                    old_state = vote.positive
                     vote.delete()
                     if old_state != positive:
                         Vote(positive=positive, user=request.user, item=item).save()
@@ -204,12 +201,12 @@ def render_or_document(request: WSGIRequest, template: str, context: dict):
     return render(request, template, context)
 
 
-def pagination(request: WSGIRequest, set: QuerySet):
+def pagination(request: WSGIRequest, qset: QuerySet):
     ''' Divides the entries in a query set in pages
 
     Returns a dictionary with data for the context '''
-    pages = range(1, set.count() // ENTRIES_PER_PAGE + 2)
-    if len(set) % 10 == 0 and len(pages) > 1:
+    pages = range(1, qset.count() // ENTRIES_PER_PAGE + 2)
+    if len(qset) % 10 == 0 and len(pages) > 1:
         pages = pages[:-1]
     try:
         current_page = int(request.GET.get('page', 1))
@@ -219,7 +216,7 @@ def pagination(request: WSGIRequest, set: QuerySet):
     item_f = item_i + ENTRIES_PER_PAGE
 
     return {
-        'set': set[item_i:item_f],
+        'set': qset[item_i:item_f],
         'pages': pages,
         'current_page': current_page,
     }

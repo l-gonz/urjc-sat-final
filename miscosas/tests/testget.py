@@ -61,7 +61,7 @@ class TestGetViewsContent(TestCase):
     def setUp(self):
         ''' Posts some forms to have content available '''
 
-        form = {'key': VALID_YOUTUBE_KEY, 'source': 'YouTube'}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
         self.client.post('/feeds', form)
 
     def test_main_page(self):
@@ -117,7 +117,7 @@ class TestGetViewsAuthenticated(TestCase):
     def setUp(self):
         ''' Posts some forms to have content available '''
 
-        form = {'key': VALID_YOUTUBE_KEY, 'source': 'YouTube'}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
         self.other_user = User.objects.create_user('aaa', password='aaa')
@@ -203,7 +203,7 @@ class TestGetViewsAuthenticated(TestCase):
 class TestGetPagesAsXml(TestCase):
 
     def setUp(self):
-        form = {'key': VALID_YOUTUBE_KEY, 'source': 'YouTube'}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
 
@@ -282,7 +282,7 @@ class TestGetPagesAsXml(TestCase):
 class TestGetPagesAsJson(TestCase):
 
     def setUp(self):
-        form = {'key': VALID_YOUTUBE_KEY, 'source': 'YouTube'}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
 

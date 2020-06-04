@@ -5,23 +5,39 @@ Forms for app MisCosas
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UsernameField
 
-from .models import Profile
-from .feeds.feedhandler import FEEDS_DATA
-
-CHOICES = [(key, key) for key in FEEDS_DATA]
-
-class FeedForm(forms.Form):
-    source = forms.CharField(widget=forms.Select(choices=CHOICES, attrs={'class':'form-control'}))
-    key = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class':'form-control'}))
+from .models import Profile, Feed, Comment
 
 
-class CommentForm(forms.Form):
-    title = forms.CharField(max_length=64, widget=forms.TextInput(attrs={'class':'form-control'}))
-    content = forms.CharField(
-        widget=forms.Textarea(attrs={
-            'class':'form-control',
-            'rows':4}),
-        max_length=256)
+class FeedForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for fieldname in self.fields:
+            self.fields[fieldname].widget.attrs['class'] = 'form-control'
+
+        self.fields['key'].widget.attrs['maxlength'] = 64
+
+    class Meta:
+        model = Feed
+        fields = ['source', 'key']
+
+
+class CommentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs['class'] = 'form-control'
+        self.fields['title'].widget.attrs['maxlength'] = 64
+
+    class Meta:
+        model = Comment
+        fields = ['title', 'content']
+        widgets = {
+            'content': forms.Textarea(attrs=
+            {
+                'class': 'form-control',
+                'rows': 4,
+                'maxlength': 256,
+            })
+        }
 
 
 class ProfileForm(forms.ModelForm):

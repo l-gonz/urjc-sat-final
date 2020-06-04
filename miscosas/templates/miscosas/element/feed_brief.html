@@ -1,6 +1,6 @@
 <hr>
 <div class='feed-brief'>
-    <h5><a href="/feed/{{ feed.pk }}">{{ feed.source }}: {{ feed.title }}</a>
+    <h5><a href="/feed/{{ feed.pk }}">{{ feed }}</a>
     <span class="badge">
     {% if feed.chosen %}
         <form action='/feed/{{ feed.pk }}' method='POST'>

@@ -2,7 +2,6 @@ import urllib
 
 from project.secretkeys import LAST_FM_API_KEY
 from miscosas.models import Feed, Item
-from miscosas.apps import MisCosasConfig
 from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
 
@@ -10,12 +9,11 @@ from .lastfmartist import LastFmArtist
 class FeedData():
     ''' Stores information from a feed source. '''
 
-    def __init__(self, name, feed_url, item_url, data_url, icon_src, load_function):
-        ''' Name and urls for accessing the feed.
+    def __init__(self, feed_url, item_url, data_url, icon_src, load_function):
+        ''' Urls for accessing the feed.
 
         Urls need {feed} or {item} fields for formatting. '''
 
-        self.name = name
         self.feed_url = feed_url
         self.item_url = item_url
         self.data_url = data_url
@@ -30,10 +28,10 @@ class FeedData():
         ''' Returns the url of the item with the given key '''
         return str.format(self.item_url, feed=feed_key, item=item_key)
 
-    def get_data_url(self, feed_key):
+    def get_data_url(self, feed_key, api_key=""):
         ''' Returns the url of the XML or JSON file
         with the data from the feed with the given key '''
-        return str.format(self.data_url, feed=feed_key)
+        return str.format(self.data_url, feed=feed_key, api_key=api_key)
 
     def load_feed(self, feed_key):
         ''' Load the info from a new or existing feed '''
@@ -44,7 +42,7 @@ def load_youtube_feed(feed_key: str):
     ''' Adds a new feed from YouTube to the database,
     downloading the data and making items from it'''
 
-    url = YOUTUBE_FEED.data_url.format(feed=feed_key)
+    url = YOUTUBE_FEED.get_data_url(feed_key)
     try:
         xml_stream = urllib.request.urlopen(url)
     except urllib.error.HTTPError:
@@ -53,7 +51,7 @@ def load_youtube_feed(feed_key: str):
     channel = YTChannel(xml_stream)
     feed, _ = Feed.objects.update_or_create(
         key=feed_key,
-        source=YOUTUBE_FEED.name,
+        source=Feed.YOUTUBE,
         defaults={
             'title': channel.name(),
             'chosen': True,
@@ -76,16 +74,16 @@ def load_last_fm_feed(feed_key: str):
     ''' Adds a new feed from Last.fm to the database,
     downloading the data and making items from it'''
 
-    url = LAST_FM_FEED.data_url.format(feed=urllib.parse.quote(feed_key), api_key=LAST_FM_API_KEY)
+    url = LAST_FM_FEED.get_data_url(urllib.parse.quote(feed_key), LAST_FM_API_KEY)
     try:
         xml_stream = urllib.request.urlopen(url)
     except urllib.error.HTTPError:
         return False
 
     artist = LastFmArtist(xml_stream)
-    feed, created = Feed.objects.update_or_create(
+    feed, _ = Feed.objects.update_or_create(
         key=feed_key,
-        source=LAST_FM_FEED.name,
+        source=Feed.LASTFM,
         defaults={
             'title': artist.name(),
             'chosen': True
@@ -105,7 +103,6 @@ def load_last_fm_feed(feed_key: str):
 
 
 YOUTUBE_FEED = FeedData(
-    "YouTube",
     "https://www.youtube.com/channel/{feed}",
     "https://www.youtube.com/watch?v={item}",
     "http://www.youtube.com/feeds/videos.xml?channel_id={feed}",
@@ -113,7 +110,6 @@ YOUTUBE_FEED = FeedData(
     load_youtube_feed)
 
 LAST_FM_FEED = FeedData(
-    "last.fm",
     "https://www.last.fm/music/{feed}",
     "https://www.last.fm/music/{feed}/{item}",
     "http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist={feed}&limit=15&api_key={api_key}",
@@ -121,6 +117,6 @@ LAST_FM_FEED = FeedData(
     load_last_fm_feed)
 
 FEEDS_DATA = {
-    YOUTUBE_FEED.name: YOUTUBE_FEED,
-    LAST_FM_FEED.name: LAST_FM_FEED,
+    Feed.YOUTUBE: YOUTUBE_FEED,
+    Feed.LASTFM: LAST_FM_FEED,
 }

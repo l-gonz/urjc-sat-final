@@ -11,13 +11,19 @@ from django.dispatch import receiver
 
 
 class Feed(models.Model):
+    YOUTUBE = 'yt'
+    LASTFM = 'lfm'
+    SOURCES = {
+        YOUTUBE: 'YouTube',
+        LASTFM: 'last.fm',
+    }
     key = models.CharField(max_length=64)
     title = models.CharField(max_length=64)
-    source = models.CharField(max_length=32)
+    source = models.CharField(max_length=32, choices=list(SOURCES.items()), default=YOUTUBE)
     chosen = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.source + ': ' + self.title
+        return self.SOURCES[self.source] + ': ' + self.title
 
 
 class Item(models.Model):
@@ -75,8 +81,8 @@ class Comment(models.Model):
 class Profile(models.Model):
     DEFAULT_PICTURE = 'blank-profile-picture.png'
 
-    LIGHTMODE = 'LM'
-    DARKMODE = 'DM'
+    LIGHTMODE = 'lm'
+    DARKMODE = 'dm'
     THEMES = [
         (LIGHTMODE, 'Light mode'),
         (DARKMODE, 'Dark mode'),

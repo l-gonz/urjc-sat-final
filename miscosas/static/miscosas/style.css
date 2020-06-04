@@ -5,7 +5,7 @@ body {
     cursor: default;
 }
 
-body.DM {
+body.dm {
     background-color: rgb(30, 30, 30);
     color: whitesmoke;
 }
@@ -52,7 +52,7 @@ body.lg { font-size: 120% }
     padding: 8px 18px 16px;
     text-align: end;
 }
-.DM #footer{ color: wheat; }
+.dm #footer{ color: wheat; }
 
 #navbar {
     background-color: darkslategrey;

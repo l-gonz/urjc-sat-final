@@ -9,7 +9,7 @@
 
         <h4>{% include 'miscosas/element/feed_brief.html' with feed=item.feed %}</h4>
 
-        {% if item.feed.source == 'YouTube' %}
+        {% if item.feed.source == 'yt' %}
             <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ item.key }}"
             frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen></iframe>
