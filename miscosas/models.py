@@ -134,8 +134,8 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     when corresponding Profile object is deleted.
     """
     if instance.picture and instance.picture != Profile.DEFAULT_PICTURE:
-        if os.path.isfile(instance.picture.path):
-            os.remove(instance.picture.path)
+        if os.path.isfile(instance._picture.path):
+            os.remove(instance._picture.path)
 
 @receiver(models.signals.pre_save, sender=Profile)
 def auto_delete_file_on_change(sender, instance, **kwargs):
@@ -145,10 +145,10 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
     with new file.
     """
     try:
-        old_file = Profile.objects.get(pk=instance.pk).picture
+        old_profile = Profile.objects.get(pk=instance.pk)
         new_file = instance.picture
-        if old_file != new_file and old_file != Profile.DEFAULT_PICTURE:
-            if os.path.isfile(old_file.path):
-                os.remove(old_file.path)
+        if old_profile.picture != new_file and old_profile.picture != Profile.DEFAULT_PICTURE:
+            if os.path.isfile(old_profile._picture.path):
+                os.remove(old_profile._picture.path)
     except Profile.DoesNotExist:
         return False

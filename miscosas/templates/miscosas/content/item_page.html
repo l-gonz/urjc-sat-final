@@ -30,18 +30,7 @@
         <div class='comment-form'>
             <h4>Add new comment</h4>
             <form method="POST" action="/item/{{ item.pk }}">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="form-group">
-                        {{ field.label_tag }}
-                        {{ field }}
-                        {% if field.help_text %}
-                            <small class="form-text text-muted">{{field.help_text|safe}}</small>
-                        {% endif %}
-                        {{ field.errors }}
-                    </div>
-                {% endfor %}
-                <br>
+                {% include 'miscosas/element/generic_form.html' %}
                 <button type="submit" name='action' value='comment'>Send</button>
             </form>
         </div>

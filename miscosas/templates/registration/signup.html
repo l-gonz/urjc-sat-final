@@ -3,23 +3,14 @@
 {% block title %} Signup {% endblock %}
 {% block content %}
     <h4>Sign up</h4>
-    <form method="post">
-        {% csrf_token %}
-
-        {% for field in form %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% if field.help_text %}
-                    <small class="form-text text-muted">{{field.help_text|safe}}</small>
-                {% endif %}
-
-                {% for error in field.errors %}
-                    <div class="alert alert-danger" role="alert">{{ error|escape }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-        <button type="submit">Sign up</button>
-    </form>
-    <a href="/login">Already have an accout? Log in here.</a>
+    {% if user.is_authenticated %}
+        <p>Hello, {{user.username}}! You already have an account.</p>
+        <a href="/user/{{user.username}}">Go to my page.</a>
+    {% else %}
+        <form method="post">
+            {% include 'miscosas/element/generic_form.html' %}
+            <button type="submit">Sign up</button>
+        </form>
+        <a href="/login">Already have an account? Log in here.</a>
+    {% endif %}
 {% endblock %}

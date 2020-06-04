@@ -1,5 +1,4 @@
 {% extends 'miscosas/base.html' %}
-{% load crispy_forms_tags %}
 
 {% block title %}{{owner.username}} | Mis cosas{% endblock %}
 {% block content %}
@@ -24,8 +23,7 @@
         <h2>Settings</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form|crispy }}
-            <br>
+            {% include 'miscosas/element/generic_form.html' %}
             <button type="submit">Save</button>
         </form>
     </div>
