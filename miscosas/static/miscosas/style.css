@@ -170,6 +170,5 @@ a.page-link:hover {
     color: salmon;
     background-color: darkslategrey;
 }
-.pagination {
-    text-align: left;
-}
+.pagination { text-align: left; }
+.delete-form { float: right;}

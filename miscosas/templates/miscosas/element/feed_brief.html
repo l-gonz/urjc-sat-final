@@ -2,7 +2,7 @@
 <div class='feed-brief'>
     <h5><a href="/feed/{{ feed.pk }}">{{ feed }}</a>
     <span class="badge">
-    {% if feed.chosen %}
+    {% if feed.chosen and "/feed" in request.path %}
         <form action='/feed/{{ feed.pk }}' method='POST'>
             {% csrf_token %}
             <button type='submit' name='action' value='unchoose'>Unchoose this feed</button>

@@ -3,24 +3,26 @@
 {% block title %}{{feed.title}} | Mis cosas{% endblock  %}
 {% block content %}
     <div class='feed-detailed'>
+        <form action='/feeds' method='POST'>
+            {% csrf_token %}
+            <input type="hidden" name='key' value='{{ feed.key }}'>
+            <input type="hidden" name='source' value='{{ feed.source }}'>
 
         {% if feed.chosen %}
+                <button title="Reload data" type='submit'><i class="material-icons">refresh</i></button>
+            </form>
             <form action='/feed/{{ feed.pk }}' method='POST'>
                 {% csrf_token %}
                 <button type='submit' name='action' value='unchoose'>Unchoose this feed</button>
             </form>
         {% else %}
-            <form action='/feeds' method='POST'>
-                {% csrf_token %}
-                <input type="hidden" name='key' value='{{ feed.key }}'>
-                <input type="hidden" name='source' value='{{ feed.source }}'>
                 <button type='submit'>Choose this feed</button>
             </form>
         {% endif %}
 
         <h1> {{ feed.title }}
             <span class="badge">
-                <a href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
+                <a title="Open in {{source}}" href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
             </span> </h1>
 
         <p>From: {{ source }}</p>

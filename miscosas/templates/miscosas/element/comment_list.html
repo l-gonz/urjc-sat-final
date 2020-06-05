@@ -10,6 +10,17 @@
                 <div class="row">
                     <div class="col-md-auto"><h5>{{ comment.title }}</h5></div>
                     <div class="col-md-auto"><p class="small"><i>By {{ comment.user.username }} - {{ comment.date }}</i><p></div>
+                    {% if comment.user.username == user.username %}
+                        <div class="col-md-1">
+                            <form method="POST" action="/item/{{ item.pk }}">
+                                {% csrf_token %}
+                                <input type="hidden" name='pk' value='{{ comment.pk }}'>
+                                    <button title="Delete comment" class='btn' type="submit" name='action' value='delete'>
+                                        <i class="material-icons text-danger">clear</i>
+                                    </button>
+                            </form>
+                        </div>
+                    {% endif %}
                 </div>
                 <p>{{ comment.content }}</p>
             </div>

@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.contrib.auth import login
 
-from .models import Feed, Item, User, Vote
+from .models import Feed, Item, User, Vote, Comment
 from .forms import FeedForm, CommentForm, ProfileForm, RegistrationForm
 from .feeds.feedhandler import FEEDS_DATA
 from .feeds.serializepage import render_document
@@ -100,24 +100,7 @@ def item_page(request: WSGIRequest, item_id: str):
 
     if request.method == 'POST' and request.user.is_authenticated:
         try:
-            if request.POST['action'] == 'comment':
-                form = CommentForm(request.POST)
-                if form.is_valid():
-                    comment = form.save(commit=False)
-                    comment.user = request.user
-                    comment.item = item
-                    comment.save()
-            elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
-                positive = request.POST['action'] == 'upvote'
-                try:
-                    vote = Vote.objects.get(item=item, user=request.user)
-                    old_state = vote.positive
-                    vote.delete()
-                    if old_state != positive:
-                        Vote(positive=positive, user=request.user, item=item).save()
-                except Vote.DoesNotExist:
-                    Vote(positive=positive, user=request.user, item=item).save()
-            path = request.POST['path']
+            path = item_post(request, item)
             return redirect(path)
         except (KeyError, ValidationError):
             # Ignore wrong post attempts
@@ -220,3 +203,32 @@ def pagination(request: WSGIRequest, qset: QuerySet):
         'pages': pages,
         'current_page': current_page,
     }
+
+def item_post(request: WSGIRequest, item: Item):
+    if request.POST['action'] == 'comment':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.item = item
+            comment.save()
+    elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
+        positive = request.POST['action'] == 'upvote'
+        try:
+            vote = Vote.objects.get(item=item, user=request.user)
+            old_state = vote.positive
+            vote.delete()
+            if old_state != positive:
+                Vote(positive=positive, user=request.user, item=item).save()
+        except Vote.DoesNotExist:
+            Vote(positive=positive, user=request.user, item=item).save()
+    elif request.POST['action'] == 'delete':
+        try:
+            pk = int(request.POST['pk'])
+            comment = Comment.objects.get(pk=pk)
+            if comment.user == request.user and comment.item == item:
+                comment.delete()
+        except (ValueError, Comment.DoesNotExist):
+            pass
+
+    return request.POST['path']

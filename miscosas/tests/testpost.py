@@ -59,47 +59,36 @@ class TestPostFeedViews(TestCase):
 
 class TestPostCommentViews(TestCase):
 
+    sample_form = {
+        'title': 'Hola',
+        'content': 'This is my comment',
+        'action': 'comment'
+    }
+
     def setUp(self):
         ''' Set up some items so that comments can be added '''
         form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
         self.client.post('/feeds', form)
-        user = User.objects.create_user('root', password='toor')
-        self.client.force_login(user)
+        self.user = User.objects.create_user('root', password='toor')
+        self.other_user = User.objects.create_user('root1', password='toor')
+        self.client.force_login(self.user)
 
     def test_comment_form_rigth(self):
         ''' Tests posting a new comment '''
-        form = {
-            'title': 'Hola',
-            'content': 'This is my comment',
-            'action': 'comment'
-        }
-
-        response = self.client.post('/item/1', form)
+        response = self.client.post('/item/1', self.sample_form)
         self.assertEqual(Comment.objects.count(), 1)
         self.assertContains(response, "class='simple-list'", count=1, status_code=200)
 
     def test_comment_form_no_user(self):
         ''' Tests posting a new comment without being logged in '''
         self.client.logout()
-        form = {
-            'title': 'Hola',
-            'content': 'This is my comment',
-            'action': 'comment'
-        }
-
-        response = self.client.post('/item/1', form)
+        response = self.client.post('/item/1', self.sample_form)
         self.assertContains(response, "class='no-content'", count=1, status_code=200)
         self.assertEqual(Comment.objects.count(), 0)
 
     def test_comment_invalid_item(self):
         ''' Tests posting a new comment on an invalid item '''
-        form = {
-            'title': 'Hola',
-            'content': 'This is my comment',
-            'action': 'comment'
-        }
-
-        response = self.client.post('/item/f56', form)
+        response = self.client.post('/item/f56', self.sample_form)
         self.assertEqual(response.status_code, 404)
         self.assertIn('miscosas/content/not_found.html',
             [t.name for t in response.templates])
@@ -115,6 +104,39 @@ class TestPostCommentViews(TestCase):
         response = self.client.post('/item/1', form)
         self.assertEqual(Comment.objects.count(), 0)
         self.assertContains(response, "class='no-content'", count=1, status_code=200)
+
+    def test_delete_comment(self):
+        ''' Tests deleting a comment posted by the user '''
+        self.client.post('/item/1', self.sample_form)
+        self.assertEquals(Comment.objects.count(), 1)
+        self.client.post('/item/1', {'action': 'delete', 'pk': 1})
+        self.assertEquals(Comment.objects.count(), 0)
+
+    def test_delete_not_own_comment(self):
+        ''' Tests deleting comments made by other user '''
+        Comment(
+            title="aaa",
+            content="aaa",
+            user=self.other_user,
+            item=Item.objects.get(pk=4)).save()
+        self.assertEquals(Comment.objects.count(), 1)
+        self.client.post('/item/4', {'action': 'delete', 'pk': 1})
+        self.assertEquals(Comment.objects.count(), 1)
+
+    def test_delete_comment_no_user(self):
+        ''' Tests deleting a comment while not logged in '''
+        self.client.post('/item/1', self.sample_form)
+        self.assertEquals(Comment.objects.count(), 1)
+        self.client.logout()
+        self.client.post('/item/1', {'action': 'delete', 'pk': 1})
+        self.assertEquals(Comment.objects.count(), 1)
+
+    def test_delete_comment_no_user(self):
+        ''' Tests deleting a comment posting on a different item '''
+        self.client.post('/item/5', self.sample_form)
+        self.assertEquals(Comment.objects.count(), 1)
+        self.client.post('/item/1', {'action': 'delete', 'pk': 1})
+        self.assertEquals(Comment.objects.count(), 1)
 
 
 class TestPostVoteForm(TestCase):
