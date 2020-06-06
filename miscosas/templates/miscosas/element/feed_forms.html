@@ -1,7 +1,9 @@
+{% load i18n %}
+
 <div class='feed-form'>
-    <h2>Add new feed</h2>
+    <h2>{% trans "Add new feed" %}</h2>
     <form method="POST" action="/feeds">
         {% include 'miscosas/element/generic_form.html' %}
-        <button type="submit">Send</button>
+        <button type="submit">{% trans "Send" %}</button>
     </form>
 </div>

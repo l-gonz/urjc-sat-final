@@ -1,0 +1,300 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-06-07 00:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/miscosas/base.html:58
+#, python-format
+msgid "This app uses data provided by %(yt)s and %(lfm)s."
+msgstr "Esta app utiliza datos proporcionados por %(yt)s y %(lfm)s."
+
+#: templates/miscosas/content/about.html:4
+#: templates/miscosas/element/navbar.html:12
+msgid "About"
+msgstr "Información"
+
+#: templates/miscosas/content/about.html:6
+msgid "By Laura González Fernández"
+msgstr "Por Laura González Fernández"
+
+#: templates/miscosas/content/about.html:8
+msgid ""
+"This web app allows you to manage feeds from different sources in the "
+"internet."
+msgstr ""
+"Esta aplicación web te permite gestionar alimentadores de diferentes fuentes "
+"de internet."
+
+#: templates/miscosas/content/about.html:9
+msgid ""
+"You can select which feeds you are interested in to track their updates."
+msgstr ""
+"Puedes seleccionar los alimentadores en los que estes interesado/a para "
+"seguir sus actualizaciones."
+
+#: templates/miscosas/content/about.html:10
+msgid ""
+"The <a href='/'>home</a> page shows the items that are most popular with the "
+"users and the feeds that have been chosen."
+msgstr ""
+"La <a href='/'>página principal</a> muestra los ítems más populares entre "
+"los usuarios y todos los alimentadores actualmente elegidos."
+
+#: templates/miscosas/content/about.html:11
+msgid ""
+"Once a feed has been selected and its information recovered, everyone can "
+"see the items it contains."
+msgstr ""
+"Una vez que un alimentador ha sido seleccionado y se ha obtenido su "
+"información, cualquiera puede ver los ítems que contiene."
+
+#: templates/miscosas/content/about.html:12
+msgid ""
+"If you no longer wish to see feeds in the main page, you can deselect them "
+"and they will only be available in the <a href='/feeds'>feeds</a> page."
+msgstr ""
+"Si ya no quieres ver un alimentador en la página principal, puedes "
+"deseleccionarlo y sólo estará disponible en la página de <a href='/"
+"feeds'>alimentadores</a>."
+
+#: templates/miscosas/content/about.html:13
+msgid ""
+"As a registered user, you can also vote the items that you like and add "
+"comments to their page."
+msgstr ""
+"Si eres un usuario registrado, también podrás votar los ítems que te gusten "
+"y añadir comentarios en su página."
+
+#: templates/miscosas/content/about.html:14
+msgid ""
+"All the votes and comments a user has made will appear in their user page."
+msgstr ""
+"Todos los votos y comentarios que un usuario haya hecho aparecerán en su "
+"página de usuario."
+
+#: templates/miscosas/content/about.html:15
+msgid ""
+"You can see a list of all the users in the web app <a href='/users'>here</a>."
+msgstr ""
+"Puedes ver una lista de todos los usuarios de la aplicación web <a href='/"
+"users'>aquí</a>."
+
+#: templates/miscosas/content/feed_page.html:13
+msgid "Update data"
+msgstr "Actualizar información"
+
+#: templates/miscosas/content/feed_page.html:17
+#: templates/miscosas/element/feed_brief.html:10
+msgid "Unchoose"
+msgstr "No elegir"
+
+#: templates/miscosas/content/feed_page.html:20
+msgid "Choose"
+msgstr "Elegir"
+
+#: templates/miscosas/content/feed_page.html:26
+msgid "Open in"
+msgstr "Abrir en"
+
+#: templates/miscosas/content/feed_page.html:29
+msgid "From:"
+msgstr "Desde:"
+
+#: templates/miscosas/content/feed_page.html:33
+msgid "Items"
+msgstr "Ítems"
+
+#: templates/miscosas/content/feeds.html:4
+#: templates/miscosas/content/feeds.html:7
+#: templates/miscosas/content/index.html:9
+#: templates/miscosas/element/navbar.html:8
+msgid "Feeds"
+msgstr "Alimentadores"
+
+#: templates/miscosas/content/index.html:6
+msgid "Most popular items"
+msgstr "Ítems más populares"
+
+#: templates/miscosas/content/index.html:13
+msgid "Your latest votes"
+msgstr "Tus últimos votos"
+
+#: templates/miscosas/content/item_page.html:8
+msgid "Go to source"
+msgstr "Ir a"
+
+#: templates/miscosas/content/item_page.html:32
+msgid "Add new comment"
+msgstr "Añadir comentario"
+
+#: templates/miscosas/content/item_page.html:35
+#: templates/miscosas/element/feed_forms.html:7
+msgid "Send"
+msgstr "Enviar"
+
+#: templates/miscosas/content/item_page.html:40
+msgid "Log in"
+msgstr "Accede"
+
+#: templates/miscosas/content/item_page.html:41
+msgid "or"
+msgstr "o"
+
+#: templates/miscosas/content/item_page.html:41
+msgid "sign up"
+msgstr "regístrate"
+
+#: templates/miscosas/content/item_page.html:42
+msgid "to leave a comment."
+msgstr "para dejar comentarios."
+
+#: templates/miscosas/content/not_found.html:4
+msgid "Page Not Found"
+msgstr "Página no encontrada"
+
+#: templates/miscosas/content/not_found.html:7
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+#: templates/miscosas/content/user_page.html:11
+msgid "Voted items"
+msgstr "Ítems votados"
+
+#: templates/miscosas/content/user_page.html:19
+msgid "Commented items"
+msgstr "Ítems comentados"
+
+#: templates/miscosas/content/user_page.html:24
+msgid "Settings"
+msgstr "Ajustes"
+
+#: templates/miscosas/content/user_page.html:28
+msgid "Save"
+msgstr "Guardar"
+
+#: templates/miscosas/content/users.html:4
+#: templates/miscosas/content/users.html:7
+#: templates/miscosas/element/navbar.html:10
+msgid "Users"
+msgstr "Usuarios"
+
+#: templates/miscosas/content/users.html:17
+msgid "No users have been created."
+msgstr "Ningún usuario se ha registrado."
+
+#: templates/miscosas/element/comment_list.html:5
+#: templates/miscosas/element/user_brief.html:7
+msgid "Comments"
+msgstr "Comentarios"
+
+#: templates/miscosas/element/comment_list.html:14
+msgid "By"
+msgstr "Por"
+
+#: templates/miscosas/element/comment_list.html:20
+msgid "Delete comment"
+msgstr "Eliminar comentario"
+
+#: templates/miscosas/element/comment_list.html:32
+msgid "No one has written comments yet."
+msgstr "Nadie ha escrito ningún comentario todavía."
+
+#: templates/miscosas/element/feed_forms.html:4
+msgid "Add new feed"
+msgstr "Añadir nuevo alimentador"
+
+#: templates/miscosas/element/feed_list.html:10
+msgid "No feeds are available."
+msgstr "Ningún alimentador disponble."
+
+#: templates/miscosas/element/item_list.html:10
+msgid "No items are available."
+msgstr "Ningún ítem disponible."
+
+#: templates/miscosas/element/navbar.html:6
+msgid "Home"
+msgstr "Inicio"
+
+#: templates/miscosas/element/navbar.html:26
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/miscosas/element/navbar.html:29
+msgid "Log out"
+msgstr "Salir"
+
+#: templates/miscosas/element/navbar.html:32
+#: templates/registration/login.html:6 templates/registration/login.html:13
+msgctxt "navbar"
+msgid "Log in"
+msgstr "Acceder"
+
+#: templates/miscosas/element/navbar.html:34
+#: templates/registration/signup.html:4 templates/registration/signup.html:6
+#: templates/registration/signup.html:13
+msgid "Sign up"
+msgstr "Regístrate"
+
+#: templates/miscosas/element/pagination.html:8
+msgid "Previous"
+msgstr "Anterior"
+
+#: templates/miscosas/element/pagination.html:18
+msgid "Next"
+msgstr "Siguiente"
+
+#: templates/miscosas/element/user_brief.html:7
+msgid "Votes"
+msgstr "Votos"
+
+#: templates/miscosas/element/vote_form.html:9
+msgid "Upvote"
+msgstr "Votos positivos"
+
+#: templates/miscosas/element/vote_form.html:17
+msgid "Downvote"
+msgstr "Votos negativos"
+
+#: templates/registration/login.html:4
+msgid "Login"
+msgstr "Acceder"
+
+#: templates/registration/login.html:8
+#, python-format
+msgid "Hello, %(user.username)s! You have already signed in."
+msgstr "¡Hola, %(user.username)s! Ya has iniciado sesión."
+
+#: templates/registration/login.html:9 templates/registration/signup.html:9
+msgid "Go to my page."
+msgstr "Ir a mi página."
+
+#: templates/registration/login.html:15
+msgid "Don't have an account yet? Create one here."
+msgstr "¿Todavía no tienes una cuenta? Crea una aquí."
+
+#: templates/registration/signup.html:8
+#, python-format
+msgid "Hello, %(user.username)s! You already have an account."
+msgstr "¡Hola, %(user.username)s! Ya tienes una cuenta."
+
+#: templates/registration/signup.html:15
+msgid "Already have an account? Log in here."
+msgstr "¿Ya tienes una cuenta? Accede aquí."
+
+#~ msgid "Reload data"
+#~ msgstr "Recargar datos"

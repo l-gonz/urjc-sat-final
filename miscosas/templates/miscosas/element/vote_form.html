@@ -1,10 +1,12 @@
+{% load i18n %}
+
 {% if user.is_authenticated %}
     <div class='vote-form'>
         <form method="POST" action="/item/{{ item.pk }}">
             {% csrf_token %}
             <input type="hidden" name='path' value='{{ request.path }}'>
 
-            <button title="Upvote" type="submit" name='action' value='upvote'>{{item.upvote_count}}
+            <button title="{% trans "Upvote" %}" type="submit" name='action' value='upvote'>{{item.upvote_count}}
                 {% if user.pk in item.upvoters %}
                     <i class="material-icons">thumb_up</i>
                 {% else %}
@@ -12,7 +14,7 @@
                 {% endif %}
             </button>
 
-            <button title="Downvote" type="submit" name='action' value='downvote'>
+            <button title="{% trans "Downvote" %}" type="submit" name='action' value='downvote'>
                 {% if user.pk in item.downvoters %}
                     {{item.downvote_count}} <i class="material-icons">thumb_down</i>
                 {% else %}

@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% if list %}
     <div class='simple-list'>
     {% for feed in list %}
@@ -5,5 +7,5 @@
     {% endfor %}
     </div>
 {% else %}
-    <p class='no-content'>No feeds are available.</p>
+    <p class='no-content'>{% trans "No feeds are available." %}</p>
 {% endif %}

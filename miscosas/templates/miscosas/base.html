@@ -1,4 +1,6 @@
 {% load static %}
+{% load i18n %}
+
 <html>
     <head>
         <!-- Required meta tags -->
@@ -50,7 +52,15 @@
         <!-- Footer -->
         <hr>
         <div id="footer">
-            <footer>This app uses data provided by <a href="https://youtube.com">YouTube</a> and <a href="https://last.fm">last.fm</a>.</footer>
+            {% with yt='<a href="https://youtube.com">YouTube</a>' %}
+            {% with lfm='<a href="https://last.fm">last.fm</a>' %}
+            <footer>
+                {% blocktrans trimmed %}
+                    This app uses data provided by {{yt}} and {{lfm}}.
+                {% endblocktrans %}
+            </footer>
+            {% endwith %}
+            {% endwith %}
         </div>
     </body>
 </html>

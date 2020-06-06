@@ -1,7 +1,8 @@
 {% extends 'miscosas/base.html' %}
+{% load i18n %}
 
-{% block title %}Page Not Found | Mis cosas{% endblock %}
+{% block title %}{% trans "Page Not Found" %} | Mis cosas{% endblock %}
 {% block content %}
     <h1>404</h1>
-    <p>Page not found</p>
+    <p>{% trans "Page not found" %}</p>
 {% endblock %}

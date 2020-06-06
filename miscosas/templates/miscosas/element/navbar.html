@@ -1,9 +1,15 @@
+{% load i18n %}
+
 <div class="flex-container">
 <nav id="navbar">
-    <a {%if request.path == "/"%}class="disabled-nav-item"{%else%}href="/"{%endif%}>Home</a>
-    <a {%if request.path == "/feeds"%}class="disabled-nav-item"{%else%}href="/feeds"{%endif%}>Feeds</a>
-    <a {%if request.path == "/users"%}class="disabled-nav-item"{%else%}href="/users"{%endif%}>Users</a>
-    <a {%if request.path == "/about"%}class="disabled-nav-item"{%else%}href="/about"{%endif%}>About</a>
+    <a {%if request.path == "/"%}class="disabled-nav-item"{%else%}href="/"{%endif%}>
+        {% trans "Home" %}</a>
+    <a {%if request.path == "/feeds"%}class="disabled-nav-item"{%else%}href="/feeds"{%endif%}>
+        {% trans "Feeds" %}</a>
+    <a {%if request.path == "/users"%}class="disabled-nav-item"{%else%}href="/users"{%endif%}>
+        {% trans "Users" %}</a>
+    <a {%if request.path == "/about"%}class="disabled-nav-item"{%else%}href="/about"{%endif%}>
+        {% trans "About" %}</a>
 
     <!-- User authentication box -->
     <div id="user-panel" class="dropdown">
@@ -16,12 +22,16 @@
         <div class="dropdown-menu">
             {% if user.is_authenticated %}
                 {% if user.is_superuser %}
-                    <a class="dropdown-item" href="/admin">Admin</a>
+                    <a class="dropdown-item" href="/admin">
+                        {% trans "Admin" %}</a>
                 {% endif %}
-                <a class="dropdown-item" href="/logout?next={{request.path}}">Log out</a>
+                <a class="dropdown-item" href="/logout?next={{request.path}}">
+                    {% trans "Log out" %}</a>
             {% else %}
-                <a class="dropdown-item" href="/login?next={{request.path}}">Log in</a>
-                <a class="dropdown-item" href="/signup?next={{request.path}}">Sign up</a>
+                <a class="dropdown-item" href="/login?next={{request.path}}">
+                    {% trans "Log in" context "navbar" %}</a>
+                <a class="dropdown-item" href="/signup?next={{request.path}}">
+                    {% trans "Sign up" %}</a>
             {% endif %}
         </div>
     </div>

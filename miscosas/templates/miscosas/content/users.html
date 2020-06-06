@@ -1,9 +1,10 @@
 {% extends 'miscosas/base.html' %}
+{% load i18n %}
 
-{% block title %}Users | Mis cosas{% endblock %}
+{% block title %}{% trans "Users" %} | Mis cosas{% endblock %}
 {% block content %}
     <div class="container row">
-        <h1 class="col-md-11"> Users </h1>
+        <h1 class="col-md-11"> {% trans "Users" %} </h1>
         <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
     </div>
     {% if user_list %}
@@ -13,6 +14,6 @@
         {% endfor %}
         </div>
     {% else %}
-        <p class='no-content'>No users have been created.</p>
+        <p class='no-content'>{% trans "No users have been created." %}</p>
     {% endif %}
 {% endblock %}

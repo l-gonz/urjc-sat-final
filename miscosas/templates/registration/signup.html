@@ -1,16 +1,17 @@
 {% extends 'miscosas/base.html' %}
+{% load i18n %}
 
-{% block title %} Signup {% endblock %}
+{% block title %} {% trans "Sign up" %} {% endblock %}
 {% block content %}
-    <h4>Sign up</h4>
+    <h4>{% trans "Sign up" %}</h4>
     {% if user.is_authenticated %}
-        <p>Hello, {{user.username}}! You already have an account.</p>
-        <a href="/user/{{user.username}}">Go to my page.</a>
+        <p>{% blocktrans %}Hello, {{user.username}}! You already have an account.{% endblocktrans %}</p>
+        <a href="/user/{{user.username}}">{% trans "Go to my page." %}</a>
     {% else %}
         <form method="post">
             {% include 'miscosas/element/generic_form.html' %}
-            <button type="submit">Sign up</button>
+            <button type="submit">{% trans "Sign up" %}</button>
         </form>
-        <a href="/login">Already have an account? Log in here.</a>
+        <a href="/login">{% trans "Already have an account? Log in here." %}</a>
     {% endif %}
 {% endblock %}

@@ -1,9 +1,10 @@
 {% extends 'miscosas/base.html' %}
+{% load i18n %}
 
-{% block title %}Feeds | Mis cosas{% endblock %}
+{% block title %}{% trans "Feeds" %} | Mis cosas{% endblock %}
 {% block content %}
     <div class="container row">
-        <h1 class="col-md-11"> Feeds </h1>
+        <h1 class="col-md-11"> {% trans "Feeds" %} </h1>
         <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
     </div>
     {% include 'miscosas/element/feed_list.html' with list=all_feeds %}

@@ -1,10 +1,11 @@
 {% extends 'miscosas/base.html' %}
+{% load i18n %}
 
 {% block title %}{{item.title}} | {{item.feed.title}} | Mis cosas{% endblock %}
 {% block content %}
     <div class='item-detailed'>
         <h1> {{ item.title }} <span class="badge">
-            <a title="Go to source" href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
+            <a title="{% trans "Go to source" %}" href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
             </span></h1>
 
         <h4>{% include 'miscosas/element/feed_brief.html' with feed=item.feed %}</h4>
@@ -28,13 +29,16 @@
 
     {% if user.is_authenticated %}
         <div class='comment-form'>
-            <h4>Add new comment</h4>
+            <h4>{% trans "Add new comment" %}</h4>
             <form method="POST" action="/item/{{ item.pk }}">
                 {% include 'miscosas/element/generic_form.html' %}
-                <button type="submit" name='action' value='comment'>Send</button>
+                <button type="submit" name='action' value='comment'>{% trans "Send" %}</button>
             </form>
         </div>
     {% else %}
-    <p><a href="/login?next={{request.path}}">Log in</a> or <a href="/signup?next={{request.path}}">sign up</a> to leave a comment.</p>
+    <p>
+        <a href="/login?next={{request.path}}">{% trans "Log in" %}</a>
+        {% trans "or" %} <a href="/signup?next={{request.path}}">{% trans "sign up" %}</a>
+        {% trans "to leave a comment." %}</p>
     {% endif %}
 {% endblock %}

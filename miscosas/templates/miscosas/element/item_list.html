@@ -1,3 +1,5 @@
+{% load i18n %}
+
 {% if list %}
     <div class='simple-list'>
     {% for item in list %}
@@ -5,5 +7,5 @@
     {% endfor %}
     </div>
 {% else %}
-    <p class='no-content'>No items are available.</p>
+    <p class='no-content'>{% trans "No items are available." %}</p>
 {% endif %}

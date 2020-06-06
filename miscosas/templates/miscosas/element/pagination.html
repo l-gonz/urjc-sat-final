@@ -1,9 +1,11 @@
+{% load i18n %}
+
 {% with npages=pages|length %}
 {% if npages > 1%}
 <nav>
     <ul class="pagination pagination-sm justify-content-end">
         {% if current_page > 1 %}
-            <li class="page-item"><a class="page-link" href="{{request.path}}?page={{current_page|add:"-1"}}">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="{{request.path}}?page={{current_page|add:"-1"}}">{% trans "Previous" %}</a></li>
         {% endif %}
 
         {% for page in pages %}
@@ -13,7 +15,7 @@
         {% endfor %}
 
         {% if current_page < npages %}
-            <li class="page-item"><a class="page-link" href="{{request.path}}?page={{current_page|add:1}}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="{{request.path}}?page={{current_page|add:1}}">{% trans "Next" %}</a></li>
         {% endif %}
     </ul>
 </nav>

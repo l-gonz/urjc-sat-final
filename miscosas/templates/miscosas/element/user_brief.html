@@ -1,6 +1,8 @@
+{% load i18n %}
+
 <hr>
 <div class='user-brief row'>
     <img class="profile-picture" src='/media/{{ user.profile.picture }}' height='40' width='40'>
     <h5><a href='/user/{{user.username}}'>{{ user.username }}</a></h5>
-    <p>Votes: {{ user.profile.vote_count }} - Comments: {{ user.profile.comment_count }}</p>
+    <p>{% trans "Votes" %}: {{ user.profile.vote_count }} - {% trans "Comments" %}: {{ user.profile.comment_count }}</p>
 </div>

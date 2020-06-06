@@ -1,4 +1,5 @@
 {% extends 'miscosas/base.html' %}
+{% load i18n %}
 
 {% block title %}{{feed.title}} | Mis cosas{% endblock  %}
 {% block content %}
@@ -9,27 +10,27 @@
             <input type="hidden" name='source' value='{{ feed.source }}'>
 
         {% if feed.chosen %}
-                <button title="Reload data" type='submit'><i class="material-icons">refresh</i></button>
+                <button title={% trans "Update data"%} type='submit'><i class="material-icons">refresh</i></button>
             </form>
             <form action='/feed/{{ feed.pk }}' method='POST'>
                 {% csrf_token %}
-                <button type='submit' name='action' value='unchoose'>Unchoose this feed</button>
+                <button type='submit' name='action' value='unchoose'>{% trans "Unchoose" %}</button>
             </form>
         {% else %}
-                <button type='submit'>Choose this feed</button>
+                <button type='submit'>{% trans "Choose" %}</button>
             </form>
         {% endif %}
 
         <h1> {{ feed.title }}
             <span class="badge">
-                <a title="Open in {{source}}" href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
+                <a title="{% trans "Open in" %} {{source}}" href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
             </span> </h1>
 
-        <p>From: {{ source }}</p>
+        <p>{% trans "From:"%} {{ source }}</p>
 
     </div>
     <div class="container row">
-        <h2 class="col-md-11"> Items </h2>
+        <h2 class="col-md-11"> {% trans "Items" %} </h2>
         <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
     </div>
     {% include 'miscosas/element/item_list.html' with list=item_list %}

@@ -1,6 +1,8 @@
+{% load i18n %}
+
 {% if list %}
     <div class="container row">
-        <h2 class="col-md-11"> Comments </h2>
+        <h2 class="col-md-11"> {% trans "Comments" %} </h2>
         <div class="col-md-1">{% include 'miscosas/element/pagination.html' %}</div>
     </div>
     <div class='simple-list'>
@@ -9,13 +11,13 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-auto"><h5>{{ comment.title }}</h5></div>
-                    <div class="col-md-auto"><p class="small"><i>By {{ comment.user.username }} - {{ comment.date }}</i><p></div>
+                    <div class="col-md-auto"><p class="small"><i>{% trans "By" %} {{ comment.user.username }} - {{ comment.date }}</i><p></div>
                     {% if comment.user.username == user.username %}
                         <div class="col-md-1">
                             <form method="POST" action="/item/{{ item.pk }}">
                                 {% csrf_token %}
                                 <input type="hidden" name='pk' value='{{ comment.pk }}'>
-                                    <button title="Delete comment" class='btn' type="submit" name='action' value='delete'>
+                                    <button title="{% trans "Delete comment"%}" class='btn' type="submit" name='action' value='delete'>
                                         <i class="material-icons text-danger">clear</i>
                                     </button>
                             </form>
@@ -27,5 +29,5 @@
         {% endfor %}
     </div>
 {% else %}
-    <p class='no-content'>No one has written comments yet.</p>
+    <p class='no-content'>{% trans "No one has written comments yet." %}</p>
 {% endif %}
