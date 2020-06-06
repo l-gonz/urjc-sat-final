@@ -18,7 +18,11 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from miscosas.views import not_found
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('miscosas.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = not_found

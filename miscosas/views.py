@@ -47,7 +47,7 @@ def feeds_page(request: WSGIRequest):
             if FEEDS_DATA[feed.source].load(feed.key):
                 return redirect(f'feed/{Feed.objects.get(key=feed.key).pk}')
             else:
-                return not_found_page(request)
+                return not_found(request)
 
     feeds = Feed.objects.all()
     pages = pagination(request, feeds)
@@ -66,7 +66,7 @@ def feed_page(request: WSGIRequest, feed_id: str):
         pk = int(feed_id)
         feed = Feed.objects.get(pk=pk)
     except (Feed.DoesNotExist, ValueError):
-        return not_found_page(request)
+        return not_found(request)
 
     if request.method == 'POST':
         try:
@@ -96,7 +96,7 @@ def item_page(request: WSGIRequest, item_id: str):
         pk = int(item_id)
         item = Item.objects.get(pk=pk)
     except (Item.DoesNotExist, ValueError):
-        return not_found_page(request)
+        return not_found(request)
 
     if request.method == 'POST' and request.user.is_authenticated:
         try:
@@ -136,7 +136,7 @@ def user_page(request: WSGIRequest, username: str):
     try:
         owner = User.objects.get(username=username)
     except (User.DoesNotExist, ValueError):
-        return not_found_page(request)
+        return not_found(request)
 
     user_match = request.user.is_authenticated and owner.username == request.user.username
 
@@ -160,8 +160,10 @@ def about_page(request: WSGIRequest):
     return render(request, 'miscosas/content/about.html')
 
 
-def not_found_page(request: WSGIRequest, path: str=''):
-    return render(request, 'miscosas/content/not_found.html', status=404)
+def not_found(request: WSGIRequest, exception=None):
+    return render(request,
+        'miscosas/content/not_found.html',
+        status=404)
 
 
 def signup(request: WSGIRequest):

@@ -125,3 +125,4 @@ dmypy.json
 # Personal ignores
 *secret*
 .vscode/*
+env/*
