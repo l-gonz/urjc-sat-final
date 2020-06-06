@@ -1,4 +1,6 @@
-import urllib
+from urllib.request import urlopen
+from urllib.parse import quote
+from urllib.error import URLError, HTTPError
 
 from project.secretkeys import LAST_FM_API_KEY
 from miscosas.models import Feed, Item
@@ -44,8 +46,8 @@ def load_youtube_feed(feed_key: str):
 
     url = YOUTUBE_FEED.get_data_url(feed_key)
     try:
-        xml_stream = urllib.request.urlopen(url)
-    except urllib.error.HTTPError:
+        xml_stream = urlopen(url)
+    except (URLError, HTTPError):
         return False
 
     channel = YTChannel(xml_stream)
@@ -74,10 +76,10 @@ def load_last_fm_feed(feed_key: str):
     ''' Adds a new feed from Last.fm to the database,
     downloading the data and making items from it'''
 
-    url = LAST_FM_FEED.get_data_url(urllib.parse.quote(feed_key), LAST_FM_API_KEY)
+    url = LAST_FM_FEED.get_data_url(quote(feed_key), LAST_FM_API_KEY)
     try:
-        xml_stream = urllib.request.urlopen(url)
-    except urllib.error.HTTPError:
+        xml_stream = urlopen(url)
+    except (URLError, HTTPError):
         return False
 
     artist = LastFmArtist(xml_stream)
