@@ -4,6 +4,7 @@ Forms for app MisCosas
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UsernameField
+from django.utils.translation import gettext_lazy as _
 
 from .models import Profile, Feed, Comment
 
@@ -52,7 +53,7 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['_picture', 'theme', 'font_size']
         labels = {
-            "_picture": "Profile picture"
+            "_picture": _("Profile picture")
         }
 
 

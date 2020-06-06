@@ -172,3 +172,8 @@ a.page-link:hover {
 }
 .pagination { text-align: left; }
 .delete-form { float: right;}
+
+.dm .form-control {
+    color: honeydew;
+    background-color: rgb(54, 54, 54);
+}

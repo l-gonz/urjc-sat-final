@@ -8,6 +8,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
 
 
 class Feed(models.Model):
@@ -17,21 +18,36 @@ class Feed(models.Model):
         YOUTUBE: 'YouTube',
         LASTFM: 'last.fm',
     }
-    key = models.CharField(max_length=64)
-    title = models.CharField(max_length=64)
-    source = models.CharField(max_length=32, choices=list(SOURCES.items()), default=YOUTUBE)
-    chosen = models.BooleanField(default=True)
+    key = models.CharField(max_length=64,
+        help_text=_('Name or id to identify the feed'),
+        verbose_name=_('key'))
+    title = models.CharField(max_length=64, verbose_name=_('title'))
+    source = models.CharField(max_length=32,
+        choices=list(SOURCES.items()),
+        default=YOUTUBE,
+        verbose_name=_('source'))
+    chosen = models.BooleanField(default=True, verbose_name=_('chosen'))
+
+    class Meta:
+        verbose_name = _('feed')
+        verbose_name_plural = _('feeds')
 
     def __str__(self):
         return self.SOURCES[self.source] + ': ' + self.title
 
 
 class Item(models.Model):
-    key = models.CharField(max_length=64)
-    title = models.CharField(max_length=64)
-    feed = models.ForeignKey(Feed, models.CASCADE, related_name="items")
-    description = models.TextField(blank=True, default='')
-    picture = models.URLField(blank=True, default='')
+    key = models.CharField(max_length=64, verbose_name=_('key'))
+    title = models.CharField(max_length=64, verbose_name=_('title'))
+    feed = models.ForeignKey(Feed, models.CASCADE,
+        related_name="items",
+        verbose_name=_('feed'))
+    description = models.TextField(blank=True, default='', verbose_name=_('description'))
+    picture = models.URLField(blank=True, default='', verbose_name=_('picture'))
+
+    class Meta:
+        verbose_name = _('item')
+        verbose_name_plural = _('items')
 
     def __str__(self):
         return str(self.feed) + ", " + self.title
@@ -58,24 +74,34 @@ class Item(models.Model):
 
 
 class Vote(models.Model):
-    positive = models.BooleanField()
-    date = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, models.CASCADE, related_name='votes')
-    item = models.ForeignKey(Item, models.CASCADE, related_name='votes')
+    positive = models.BooleanField(verbose_name=_('positive'))
+    date = models.DateTimeField(auto_now=True, verbose_name=_('date'))
+    user = models.ForeignKey(User, models.CASCADE,
+        related_name='votes', verbose_name=_('user'))
+    item = models.ForeignKey(Item, models.CASCADE,
+        related_name='votes', verbose_name=_('item'))
 
     class Meta:
         unique_together = ('user', 'item',)
+        verbose_name = _('vote')
+        verbose_name_plural = _('votes')
 
 
 class Comment(models.Model):
-    title = models.CharField(max_length=64)
-    content = models.CharField(max_length=256)
-    date = models.DateTimeField(auto_now=True)
-    item = models.ForeignKey(Item, models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, models.CASCADE, related_name='comments')
+    title = models.CharField(max_length=64, verbose_name=_('title'))
+    content = models.CharField(max_length=256, verbose_name=_('content'))
+    date = models.DateTimeField(auto_now=True, verbose_name=_('date'))
+    item = models.ForeignKey(Item, models.CASCADE,
+        related_name='comments', verbose_name=_('item'))
+    user = models.ForeignKey(User, models.CASCADE,
+    related_name='comments', verbose_name=_('user'))
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = _('comment')
+        verbose_name_plural = _('comments')
 
 
 class Profile(models.Model):
@@ -84,23 +110,29 @@ class Profile(models.Model):
     LIGHTMODE = 'lm'
     DARKMODE = 'dm'
     THEMES = [
-        (LIGHTMODE, 'Light mode'),
-        (DARKMODE, 'Dark mode'),
+        (LIGHTMODE, _('Light mode')),
+        (DARKMODE, _('Dark mode')),
     ]
 
     SMALL_FONT = 'sm'
     MEDIUM_FONT = 'md'
     LARGE_FONT = 'lg'
     FONT_SIZES = [
-        (SMALL_FONT, 'Small'),
-        (MEDIUM_FONT, 'Medium'),
-        (LARGE_FONT, 'Large'),
+        (SMALL_FONT, _('Small')),
+        (MEDIUM_FONT, _('Medium')),
+        (LARGE_FONT, _('Large')),
     ]
 
-    user = models.OneToOneField(User, models.CASCADE)
-    _picture = models.ImageField(blank=True, null=True)
-    theme = models.CharField(max_length=2, choices=THEMES, default=LIGHTMODE)
-    font_size = models.CharField(max_length=2, choices=FONT_SIZES, default=MEDIUM_FONT)
+    user = models.OneToOneField(User, models.CASCADE, verbose_name=_('user'))
+    _picture = models.ImageField(blank=True, null=True, verbose_name=_('picture'))
+    theme = models.CharField(max_length=2, choices=THEMES,
+        default=LIGHTMODE, verbose_name=_('theme'))
+    font_size = models.CharField(max_length=2, choices=FONT_SIZES,
+        default=MEDIUM_FONT, verbose_name=_('font size'))
+
+    class Meta:
+        verbose_name = _('profile')
+        verbose_name_plural = _('profiles')
 
     def __str__(self):
         return str(self.user)

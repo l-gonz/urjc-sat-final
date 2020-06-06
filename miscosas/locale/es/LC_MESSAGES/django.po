@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-07 00:09+0200\n"
+"POT-Creation-Date: 2020-06-07 01:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,122 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: forms.py:56
+msgid "Profile picture"
+msgstr "Imágen de perfil"
+
+#: models.py:22
+msgid "Name or id to identify the feed"
+msgstr "Nombre o id para identificar el alimentador"
+
+#: models.py:23 models.py:40
+msgid "key"
+msgstr "clave"
+
+#: models.py:24 models.py:41 models.py:91
+msgid "title"
+msgstr "título"
+
+#: models.py:28
+msgid "source"
+msgstr "fuente"
+
+#: models.py:29
+msgid "chosen"
+msgstr "elegido"
+
+#: models.py:32 models.py:44
+msgid "feed"
+msgstr "alimentador"
+
+#: models.py:33
+msgid "feeds"
+msgstr "alimentadores"
+
+#: models.py:45
+msgid "description"
+msgstr "descripción"
+
+#: models.py:46 models.py:127
+msgid "picture"
+msgstr "imágen"
+
+#: models.py:49 models.py:82 models.py:95
+msgid "item"
+msgstr "ítem"
+
+#: models.py:50
+msgid "items"
+msgstr "ítems"
+
+#: models.py:77
+msgid "positive"
+msgstr "positivo"
+
+#: models.py:78 models.py:93
+msgid "date"
+msgstr "fecha"
+
+#: models.py:80 models.py:97 models.py:126
+msgid "user"
+msgstr "usuario"
+
+#: models.py:86
+msgid "vote"
+msgstr "voto"
+
+#: models.py:87
+msgid "votes"
+msgstr "votos"
+
+#: models.py:92
+msgid "content"
+msgstr "contenido"
+
+#: models.py:103
+msgid "comment"
+msgstr "comentario"
+
+#: models.py:104
+msgid "comments"
+msgstr "comentarios"
+
+#: models.py:113
+msgid "Light mode"
+msgstr "Modo claro"
+
+#: models.py:114
+msgid "Dark mode"
+msgstr "Modo oscuro"
+
+#: models.py:121
+msgid "Small"
+msgstr "Pequeña"
+
+#: models.py:122
+msgid "Medium"
+msgstr "Mediana"
+
+#: models.py:123
+msgid "Large"
+msgstr "Grande"
+
+#: models.py:129
+msgid "theme"
+msgstr "tema"
+
+#: models.py:131
+msgid "font size"
+msgstr "tamaño de fuente"
+
+#: models.py:134
+msgid "profile"
+msgstr "perfil"
+
+#: models.py:135
+msgid "profiles"
+msgstr "perfiles"
 
 #: templates/miscosas/base.html:58
 #, python-format
