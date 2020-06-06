@@ -21,4 +21,5 @@ urlpatterns = [
     path('user/<str:username>', views.user_page),
     path('about', views.about_page),
     path('', views.index),
+    path('<str:path>', views.not_found_page),
 ]

@@ -160,7 +160,7 @@ def about_page(request: WSGIRequest):
     return render(request, 'miscosas/content/about.html')
 
 
-def not_found_page(request: WSGIRequest):
+def not_found_page(request: WSGIRequest, path: str=''):
     return render(request, 'miscosas/content/not_found.html', status=404)
 
 
