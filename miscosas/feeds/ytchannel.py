@@ -3,7 +3,7 @@
 from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
 
-from .feedparser import FeedParser
+from .feedparser import FeedParser, ParsingError
 
 
 class YTHandler(ContentHandler):
@@ -74,6 +74,14 @@ class YTChannel(FeedParser):
         self.parser.setContentHandler(self.handler)
         self.parser.parse(stream)
 
+        # Make sure all expected fields are filled
+        if not self.handler.channel_name:
+            raise ParsingError("Feed has no title")
+        if not self.handler.videos:
+            raise ParsingError("Feed has no items")
+        if any(not self.is_item_complete(item) for item in self.handler.videos):
+            raise ParsingError("Some item is missing fields")
+
     def feed_title(self):
         return self.handler.channel_name
 
@@ -87,3 +95,10 @@ class YTChannel(FeedParser):
                 'picture': video['media:thumbnail'],
             })
         return items
+
+    def is_item_complete(self, item):
+        ''' Checks if an individual item has all expected fields '''
+        return (item.get('yt:videoId') and
+                item.get('media:title') and
+                item.get('media:description') and
+                item.get('media:thumbnail'))

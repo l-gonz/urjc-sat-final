@@ -1,11 +1,14 @@
+import sys
 from urllib.request import urlopen
 from urllib.parse import quote
 from urllib.error import URLError, HTTPError
 
 from project.secretkeys import LAST_FM_API_KEY
 from miscosas.apps import MisCosasConfig as Config
+from .feedparser import ParsingError
 from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
+from .subreddit import Subreddit
 
 
 class FeedData:
@@ -49,10 +52,20 @@ class FeedData:
         url = self.get_data_url(feed_key)
         try:
             xml_stream = urlopen(url)
-        except (URLError, HTTPError):
+        except (URLError, HTTPError) as e:
+            print(e, end='\n', file=sys.stderr)
             return False
 
-        parser = self._parser(xml_stream)
+        if self._source == Config.REDDIT and xml_stream.geturl() != url:
+            print("Key not found", end='\n')
+            return False
+
+        try:
+            parser = self._parser(xml_stream)
+        except ParsingError as e:
+            print("ParsingError: " + e, end='\n', file=sys.stderr)
+            return False
+
         feed, _ = Feed.objects.update_or_create(
             key=feed_key,
             source=self._source,
@@ -87,7 +100,15 @@ LAST_FM_FEED = FeedData(
     LastFmArtist,
     LAST_FM_API_KEY)
 
+REDDIT_FEED = FeedData(
+    "https://www.reddit.com/r/{feed}",
+    "https://www.reddit.com/r/{feed}/comments/{item}",
+    "https://www.reddit.com/r/{feed}.rss",
+    Config.REDDIT,
+    Subreddit)
+
 FEEDS_DATA = {
     Config.YOUTUBE: YOUTUBE_FEED,
     Config.LASTFM: LAST_FM_FEED,
+    Config.REDDIT: REDDIT_FEED,
 }

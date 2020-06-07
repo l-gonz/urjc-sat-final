@@ -29,3 +29,6 @@ class FeedParser(ABC):
         Description picture is optional
         """
         pass
+
+class ParsingError(RuntimeError):
+    pass

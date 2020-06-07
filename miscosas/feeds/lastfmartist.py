@@ -3,6 +3,8 @@
 from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
 
+from .feedparser import FeedParser, ParsingError
+
 
 class LastFmHandler(ContentHandler):
     """Class to handle events fired by the SAX parser
@@ -57,7 +59,7 @@ class LastFmHandler(ContentHandler):
             self.content = self.content + chars
 
 
-class LastFmArtist():
+class LastFmArtist(FeedParser):
     """Class to get videos in a YouTube channel.
 
     Extracts video info from the XML document for a YT channel.
@@ -69,6 +71,14 @@ class LastFmArtist():
         self.handler = LastFmHandler()
         self.parser.setContentHandler(self.handler)
         self.parser.parse(stream)
+
+        # Make sure all expected fields are filled
+        if not self.handler.name:
+            raise ParsingError("Feed has no title")
+        if not self.handler.albums:
+            raise ParsingError("Feed has no items")
+        if any(not self.is_item_complete(item) for item in self.handler.albums):
+            raise ParsingError("Some item is missing fields")
 
     def feed_title(self):
         return self.handler.name
@@ -82,3 +92,8 @@ class LastFmArtist():
                 'picture': album['image'],
             })
         return items
+
+    def is_item_complete(self, item):
+        ''' Checks if an individual item has all expected fields '''
+        return (item.get('name') and
+                item.get('image'))

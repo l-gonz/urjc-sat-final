@@ -6,6 +6,7 @@ class MisCosasConfig(AppConfig):
 
     YOUTUBE = 'yt'
     LASTFM = 'lfm'
+    REDDIT = 'rd'
 
     LIGHTMODE = 'lm'
     DARKMODE = 'dm'

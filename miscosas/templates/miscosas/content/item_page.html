@@ -20,7 +20,7 @@
 
         <br><br>
         {% include 'miscosas/element/vote_form.html' %}
-        <p>{{ item.description }}</p>
+        <p>{{ item.description|safe }}</p>
     </div>
 
     <!-- Comments -->

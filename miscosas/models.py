@@ -18,7 +18,9 @@ class Feed(models.Model):
     SOURCES = {
         Config.YOUTUBE: 'YouTube',
         Config.LASTFM: 'last.fm',
+        Config.REDDIT: 'Reddit',
     }
+
     key = models.CharField(max_length=64,
         help_text=_('Name or id to identify the feed'),
         verbose_name=_('key'))
