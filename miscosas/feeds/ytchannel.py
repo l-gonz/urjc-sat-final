@@ -3,6 +3,8 @@
 from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
 
+from .feedparser import FeedParser
+
 
 class YTHandler(ContentHandler):
     """Class to handle events fired by the SAX parser
@@ -60,11 +62,10 @@ class YTHandler(ContentHandler):
             self.content = self.content + chars
 
 
-class YTChannel:
+class YTChannel(FeedParser):
     """Class to get videos in a YouTube channel.
 
     Extracts video info from the XML document for a YT channel.
-    The list of videos found can be retrieved later by calling videos()
     """
 
     def __init__(self, stream):
@@ -73,8 +74,16 @@ class YTChannel:
         self.parser.setContentHandler(self.handler)
         self.parser.parse(stream)
 
-    def videos(self):
-        return self.handler.videos
-
-    def name(self):
+    def feed_title(self):
         return self.handler.channel_name
+
+    def items_data(self):
+        items = []
+        for video in self.handler.videos:
+            items.append({
+                'key': video['yt:videoId'],
+                'title': video['media:title'],
+                'description': video['media:description'],
+                'picture': video['media:thumbnail'],
+            })
+        return items

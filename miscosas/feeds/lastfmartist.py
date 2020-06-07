@@ -70,8 +70,15 @@ class LastFmArtist():
         self.parser.setContentHandler(self.handler)
         self.parser.parse(stream)
 
-    def albums(self):
-        return self.handler.albums
-
-    def name(self):
+    def feed_title(self):
         return self.handler.name
+
+    def items_data(self):
+        items = []
+        for album in self.handler.albums:
+            items.append({
+                'key': album['name'],
+                'title': album['name'],
+                'picture': album['image'],
+            })
+        return items

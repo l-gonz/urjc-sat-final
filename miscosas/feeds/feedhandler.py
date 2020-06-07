@@ -8,114 +8,84 @@ from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
 
 
-class FeedData():
+class FeedData:
     ''' Stores information from a feed source. '''
 
-    def __init__(self, feed_url, item_url, data_url, load_function):
+    def __init__(self,
+                 feed_url,
+                 item_url,
+                 data_url,
+                 source,
+                 feed_parser,
+                 api_key=""):
         ''' Urls for accessing the feed.
 
         Urls need {feed} or {item} fields for formatting. '''
 
-        self.feed_url = feed_url
-        self.item_url = item_url
-        self.data_url = data_url
-        self.load = load_function
+        self._feed_url = feed_url
+        self._item_url = item_url
+        self._data_url = data_url
+        self._source = source
+        self._parser = feed_parser
+        self._api_key = api_key
 
     def get_feed_url(self, feed_key):
         ''' Returns the url of the feed with the given key '''
-        return str.format(self.feed_url, feed=feed_key)
+        return str.format(self._feed_url, feed=quote(feed_key))
 
     def get_item_url(self, feed_key, item_key):
         ''' Returns the url of the item with the given key '''
-        return str.format(self.item_url, feed=feed_key, item=item_key)
+        return str.format(self._item_url, feed=quote(feed_key), item=quote(item_key))
 
-    def get_data_url(self, feed_key, api_key=""):
+    def get_data_url(self, feed_key):
         ''' Returns the url of the XML or JSON file
         with the data from the feed with the given key '''
-        return str.format(self.data_url, feed=feed_key, api_key=api_key)
+        return str.format(self._data_url, feed=quote(feed_key), api_key=self._api_key)
 
-    def load_feed(self, feed_key):
+    def load(self, feed_key):
         ''' Load the info from a new or existing feed '''
-        self.load(feed_key)
+        from miscosas.models import Feed, Item
 
+        url = self.get_data_url(feed_key)
+        try:
+            xml_stream = urlopen(url)
+        except (URLError, HTTPError):
+            return False
 
-def load_youtube_feed(feed_key: str):
-    ''' Adds a new feed from YouTube to the database,
-    downloading the data and making items from it'''
-    from miscosas.models import Feed, Item
-
-    url = YOUTUBE_FEED.get_data_url(feed_key)
-    try:
-        xml_stream = urlopen(url)
-    except (URLError, HTTPError):
-        return False
-
-    channel = YTChannel(xml_stream)
-    feed, _ = Feed.objects.update_or_create(
-        key=feed_key,
-        source=Config.YOUTUBE,
-        defaults={
-            'title': channel.name(),
-            'chosen': True,
-        })
-
-    for video in channel.videos():
-        Item.objects.update_or_create(
-            key=video['yt:videoId'],
+        parser = self._parser(xml_stream)
+        feed, _ = Feed.objects.update_or_create(
+            key=feed_key,
+            source=self._source,
             defaults={
-                'key': video['yt:videoId'],
-                'title': video['media:title'],
-                'feed': feed,
-                'description': video['media:description'],
-                'picture': video['media:thumbnail'],
+                'title': parser.feed_title(),
+                'chosen': True,
             })
 
-    return True
+        for item in parser.items_data():
+            Item.objects.update_or_create(
+                key=item['key'],
+                defaults={
+                    **item,
+                    'feed': feed,
+                })
 
-def load_last_fm_feed(feed_key: str):
-    ''' Adds a new feed from Last.fm to the database,
-    downloading the data and making items from it'''
-    from miscosas.models import Feed, Item
-
-    url = LAST_FM_FEED.get_data_url(quote(feed_key), LAST_FM_API_KEY)
-    try:
-        xml_stream = urlopen(url)
-    except (URLError, HTTPError):
-        return False
-
-    artist = LastFmArtist(xml_stream)
-    feed, _ = Feed.objects.update_or_create(
-        key=feed_key,
-        source=Config.LASTFM,
-        defaults={
-            'title': artist.name(),
-            'chosen': True
-        })
-
-    for album in artist.albums():
-        Item.objects.update_or_create(
-            key=album['name'],
-            defaults={
-                'key': album['name'],
-                'title': album['name'],
-                'feed': feed,
-                'picture': album['image'],
-            })
-
-    return True
+        return True
 
 
 YOUTUBE_FEED = FeedData(
     "https://www.youtube.com/channel/{feed}",
     "https://www.youtube.com/watch?v={item}",
     "http://www.youtube.com/feeds/videos.xml?channel_id={feed}",
-    load_youtube_feed)
+    Config.YOUTUBE,
+    YTChannel)
 
 LAST_FM_FEED = FeedData(
     "https://www.last.fm/music/{feed}",
     "https://www.last.fm/music/{feed}/{item}",
     "http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist={feed}&limit=15&api_key={api_key}",
-    load_last_fm_feed)
+    Config.LASTFM,
+    LastFmArtist,
+    LAST_FM_API_KEY)
 
 FEEDS_DATA = {
     Config.YOUTUBE: YOUTUBE_FEED,
