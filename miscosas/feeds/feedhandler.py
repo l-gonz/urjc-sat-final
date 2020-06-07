@@ -11,7 +11,7 @@ from .lastfmartist import LastFmArtist
 class FeedData():
     ''' Stores information from a feed source. '''
 
-    def __init__(self, feed_url, item_url, data_url, icon_src, load_function):
+    def __init__(self, feed_url, item_url, data_url, load_function):
         ''' Urls for accessing the feed.
 
         Urls need {feed} or {item} fields for formatting. '''
@@ -19,7 +19,6 @@ class FeedData():
         self.feed_url = feed_url
         self.item_url = item_url
         self.data_url = data_url
-        self.icon_src = icon_src
         self.load = load_function
 
     def get_feed_url(self, feed_key):
@@ -108,14 +107,12 @@ YOUTUBE_FEED = FeedData(
     "https://www.youtube.com/channel/{feed}",
     "https://www.youtube.com/watch?v={item}",
     "http://www.youtube.com/feeds/videos.xml?channel_id={feed}",
-    "miscosas/youtube_social_icon_white.png",
     load_youtube_feed)
 
 LAST_FM_FEED = FeedData(
     "https://www.last.fm/music/{feed}",
     "https://www.last.fm/music/{feed}/{item}",
     "http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist={feed}&limit=15&api_key={api_key}",
-    "https://www.last.fm/static/images/logo_static.adb61955725c.png",
     load_last_fm_feed)
 
 FEEDS_DATA = {

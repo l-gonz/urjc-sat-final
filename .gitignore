@@ -126,3 +126,4 @@ dmypy.json
 *secret*
 .vscode/*
 env/*
+.DS_Store
