@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 
 from . import views
 from .forms import AuthForm
+from .feeds.rssfeeds import RssFeed
 
 urlpatterns = [
     # Auth
@@ -20,5 +21,6 @@ urlpatterns = [
     path('users', views.users_page),
     path('user/<str:username>', views.user_page),
     path('about', views.about_page),
+    path('comments/', RssFeed()),
     path('', views.index),
 ]

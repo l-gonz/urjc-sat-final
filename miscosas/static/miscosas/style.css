@@ -113,7 +113,7 @@ button {
     border-radius: .25rem;
     display: inline-block;
 }
-button:hover { color: salmon; }
+button:hover, button:hover a { color: salmon; }
 
 .vote-form button { font-size: 24px; }
 .item-brief .vote-form * { font-size: 14px; }
@@ -177,3 +177,16 @@ a.page-link:hover {
     color: honeydew;
     background-color: rgb(54, 54, 54);
 }
+
+#documents i {
+    color: whitesmoke;
+    background-color: darkslategrey;
+    border-color: darkslategrey;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    padding: .2rem .70rem;
+    border-radius: .25rem;
+    display: inline-block;
+}
+#documents a:hover { color: salmon; }
