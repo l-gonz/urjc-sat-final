@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from miscosas.models import Item, Feed
-from miscosas.feeds.feedhandler import YOUTUBE_FEED, LAST_FM_FEED, REDDIT_FEED
+from miscosas.feeds.feedhandler import *
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
@@ -11,6 +11,9 @@ INVALID_LAST_FM_KEY = "nj34jsdgf"
 
 VALID_REDDIT_KEY = "memes"
 INVALID_REDDIT_KEY = "gh67g"
+
+VALID_FLICKR_KEY = "fuenlabrada"
+INVALID_FLICKR_KEY = "vkldjg48jvg"
 
 
 class TestYoutubeFeed(TestCase):
@@ -102,3 +105,34 @@ class TestRedditFeed(TestCase):
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
         self.assertEqual(Item.objects.count(), 26)
+
+
+class TestFlickrFeed(TestCase):
+
+    def test_flickr_new(self):
+        ''' Tests adding a new flickr feed with a valid key'''
+        key = VALID_FLICKR_KEY
+        result = FLICKR_FEED.load(key)
+
+        self.assertTrue(result)
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 20)
+
+    def test_flickr_wrong_key(self):
+        ''' Tests trying to add a flickr feed with an invalid key'''
+        key = INVALID_FLICKR_KEY
+        result = FLICKR_FEED.load(key)
+
+        self.assertFalse(result)
+        self.assertEqual(Feed.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)
+
+    def test_flickr_update(self):
+        ''' Tests updating a flickr feed that already exists '''
+        key = VALID_FLICKR_KEY
+        result = FLICKR_FEED.load(key)
+        result = FLICKR_FEED.load(key)
+
+        self.assertTrue(result)
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 20)

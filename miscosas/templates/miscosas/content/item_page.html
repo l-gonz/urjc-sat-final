@@ -13,14 +13,19 @@
         {% if item.feed.source == 'yt' %}
             <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ item.key }}"
             frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
+            allowfullscreen></iframe><br/><br/>
+            {% include 'miscosas/element/vote_form.html' %}
+            <p>{{ item.description|safe }}</p>
+        {% elif not item.picture %}
+            <p>{{ item.description|safe }}</p>
+            {% include 'miscosas/element/vote_form.html' %}
         {%else%}
             <img src="{{ item.picture }}"></img>
+            <br/><br/>
+            {% include 'miscosas/element/vote_form.html' %}
+            <p>{{ item.description|safe }}</p>
         {% endif %}
 
-        <br><br>
-        {% include 'miscosas/element/vote_form.html' %}
-        <p>{{ item.description|safe }}</p>
     </div>
 
     <!-- Comments -->

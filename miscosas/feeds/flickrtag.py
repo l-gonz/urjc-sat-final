@@ -6,18 +6,21 @@ from xml.sax import make_parser
 from .feedparser import FeedParser, ParsingError
 
 
-class RedditHandler(ContentHandler):
+class FlickrHandler(ContentHandler):
     """Class to handle events fired by the SAX parser
 
-    Fills in self.news with data from news items
-    in a subreddit RSS feed.
+    Fills in self.photos with data from photo items
+    with a tag in Flickr.
     """
 
     ENTRY_TAGS = [
         'content',
-        'id',
         'title',
     ]
+
+    ENTRY_ARGS = {
+        'link': 'href',
+    }
 
     FEED_TAGS = [
         'title'
@@ -29,23 +32,27 @@ class RedditHandler(ContentHandler):
         """Initialization of variables for the parser
         * in_content: reading target content (leaf strings)
         * content: target content being read
-        * news: list of news in the subreddit,
-            each news is a dictionary (title, id, content)
-        * current_entry: the information from the current news
+        * photos: list of photos in the subreddit,
+            each photo is a dictionary (title, content, link)
+        * current_entry: the information from the current photo
         """
         self.in_content = False
         self.in_entry = False
         self.content = ""
-        self.news = []
+        self.photos = []
         self.current_entry = {}
         self.name = ""
 
     def startElement(self, name, attrs):
         self.in_content = (
             (self.in_entry and name in self.ENTRY_TAGS) or
+            (self.in_entry and name in self.ENTRY_ARGS) or
             (not self.in_entry and name in self.FEED_TAGS))
         if name == self.ENTRY_TAG:
             self.in_entry = True
+        if self.in_entry and name in self.ENTRY_ARGS:
+            if attrs['rel'] == 'alternate':
+                self.current_entry[name] = attrs[self.ENTRY_ARGS[name]]
 
     def endElement(self, name):
         if self.in_entry and name in self.ENTRY_TAGS:
@@ -53,7 +60,7 @@ class RedditHandler(ContentHandler):
         elif not self.in_entry and name in self.FEED_TAGS:
             self.name = self.content
         elif name == self.ENTRY_TAG:
-            self.news.append(self.current_entry)
+            self.photos.append(self.current_entry)
             self.current_entry = {}
             self.in_entry = False
 
@@ -65,54 +72,42 @@ class RedditHandler(ContentHandler):
             self.content = self.content + chars
 
 
-class Subreddit(FeedParser):
-    """Class to get news from a subreddit.
+class FlickrTag(FeedParser):
+    """Class to get photos from a tag in Flickr.
 
-    Extracts item info from the XML document for a reddit rss feed.
+    Extracts item info from the XML document for a Flickr tag rss feed.
     """
 
     def __init__(self, stream):
         self.parser = make_parser()
-        self.handler = RedditHandler()
+        self.handler = FlickrHandler()
         self.parser.setContentHandler(self.handler)
         self.parser.parse(stream)
 
         # Make sure all expected fields are filled
         if not self.handler.name:
             raise ParsingError("Feed has no title")
-        if not self.handler.news:
+        if not self.handler.photos:
             raise ParsingError("Feed has no items")
-        if any(not self.is_item_complete(item) for item in self.handler.news):
+        if any(not self.is_item_complete(item) for item in self.handler.photos):
             raise ParsingError("Some item is missing fields")
 
     def feed_title(self):
-        name = self.handler.name
-        if name.startswith('/r/'):
-            return name.split('/')[2]
-        else:
-            return name
+        return self.handler.name
 
     def items_data(self):
         items = []
-        for news in self.handler.news:
+        for photo in self.handler.photos:
             items.append({
-                'key': news['id'].split('_')[1],
-                'title': news['title'],
-                'description': self.format_content(news['content']),
+                'key': photo['link']
+                    .replace("https://www.flickr.com/photos/", "")[:-1],
+                'title': photo['title'],
+                'description': photo['content'],
             })
         return items
 
     def is_item_complete(self, item):
         ''' Checks if an individual item has all expected fields '''
-        return (item.get('id') and
+        return (item.get('link') and
                 item.get('title') and
                 item.get('content'))
-
-    def format_content(self, content: str):
-        ''' Removes [link] and [comments] links from the end '''
-        pos = content.find('&#32; submitted by &#32')
-        for _ in [1, 2]:
-            span_start = content.find("<span>", pos)
-            span_end = content.find("</span>", span_start)
-            content = content[:span_start] + content[span_end:]
-        return content

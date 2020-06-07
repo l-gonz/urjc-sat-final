@@ -45,7 +45,8 @@ def feeds_page(request: WSGIRequest):
         if form.is_valid():
             feed = form.save(commit=False)
             if FEEDS_DATA[feed.source].load(feed.key):
-                return redirect(f'feed/{Feed.objects.get(key=feed.key).pk}')
+                pk = Feed.objects.get(key=feed.key, source=feed.source).pk
+                return redirect(f'feed/{pk}')
             else:
                 return not_found(request)
 

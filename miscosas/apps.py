@@ -7,6 +7,7 @@ class MisCosasConfig(AppConfig):
     YOUTUBE = 'yt'
     LASTFM = 'lfm'
     REDDIT = 'rd'
+    FLICKR = 'fl'
 
     LIGHTMODE = 'lm'
     DARKMODE = 'dm'
@@ -14,6 +15,13 @@ class MisCosasConfig(AppConfig):
     SMALL_FONT = 'sm'
     MEDIUM_FONT = 'md'
     LARGE_FONT = 'lg'
+
+    SOURCES = {
+        YOUTUBE: 'YouTube',
+        LASTFM: 'last.fm',
+        REDDIT: 'Reddit',
+        FLICKR: 'Flickr',
+    }
 
     THEMES = [
         (LIGHTMODE, _('Light mode')),

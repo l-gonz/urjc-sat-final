@@ -15,18 +15,12 @@ from .feeds.feedhandler import FEEDS_DATA
 
 
 class Feed(models.Model):
-    SOURCES = {
-        Config.YOUTUBE: 'YouTube',
-        Config.LASTFM: 'last.fm',
-        Config.REDDIT: 'Reddit',
-    }
-
     key = models.CharField(max_length=64,
         help_text=_('Name or id to identify the feed'),
         verbose_name=_('key'))
     title = models.CharField(max_length=64, verbose_name=_('title'))
     source = models.CharField(max_length=32,
-        choices=list(SOURCES.items()),
+        choices=list(Config.SOURCES.items()),
         default=Config.YOUTUBE,
         verbose_name=_('source'))
     chosen = models.BooleanField(default=True, verbose_name=_('chosen'))
@@ -36,11 +30,11 @@ class Feed(models.Model):
         verbose_name_plural = _('feeds')
 
     def __str__(self):
-        return self.SOURCES[self.source] + ': ' + self.title
+        return Config.SOURCES[self.source] + ': ' + self.title
 
     @property
     def source_pretty(self):
-        return Feed.SOURCES[self.source]
+        return Config.SOURCES[self.source]
 
     @property
     def score(self):

@@ -9,6 +9,7 @@ from .feedparser import ParsingError
 from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
 from .subreddit import Subreddit
+from .flickrtag import FlickrTag
 
 
 class FeedData:
@@ -53,17 +54,16 @@ class FeedData:
         try:
             xml_stream = urlopen(url)
         except (URLError, HTTPError) as e:
-            print(e, end='\n', file=sys.stderr)
             return False
 
+        # Wrong reddit names redirect to a search rss
         if self._source == Config.REDDIT and xml_stream.geturl() != url:
-            print("Key not found", end='\n')
             return False
 
         try:
             parser = self._parser(xml_stream)
         except ParsingError as e:
-            print("ParsingError: " + e, end='\n', file=sys.stderr)
+            print("ParsingError: " + str(e), end='\n', file=sys.stderr)
             return False
 
         feed, _ = Feed.objects.update_or_create(
@@ -107,8 +107,16 @@ REDDIT_FEED = FeedData(
     Config.REDDIT,
     Subreddit)
 
+FLICKR_FEED = FeedData(
+    "https://www.flickr.com/search/?tags={feed}",
+    "https://www.flickr.com/photos/{item}/",
+    "https://www.flickr.com/services/feeds/photos_public.gne?tags={feed}",
+    Config.FLICKR,
+    FlickrTag)
+
 FEEDS_DATA = {
     Config.YOUTUBE: YOUTUBE_FEED,
     Config.LASTFM: LAST_FM_FEED,
     Config.REDDIT: REDDIT_FEED,
+    Config.FLICKR: FLICKR_FEED,
 }
