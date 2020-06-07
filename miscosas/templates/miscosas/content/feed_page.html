@@ -23,10 +23,14 @@
 
         <h1> {{ feed.title }}
             <span class="badge">
-                <a title="{% trans "Open in" %} {{source}}" href="{{ link }}" target="_blank"><i class="material-icons">launch</i></a>
+                <a title="{% trans "Open in" %} {{feed.source_pretty}}" href="{{ feed.link }}" target="_blank"><i class="material-icons">launch</i></a>
             </span> </h1>
 
-        <p>{% trans "From:"%} {{ source }}</p>
+        <span class="row">
+            <p>{% trans "From:"%} {{ feed.source_pretty }}</p>
+            <p>{% trans "Total items" %}: {{feed.items.count}}</p>
+            <p>{% trans "Score" %}: {{feed.score}}</p>
+        </span>
 
     </div>
     <div class="container row">

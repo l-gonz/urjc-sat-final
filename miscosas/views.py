@@ -82,10 +82,8 @@ def feed_page(request: WSGIRequest, feed_id: str):
     context = {
         'feed': feed,
         'item_list': pages['set'],
-        'link': FEEDS_DATA[feed.source].get_feed_url(feed.key),
         'pages': pages['pages'],
         'current_page': pages['current_page'],
-        'source': Feed.SOURCES[feed.source],
     }
 
     return render_or_document(request, 'miscosas/content/feed_page.html', context)
@@ -111,7 +109,6 @@ def item_page(request: WSGIRequest, item_id: str):
 
     context = {
         'item': item,
-        'link': FEEDS_DATA[item.feed.source].get_item_url(item.feed.key, item.key),
         'comment_list': pages['set'],
         'form': CommentForm(),
         'pages': pages['pages'],

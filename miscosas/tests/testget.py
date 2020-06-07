@@ -5,6 +5,7 @@ from xml.etree import ElementTree
 from django.test import TestCase
 
 from miscosas.models import Item, Feed, User, Profile, Vote
+from miscosas.apps import MisCosasConfig as Config
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
@@ -61,7 +62,7 @@ class TestGetViewsContent(TestCase):
     def setUp(self):
         ''' Posts some forms to have content available '''
 
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
 
     def test_main_page(self):
@@ -71,8 +72,7 @@ class TestGetViewsContent(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "class='simple-list'", count=1)
         self.assertContains(response, "class='no-content'", count=1)
-        self.assertContains(response, "class='item-brief'", count=0)
-        self.assertContains(response, "class='feed-brief'", count=Feed.objects.count())
+        self.assertContains(response, "list-brief", count=Feed.objects.count())
         self.assertContains(response, "class='feed-form'", count=1)
         self.assertContains(response, "class='vote-form'", count=0)
 
@@ -82,7 +82,7 @@ class TestGetViewsContent(TestCase):
         response = self.client.get('/feeds')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "class='simple-list'", count=1)
-        self.assertContains(response, "class='feed-brief'", count=Feed.objects.count())
+        self.assertContains(response, "list-brief", count=Feed.objects.count())
         self.assertContains(response, "class='feed-form'", count=1)
 
     def test_feed_page(self):
@@ -95,7 +95,7 @@ class TestGetViewsContent(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, "class='feed-detailed'", count=1)
             self.assertContains(response, "class='simple-list'", count=1)
-            self.assertContains(response, "item-brief", count=10)
+            self.assertContains(response, "list-brief", count=10)
             self.assertContains(response, "class='vote-form'", count=0)
 
     def test_item_page(self):
@@ -106,7 +106,7 @@ class TestGetViewsContent(TestCase):
         for item in items:
             response = self.client.get(f'/item/{item.pk}')
             self.assertEqual(response.status_code, 200)
-            self.assertContains(response, "class='feed-brief'", count=1)
+            self.assertContains(response, "list-brief", count=1)
             self.assertContains(response, "class='item-detailed'", count=1)
             self.assertContains(response, "class='vote-form'", count=0)
             self.assertContains(response, "class='comment-form'", count=0)
@@ -117,7 +117,7 @@ class TestGetViewsAuthenticated(TestCase):
     def setUp(self):
         ''' Posts some forms to have content available '''
 
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
         self.other_user = User.objects.create_user('aaa', password='aaa')
@@ -151,7 +151,7 @@ class TestGetViewsAuthenticated(TestCase):
 
         response = self.client.get('/')
         self.assertContains(response, "class='simple-list'", count=3)
-        self.assertContains(response, "item-brief", count=15)
+        self.assertContains(response, "list-brief", count=16)
 
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''
@@ -188,7 +188,7 @@ class TestGetViewsAuthenticated(TestCase):
         self.assertContains(response, "class='upvoted-items'", count=1)
         self.assertContains(response, "class='downvoted-items'", count=1)
         self.assertContains(response, "class='commented-items'", count=1)
-        self.assertContains(response, "item-brief", count=4)
+        self.assertContains(response, "list-brief", count=4)
         self.assertContains(response, "class='vote-form'", count=4)
         self.assertContains(response, "href='/item/1'", count=1)
         self.assertContains(response, "href='/item/3'", count=2)
@@ -203,7 +203,7 @@ class TestGetViewsAuthenticated(TestCase):
 class TestGetPagesAsXml(TestCase):
 
     def setUp(self):
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
 
@@ -282,7 +282,7 @@ class TestGetPagesAsXml(TestCase):
 class TestGetPagesAsJson(TestCase):
 
     def setUp(self):
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
 

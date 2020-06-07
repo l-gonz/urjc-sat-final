@@ -3,7 +3,7 @@ from urllib.parse import quote
 from urllib.error import URLError, HTTPError
 
 from project.secretkeys import LAST_FM_API_KEY
-from miscosas.models import Feed, Item
+from miscosas.apps import MisCosasConfig as Config
 from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
 
@@ -42,6 +42,7 @@ class FeedData():
 def load_youtube_feed(feed_key: str):
     ''' Adds a new feed from YouTube to the database,
     downloading the data and making items from it'''
+    from miscosas.models import Feed, Item
 
     url = YOUTUBE_FEED.get_data_url(feed_key)
     try:
@@ -52,7 +53,7 @@ def load_youtube_feed(feed_key: str):
     channel = YTChannel(xml_stream)
     feed, _ = Feed.objects.update_or_create(
         key=feed_key,
-        source=Feed.YOUTUBE,
+        source=Config.YOUTUBE,
         defaults={
             'title': channel.name(),
             'chosen': True,
@@ -74,6 +75,7 @@ def load_youtube_feed(feed_key: str):
 def load_last_fm_feed(feed_key: str):
     ''' Adds a new feed from Last.fm to the database,
     downloading the data and making items from it'''
+    from miscosas.models import Feed, Item
 
     url = LAST_FM_FEED.get_data_url(quote(feed_key), LAST_FM_API_KEY)
     try:
@@ -84,7 +86,7 @@ def load_last_fm_feed(feed_key: str):
     artist = LastFmArtist(xml_stream)
     feed, _ = Feed.objects.update_or_create(
         key=feed_key,
-        source=Feed.LASTFM,
+        source=Config.LASTFM,
         defaults={
             'title': artist.name(),
             'chosen': True
@@ -116,6 +118,6 @@ LAST_FM_FEED = FeedData(
     load_last_fm_feed)
 
 FEEDS_DATA = {
-    Feed.YOUTUBE: YOUTUBE_FEED,
-    Feed.LASTFM: LAST_FM_FEED,
+    Config.YOUTUBE: YOUTUBE_FEED,
+    Config.LASTFM: LAST_FM_FEED,
 }

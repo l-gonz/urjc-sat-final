@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from miscosas.forms import FeedForm
 from miscosas.models import Item, Feed, Comment, Profile, Vote
+from miscosas.apps import MisCosasConfig as Config
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
@@ -15,7 +16,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_youtube_right(self):
         ''' Tests posting the feed form with a valid key '''
-        form_data = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form_data = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         form = FeedForm(data=form_data)
         self.assertTrue(form.is_valid())
 
@@ -26,7 +27,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_youtube_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
-        form_data = {'key': INVALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form_data = {'key': INVALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 
@@ -37,7 +38,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_last_fm_right(self):
         ''' Tests posting the feed form with a valid key '''
-        form_data = {'key': VALID_LAST_FM_KEY, 'source': Feed.LASTFM}
+        form_data = {'key': VALID_LAST_FM_KEY, 'source': Config.LASTFM}
         form = FeedForm(data=form_data)
         self.assertTrue(form.is_valid())
 
@@ -48,7 +49,7 @@ class TestPostFeedViews(TestCase):
 
     def test_feed_last_fm_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
-        form_data = {'key': INVALID_LAST_FM_KEY, 'source': Feed.LASTFM}
+        form_data = {'key': INVALID_LAST_FM_KEY, 'source': Config.LASTFM}
         form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 
@@ -67,7 +68,7 @@ class TestPostCommentViews(TestCase):
 
     def setUp(self):
         ''' Set up some items so that comments can be added '''
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
         self.other_user = User.objects.create_user('root1', password='toor')
@@ -131,7 +132,7 @@ class TestPostCommentViews(TestCase):
         self.client.post('/item/1', {'action': 'delete', 'pk': 1})
         self.assertEquals(Comment.objects.count(), 1)
 
-    def test_delete_comment_no_user(self):
+    def test_delete_comment_wrong_item(self):
         ''' Tests deleting a comment posting on a different item '''
         self.client.post('/item/5', self.sample_form)
         self.assertEquals(Comment.objects.count(), 1)
@@ -143,7 +144,7 @@ class TestPostVoteForm(TestCase):
 
     def setUp(self):
         ''' Set up some items so that votes can be added '''
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
         self.user = User.objects.create_user('root', password='toor')
         self.client.force_login(self.user)
@@ -204,43 +205,43 @@ class TestPostProfileForm(TestCase):
     def test_change_font_size(self):
         form = {
             'theme': self.user.profile.theme,
-            'font_size': Profile.LARGE_FONT,
+            'font_size': Config.LARGE_FONT,
         }
 
         response = self.client.post('/user/' + self.user.username, form)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.get(username=self.user.username).profile.font_size, Profile.LARGE_FONT)
+        self.assertEqual(User.objects.get(username=self.user.username).profile.font_size, Config.LARGE_FONT)
 
     def test_change_theme(self):
         form = {
-            'theme': Profile.DARKMODE,
+            'theme': Config.DARKMODE,
             'font_size': self.user.profile.font_size,
         }
 
         response = self.client.post('/user/' + self.user.username, form)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(User.objects.get(username=self.user.username).profile.theme, Profile.DARKMODE)
+        self.assertEqual(User.objects.get(username=self.user.username).profile.theme, Config.DARKMODE)
 
     def test_post_wrong_user(self):
         form = {
-            'theme': Profile.DARKMODE,
-            'font_size': Profile.LARGE_FONT,
+            'theme': Config.DARKMODE,
+            'font_size': Config.LARGE_FONT,
         }
 
         response = self.client.post('/user/' + self.other_user.username, form)
         self.assertEqual(response.status_code, 200)
         profile = User.objects.get(username=self.other_user.username).profile
-        self.assertEqual(profile.font_size, Profile.MEDIUM_FONT)
-        self.assertEqual(profile.theme, Profile.LIGHTMODE)
+        self.assertEqual(profile.font_size, Config.MEDIUM_FONT)
+        self.assertEqual(profile.theme, Config.LIGHTMODE)
 
 
 class TestPostFeedChoose(TestCase):
 
     def setUp(self):
         ''' Set up some feeds so that votes can be added '''
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
-        form = {'key': VALID_LAST_FM_KEY, 'source': Feed.LASTFM}
+        form = {'key': VALID_LAST_FM_KEY, 'source': Config.LASTFM}
         self.client.post('/feeds', form)
 
     def test_unchoose_feed(self):
@@ -251,16 +252,16 @@ class TestPostFeedChoose(TestCase):
         self.assertTrue(Feed.objects.get(pk=2).chosen)
 
         response = self.client.get('/')
-        self.assertContains(response, "class='feed-brief'", 1)
+        self.assertContains(response, "list-brief", 1)
 
     def test_rechoose_feed(self):
         form = {'action': 'unchoose'}
         self.client.post('/feed/1', form)
-        form = {'key': VALID_YOUTUBE_KEY, 'source': Feed.YOUTUBE}
+        form = {'key': VALID_YOUTUBE_KEY, 'source': Config.YOUTUBE}
         self.client.post('/feeds', form)
 
         self.assertTrue(Feed.objects.get(pk=1).chosen)
         self.assertTrue(Feed.objects.get(pk=2).chosen)
 
         response = self.client.get('/')
-        self.assertContains(response, "class='feed-brief'", 2)
+        self.assertContains(response, "list-brief", 2)

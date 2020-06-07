@@ -10,13 +10,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
+from .apps import MisCosasConfig as Config
+from .feeds.feedhandler import FEEDS_DATA
+
 
 class Feed(models.Model):
-    YOUTUBE = 'yt'
-    LASTFM = 'lfm'
     SOURCES = {
-        YOUTUBE: 'YouTube',
-        LASTFM: 'last.fm',
+        Config.YOUTUBE: 'YouTube',
+        Config.LASTFM: 'last.fm',
     }
     key = models.CharField(max_length=64,
         help_text=_('Name or id to identify the feed'),
@@ -24,7 +25,7 @@ class Feed(models.Model):
     title = models.CharField(max_length=64, verbose_name=_('title'))
     source = models.CharField(max_length=32,
         choices=list(SOURCES.items()),
-        default=YOUTUBE,
+        default=Config.YOUTUBE,
         verbose_name=_('source'))
     chosen = models.BooleanField(default=True, verbose_name=_('chosen'))
 
@@ -34,6 +35,20 @@ class Feed(models.Model):
 
     def __str__(self):
         return self.SOURCES[self.source] + ': ' + self.title
+
+    @property
+    def source_pretty(self):
+        return Feed.SOURCES[self.source]
+
+    @property
+    def score(self):
+        upvotes = Vote.objects.filter(item__feed=self, positive=True).count()
+        downvotes = Vote.objects.filter(item__feed=self, positive=False).count()
+        return upvotes - downvotes
+
+    @property
+    def link(self):
+        return FEEDS_DATA[self.source].get_feed_url(self.key)
 
 
 class Item(models.Model):
@@ -72,6 +87,10 @@ class Item(models.Model):
         downs = self.votes.filter(positive=False)
         return [vote.user.pk for vote in downs]
 
+    @property
+    def link(self):
+        return FEEDS_DATA[self.feed.source].get_item_url(self.feed.key, self.key)
+
 
 class Vote(models.Model):
     positive = models.BooleanField(verbose_name=_('positive'))
@@ -107,28 +126,12 @@ class Comment(models.Model):
 class Profile(models.Model):
     DEFAULT_PICTURE = 'blank-profile-picture.png'
 
-    LIGHTMODE = 'lm'
-    DARKMODE = 'dm'
-    THEMES = [
-        (LIGHTMODE, _('Light mode')),
-        (DARKMODE, _('Dark mode')),
-    ]
-
-    SMALL_FONT = 'sm'
-    MEDIUM_FONT = 'md'
-    LARGE_FONT = 'lg'
-    FONT_SIZES = [
-        (SMALL_FONT, _('Small')),
-        (MEDIUM_FONT, _('Medium')),
-        (LARGE_FONT, _('Large')),
-    ]
-
     user = models.OneToOneField(User, models.CASCADE, verbose_name=_('user'))
     _picture = models.ImageField(blank=True, null=True, verbose_name=_('picture'))
-    theme = models.CharField(max_length=2, choices=THEMES,
-        default=LIGHTMODE, verbose_name=_('theme'))
-    font_size = models.CharField(max_length=2, choices=FONT_SIZES,
-        default=MEDIUM_FONT, verbose_name=_('font size'))
+    theme = models.CharField(max_length=2, choices=Config.THEMES,
+        default=Config.LIGHTMODE, verbose_name=_('theme'))
+    font_size = models.CharField(max_length=2, choices=Config.FONT_SIZES,
+        default=Config.MEDIUM_FONT, verbose_name=_('font size'))
 
     class Meta:
         verbose_name = _('profile')

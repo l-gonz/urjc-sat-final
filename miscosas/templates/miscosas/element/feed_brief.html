@@ -1,14 +1,19 @@
 {% load i18n %}
 
 <hr>
-<div class='feed-brief'>
-    <h5><a href="/feed/{{ feed.pk }}">{{ feed }}</a>
-    <span class="badge">
-    {% if feed.chosen and "/feed" in request.path %}
-        <form action='/feed/{{ feed.pk }}' method='POST'>
-            {% csrf_token %}
-            <button type='submit' name='action' value='unchoose'>{% trans "Unchoose" %}</button>
-        </form>
-    {% endif %}
-    </span></h5>
+<div class="list-brief row d-flex justify-content-between">
+    <span class="row">
+        <h5><a href="/feed/{{ feed.pk }}">{{ feed }}</a></h5>
+        <a title="{% trans "Open in" %} {{ feed.source_pretty }}" href="{{ feed.link }}" target="_blank"><i class="material-icons">launch</i></a>
+        <p>{% trans "Total items" %}: {{feed.items.count}}</p>
+        <p>{% trans "Score" %}: {{feed.score}}</p>
+    </span>
+    <div>
+        {% if feed.chosen and "/feed" in request.path %}
+            <form action='/feed/{{ feed.pk }}' method='POST'>
+                {% csrf_token %}
+                <button type='submit' name='action' value='unchoose'>{% trans "Unchoose" %}</button>
+            </form>
+        {% endif %}
+    </div>
 </div>

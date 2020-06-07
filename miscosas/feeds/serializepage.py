@@ -55,9 +55,9 @@ def feed_xml(request: WSGIRequest, feed: Feed, detailed: bool):
     """ Returns a Feed model as XML.  """
     element = Element('feed')
     SubElement(element, 'title').text = feed.title
-    SubElement(element, 'source').text = feed.source
+    SubElement(element, 'source').text = feed.source_pretty
     if detailed:
-        SubElement(element, 'link', href=FEEDS_DATA[feed.source].get_feed_url(feed.key))
+        SubElement(element, 'link', href=feed.link)
         SubElement(element, 'chosen').text = str(feed.chosen)
     else:
         SubElement(element, 'link', href=request.build_absolute_uri('/feed/' + str(feed.pk)))
@@ -68,7 +68,7 @@ def item_xml(request: WSGIRequest, item: Item, detailed: bool):
     element = Element('item')
     SubElement(element, 'title').text = item.title
     if detailed:
-        SubElement(element, 'link', href=FEEDS_DATA[item.feed.source].get_feed_url(item.key))
+        SubElement(element, 'link', href=item.link)
         SubElement(element, 'description').text = item.description
         SubElement(element, 'image', src=item.picture)
         element.extend([comment_xml(comment) for comment in item.comments.all().order_by('-date')[:20]])

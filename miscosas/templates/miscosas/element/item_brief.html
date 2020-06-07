@@ -1,9 +1,12 @@
+{% load i18n %}
+
 <hr>
-<div class="item-brief row d-flex justify-content-between">
+<div class="list-brief row d-flex justify-content-between">
     <span class="row">
         <h5><a href='/item/{{ item.pk }}'>
             {{ item.title }}
         </a></h5>
+        <a title="{% trans "Open in" %} {{ item.feed.source_pretty }}" href="{{ item.link }}" target="_blank"><i class="material-icons">launch</i></a>
         <p>{{ item.feed.title }}</p>
     </span>
     {% include 'miscosas/element/vote_form.html' %}
