@@ -1,3 +1,5 @@
+from time import sleep
+
 from django.test import TestCase
 
 from miscosas.models import Item, Feed
@@ -15,13 +17,17 @@ INVALID_REDDIT_KEY = "gh67g"
 VALID_FLICKR_KEY = "fuenlabrada"
 INVALID_FLICKR_KEY = "vkldjg48jvg"
 
+VALID_GOODREADS_NAME_KEY = "Trudi Canavan"
+VALID_GOODREADS_ID_KEY = "15890"
+INVALID_GOODREADS_KEY = "iejlgn4u5t549tgjhg"
+
 
 class TestYoutubeFeed(TestCase):
 
     def test_youtube_new(self):
         ''' Tests adding a new youtube feed with a valid key'''
         key = VALID_YOUTUBE_KEY
-        result = YOUTUBE_FEED.load(key)
+        result, _ = YOUTUBE_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -30,7 +36,7 @@ class TestYoutubeFeed(TestCase):
     def test_youtube_wrong_key(self):
         ''' Tests trying to add a youtube feed with an invalid key'''
         key = INVALID_YOUTUBE_KEY
-        result = YOUTUBE_FEED.load(key)
+        result, _ = YOUTUBE_FEED.load(key)
         self.assertFalse(result)
         self.assertEqual(Feed.objects.count(), 0)
         self.assertEqual(Item.objects.count(), 0)
@@ -38,8 +44,8 @@ class TestYoutubeFeed(TestCase):
     def test_youtube_update(self):
         ''' Tests updating a youtube feed that already exists '''
         key = VALID_YOUTUBE_KEY
-        result = YOUTUBE_FEED.load(key)
-        result = YOUTUBE_FEED.load(key)
+        YOUTUBE_FEED.load(key)
+        result, _ = YOUTUBE_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -51,7 +57,7 @@ class TestLastFmFeed(TestCase):
     def test_last_fm_new(self):
         ''' Tests adding a new last fm feed with a valid key'''
         key = VALID_LAST_FM_KEY
-        result = LAST_FM_FEED.load(key)
+        result, _ = LAST_FM_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -60,7 +66,7 @@ class TestLastFmFeed(TestCase):
     def test_last_fm_wrong_key(self):
         ''' Tests trying to add a last fm feed with an invalid key'''
         key = INVALID_LAST_FM_KEY
-        result = LAST_FM_FEED.load(key)
+        result, _ = LAST_FM_FEED.load(key)
         self.assertFalse(result)
         self.assertEqual(Feed.objects.count(), 0)
         self.assertEqual(Item.objects.count(), 0)
@@ -68,8 +74,8 @@ class TestLastFmFeed(TestCase):
     def test_last_fm_update(self):
         ''' Tests updating a last fm feed that already exists '''
         key = VALID_LAST_FM_KEY
-        result = LAST_FM_FEED.load(key)
-        result = LAST_FM_FEED.load(key)
+        LAST_FM_FEED.load(key)
+        result, _ = LAST_FM_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -81,7 +87,7 @@ class TestRedditFeed(TestCase):
     def test_reddit_new(self):
         ''' Tests adding a new reddit feed with a valid key'''
         key = VALID_REDDIT_KEY
-        result = REDDIT_FEED.load(key)
+        result, _ = REDDIT_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -90,7 +96,7 @@ class TestRedditFeed(TestCase):
     def test_reddit_wrong_key(self):
         ''' Tests trying to add a reddit feed with an invalid key'''
         key = INVALID_REDDIT_KEY
-        result = REDDIT_FEED.load(key)
+        result, _ = REDDIT_FEED.load(key)
 
         self.assertFalse(result)
         self.assertEqual(Feed.objects.count(), 0)
@@ -99,8 +105,8 @@ class TestRedditFeed(TestCase):
     def test_reddit_update(self):
         ''' Tests updating a reddit feed that already exists '''
         key = VALID_REDDIT_KEY
-        result = REDDIT_FEED.load(key)
-        result = REDDIT_FEED.load(key)
+        result, _ = REDDIT_FEED.load(key)
+        result, _ = REDDIT_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -112,7 +118,7 @@ class TestFlickrFeed(TestCase):
     def test_flickr_new(self):
         ''' Tests adding a new flickr feed with a valid key'''
         key = VALID_FLICKR_KEY
-        result = FLICKR_FEED.load(key)
+        result, _ = FLICKR_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
@@ -121,7 +127,7 @@ class TestFlickrFeed(TestCase):
     def test_flickr_wrong_key(self):
         ''' Tests trying to add a flickr feed with an invalid key'''
         key = INVALID_FLICKR_KEY
-        result = FLICKR_FEED.load(key)
+        result, _ = FLICKR_FEED.load(key)
 
         self.assertFalse(result)
         self.assertEqual(Feed.objects.count(), 0)
@@ -130,9 +136,60 @@ class TestFlickrFeed(TestCase):
     def test_flickr_update(self):
         ''' Tests updating a flickr feed that already exists '''
         key = VALID_FLICKR_KEY
-        result = FLICKR_FEED.load(key)
-        result = FLICKR_FEED.load(key)
+        result, _ = FLICKR_FEED.load(key)
+        result, _ = FLICKR_FEED.load(key)
 
         self.assertTrue(result)
         self.assertEqual(Feed.objects.count(), 1)
         self.assertEqual(Item.objects.count(), 20)
+
+
+class TestGoodreadsFeed(TestCase):
+
+    def test_goodreads_name_new(self):
+        ''' Tests adding a new goodreads feed with a valid name key'''
+        sleep(1.5)
+        key = VALID_GOODREADS_NAME_KEY
+        result, _ = GOODREADS_FEED.load(key)
+
+        self.assertTrue(result)
+        feed = Feed.objects.get()
+        self.assertEqual(feed.key, VALID_GOODREADS_ID_KEY)
+        self.assertEqual(feed.title, VALID_GOODREADS_NAME_KEY)
+        self.assertEqual(Item.objects.count(), 14)
+
+    def test_goodreads_id_new(self):
+        ''' Tests adding a new goodreads feed with a valid id key'''
+        sleep(1.5)
+        key = VALID_GOODREADS_ID_KEY
+        result, _ = GOODREADS_FEED.load(key)
+
+        self.assertTrue(result)
+        feed = Feed.objects.get()
+        self.assertEqual(feed.key, VALID_GOODREADS_ID_KEY)
+        self.assertEqual(feed.title, VALID_GOODREADS_NAME_KEY)
+        self.assertEqual(Item.objects.count(), 14)
+
+    def test_goodreads_wrong_key(self):
+        ''' Tests trying to add a goodreads feed with an invalid key'''
+        sleep(1.5)
+        key = INVALID_GOODREADS_KEY
+        result, _ = GOODREADS_FEED.load(key)
+
+        self.assertFalse(result)
+        self.assertEqual(Feed.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)
+
+    def test_goodreads_update(self):
+        ''' Tests updating a goodreads feed that already exists '''
+        sleep(1.5)
+        key = VALID_GOODREADS_NAME_KEY
+        GOODREADS_FEED.load(key)
+        feed = Feed.objects.get()
+        self.assertEqual(feed.key, VALID_GOODREADS_ID_KEY)
+
+        sleep(1.5)
+        result, _ = GOODREADS_FEED.load(feed.key)
+        self.assertTrue(result)
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 14)

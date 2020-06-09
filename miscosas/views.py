@@ -44,11 +44,10 @@ def feeds_page(request: WSGIRequest):
         form = FeedForm(request.POST)
         if form.is_valid():
             feed = form.save(commit=False)
-            if FEEDS_DATA[feed.source].load(feed.key):
-                pk = Feed.objects.get(key=feed.key, source=feed.source).pk
-                return redirect(f'feed/{pk}')
-            else:
-                return not_found(request)
+            feed, error = FEEDS_DATA[feed.source].load(feed.key)
+            if feed:
+                return redirect(f'feed/{feed.pk}')
+            return not_found(request, error)
 
     feeds = Feed.objects.all()
     pages = pagination(request, feeds)
@@ -159,9 +158,10 @@ def about_page(request: WSGIRequest):
 
 
 def not_found(request: WSGIRequest, exception=None):
+    context = {'error': exception}
     return render(request,
         'miscosas/content/not_found.html',
-        status=404)
+        context, status=404)
 
 
 def signup(request: WSGIRequest):

@@ -80,6 +80,8 @@ class Subreddit(FeedParser):
         # Make sure all expected fields are filled
         if not self.handler.name:
             raise ParsingError("Feed has no title")
+        if self.handler.name == "search results":
+            raise ParsingError("Key not found")
         if not self.handler.news:
             raise ParsingError("Feed has no items")
         if any(not self.is_item_complete(item) for item in self.handler.news):

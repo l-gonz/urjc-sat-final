@@ -9,15 +9,16 @@ class FeedParser(ABC):
     @abstractmethod
     def __init__(self, stream):
         """
-        Class constructor, takes the url of the stream as an argument
+        Parameters
+        ----------
+        stream : HttpResponse
+            The data to parse
         """
         pass
 
     @abstractmethod
     def feed_title(self):
-        """
-        Returns a string with the title of the feed
-        """
+        """Returns a string with the title of the feed."""
         pass
 
     @abstractmethod

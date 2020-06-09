@@ -3,17 +3,18 @@ from urllib.request import urlopen
 from urllib.parse import quote
 from urllib.error import URLError, HTTPError
 
-from project.secretkeys import LAST_FM_API_KEY
+from project.secretkeys import LAST_FM_API_KEY, GOODREADS_API_KEY
 from miscosas.apps import MisCosasConfig as Config
 from .feedparser import ParsingError
 from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
 from .subreddit import Subreddit
 from .flickrtag import FlickrTag
+from .goodreadsauthor import GoodreadsAuthor, get_author_id
 
 
 class FeedData:
-    ''' Stores information from a feed source. '''
+    """Stores information from a feed source."""
 
     def __init__(self,
                  feed_url,
@@ -21,10 +22,31 @@ class FeedData:
                  data_url,
                  source,
                  feed_parser,
-                 api_key=""):
-        ''' Urls for accessing the feed.
+                 api_key="",
+                 pre_load=None):
+        """
+        Initializes the required data to access the feed.
 
-        Urls need {feed} or {item} fields for formatting. '''
+        Parameters:
+        ----------------
+        feed_url : str
+            External link for a feed, will format {feed}
+        item_url : str
+            External link for an item, will format {feed} and {item}
+        data_url : str
+            Feed source API url to get the document to parse,
+            will format {feed} and {api_key}
+        source : str
+            The identifier for the source of the data
+        feed_parser : FeedParser
+            An implementation of FeedParser to get the feed
+            data from the the document
+        api_key : str
+            An optional API key if the source API requires it
+        pre_load: func
+            An optional function that is executed before the
+            document with the data is requested and parsed
+        """
 
         self._feed_url = feed_url
         self._item_url = item_url
@@ -32,6 +54,7 @@ class FeedData:
         self._source = source
         self._parser = feed_parser
         self._api_key = api_key
+        self._pre_load = pre_load
 
     def get_feed_url(self, feed_key):
         ''' Returns the url of the feed with the given key '''
@@ -47,24 +70,27 @@ class FeedData:
         return str.format(self._data_url, feed=quote(feed_key), api_key=self._api_key)
 
     def load(self, feed_key):
-        ''' Load the info from a new or existing feed '''
+        '''Load the info from a new or existing feed.
+
+        Returns a tuple (feed updated, error) '''
         from miscosas.models import Feed, Item
+
+        if self._pre_load:
+            try:
+                feed_key = self._pre_load(feed_key, self._api_key)
+            except (URLError, HTTPError, ParsingError) as error:
+                return None, error
 
         url = self.get_data_url(feed_key)
         try:
             xml_stream = urlopen(url)
-        except (URLError, HTTPError) as e:
-            return False
-
-        # Wrong reddit names redirect to a search rss
-        if self._source == Config.REDDIT and xml_stream.geturl() != url:
-            return False
+        except (URLError, HTTPError) as error:
+            return None, error
 
         try:
             parser = self._parser(xml_stream)
-        except ParsingError as e:
-            print("ParsingError: " + str(e), end='\n', file=sys.stderr)
-            return False
+        except ParsingError as error:
+            return None, error
 
         feed, _ = Feed.objects.update_or_create(
             key=feed_key,
@@ -82,7 +108,7 @@ class FeedData:
                     'feed': feed,
                 })
 
-        return True
+        return feed, None
 
 
 YOUTUBE_FEED = FeedData(
@@ -114,9 +140,19 @@ FLICKR_FEED = FeedData(
     Config.FLICKR,
     FlickrTag)
 
+GOODREADS_FEED = FeedData(
+    "https://www.goodreads.com/author/show/{feed}",
+    "https://www.goodreads.com/book/show/{item}",
+    "https://www.goodreads.com/author/list.xml?id={feed}&key={api_key}",
+    Config.GOODREADS,
+    GoodreadsAuthor,
+    GOODREADS_API_KEY,
+    get_author_id)
+
 FEEDS_DATA = {
     Config.YOUTUBE: YOUTUBE_FEED,
     Config.LASTFM: LAST_FM_FEED,
     Config.REDDIT: REDDIT_FEED,
     Config.FLICKR: FLICKR_FEED,
+    Config.GOODREADS: GOODREADS_FEED,
 }

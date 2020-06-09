@@ -8,6 +8,7 @@ class MisCosasConfig(AppConfig):
     LASTFM = 'lfm'
     REDDIT = 'rd'
     FLICKR = 'fl'
+    GOODREADS = 'gr'
 
     LIGHTMODE = 'lm'
     DARKMODE = 'dm'
@@ -21,6 +22,7 @@ class MisCosasConfig(AppConfig):
         LASTFM: 'last.fm',
         REDDIT: 'Reddit',
         FLICKR: 'Flickr',
+        GOODREADS: 'Goodreads',
     }
 
     THEMES = [

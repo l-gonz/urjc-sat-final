@@ -3,6 +3,10 @@
 
 {% block title %}{% trans "Page Not Found" %} | Mis cosas{% endblock %}
 {% block content %}
-    <h1>404</h1>
-    <p>{% trans "Page not found" %}</p>
+    {% if error %}
+        <h2>{{ error }}</h2>
+    {% else %}
+        <h1>404</h1>
+        <p>{% trans "Page not found" %}</p>
+    {% endif %}
 {% endblock %}
