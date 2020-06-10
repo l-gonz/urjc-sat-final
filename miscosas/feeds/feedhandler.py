@@ -1,9 +1,8 @@
-import sys
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from urllib.parse import quote
 from urllib.error import URLError, HTTPError
 
-from project.secretkeys import LAST_FM_API_KEY, GOODREADS_API_KEY
+from project.secretkeys import LAST_FM_API_KEY, GOODREADS_API_KEY, SPOTIFY_API_KEY
 from miscosas.apps import MisCosasConfig as Config
 from .feedparser import ParsingError
 from .ytchannel import YTChannel
@@ -11,6 +10,7 @@ from .lastfmartist import LastFmArtist
 from .subreddit import Subreddit
 from .flickrtag import FlickrTag
 from .goodreadsauthor import GoodreadsAuthor, get_author_id
+from .spotifyartist import SpotifyArtist, get_artist_id
 
 
 class FeedData:
@@ -73,22 +73,29 @@ class FeedData:
         '''Load the info from a new or existing feed.
 
         Returns a tuple (feed updated, error) '''
-        from miscosas.models import Feed, Item
 
+        headers = {}
         if self._pre_load:
             try:
-                feed_key = self._pre_load(feed_key, self._api_key)
+                headers, feed_key = self._pre_load(feed_key, self._api_key)
             except (URLError, HTTPError, ParsingError) as error:
                 return None, error
 
         url = self.get_data_url(feed_key)
+        request = Request(url, headers=headers)
         try:
-            xml_stream = urlopen(url)
+            response = urlopen(request)
         except (URLError, HTTPError) as error:
             return None, error
 
+        return self._parse(response, feed_key)
+
+    def _parse(self, response, feed_key):
+        """Parses an HTTPResponse into a Feed with Items."""
+        from miscosas.models import Feed, Item
+
         try:
-            parser = self._parser(xml_stream)
+            parser = self._parser(response)
         except ParsingError as error:
             return None, error
 
@@ -149,10 +156,20 @@ GOODREADS_FEED = FeedData(
     GOODREADS_API_KEY,
     get_author_id)
 
+SPOTIFY_FEED = FeedData(
+    "https://open.spotify.com/artist/{feed}",
+    "https://open.spotify.com/track/{item}",
+    "https://api.spotify.com/v1/artists/{feed}/top-tracks?country=ES",
+    Config.SPOTIFY,
+    SpotifyArtist,
+    SPOTIFY_API_KEY,
+    get_artist_id)
+
 FEEDS_DATA = {
     Config.YOUTUBE: YOUTUBE_FEED,
     Config.LASTFM: LAST_FM_FEED,
     Config.REDDIT: REDDIT_FEED,
     Config.FLICKR: FLICKR_FEED,
     Config.GOODREADS: GOODREADS_FEED,
+    Config.SPOTIFY: SPOTIFY_FEED,
 }

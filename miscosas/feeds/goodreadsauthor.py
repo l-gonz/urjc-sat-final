@@ -127,8 +127,8 @@ class GoodreadsAuthor(FeedParser):
 
     def is_item_complete(self, item):
         ''' Checks if an individual item has all expected fields '''
-        return ('id' in item and
-                'title' in item and
+        return (item.get('id') and
+                item.get('title') and
                 'description' in item and
                 'image_url' in item)
 
@@ -137,7 +137,7 @@ def get_author_id(author_name: str, api_key: str):
     """Translates an author name into a Goodreads author id."""
     # Key is already an author id, not a name
     if author_name.isdigit():
-        return author_name
+        return {}, author_name
 
     url = "https://www.goodreads.com/api/author_url/{feed}?key={api_key}"
     url = str.format(url, feed=quote(author_name), api_key=api_key)
@@ -151,7 +151,7 @@ def get_author_id(author_name: str, api_key: str):
         raise ParsingError("Key not found")
 
     # Goodreads API has a one request per second limit
-    # Forcing sleep during 1.5 seconds to not risk revoking
-    # of the developer key
-    sleep(1.5)
-    return author_id
+    # Forcing sleep during 1 second to not risk losing
+    # the developer key
+    sleep(1)
+    return {}, author_id

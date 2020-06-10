@@ -151,7 +151,7 @@ class TestGetViewsAuthenticated(TestCase):
 
         response = self.client.get('/')
         self.assertContains(response, "class='simple-list'", count=3)
-        self.assertContains(response, "list-brief", count=16)
+        self.assertContains(response, "list-brief", count=15)
 
     def test_feed_page(self):
         ''' Tests vote forms on feed page '''
