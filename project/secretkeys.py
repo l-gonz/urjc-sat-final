@@ -13,3 +13,9 @@ PROJECT_KEY = "django-secret-key"
 
 # Get your personal key from https://www.last.fm/join?next=/api/account/create
 LAST_FM_API_KEY = "last-fm-api-key"
+
+# Developer key from Goodreads, can be obtained at https://www.goodreads.com/api/keys
+GOODREADS_API_KEY = "goodreads-api-key"
+
+# Spotify clientID:clientSecret, can be obtained at https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app
+SPOTIFY_API_KEY = "clientID:secretKey"
