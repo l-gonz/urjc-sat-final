@@ -9,6 +9,7 @@ class MisCosasConfig(AppConfig):
     REDDIT = 'rd'
     FLICKR = 'fl'
     GOODREADS = 'gr'
+    SPOTIFY = 'sp'
 
     LIGHTMODE = 'lm'
     DARKMODE = 'dm'
@@ -23,6 +24,7 @@ class MisCosasConfig(AppConfig):
         REDDIT: 'Reddit',
         FLICKR: 'Flickr',
         GOODREADS: 'Goodreads',
+        SPOTIFY: 'Spotify',
     }
 
     THEMES = [

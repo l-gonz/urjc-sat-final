@@ -9,15 +9,29 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import format_html, format_html_join
 
 from .apps import MisCosasConfig as Config
 from .feeds.feedhandler import FEEDS_DATA
 
+def get_feed_help_texts():
+    """Help texts for the feed model."""
+    help_texts = [
+        (Config.SOURCES[Config.YOUTUBE], _('A channel identifier')),
+        (Config.SOURCES[Config.LASTFM], _('The name of a musical artist')),
+        (Config.SOURCES[Config.REDDIT], _('The name of a subreddit')),
+        (Config.SOURCES[Config.FLICKR], _('A tag for pictures')),
+        (Config.SOURCES[Config.GOODREADS], _('The name of a book author')),
+        (Config.SOURCES[Config.SPOTIFY], _('The name of a musical artist')),
+    ]
+    help_items = format_html_join('', '<li>{}: {}</li>', (help_text for help_text in help_texts))
+    return format_html('<ul>{}</ul>', help_items)
+
 
 class Feed(models.Model):
     key = models.CharField(max_length=64,
-        help_text=_('Name or id to identify the feed'),
-        verbose_name=_('key'))
+        verbose_name=_('key'),
+        help_text=get_feed_help_texts())
     title = models.CharField(max_length=64, verbose_name=_('title'))
     source = models.CharField(max_length=32,
         choices=list(Config.SOURCES.items()),

@@ -20,7 +20,7 @@ ENTRIES_PER_PAGE = 10
 def index(request: WSGIRequest):
     # Selects the items that have been voted the most
     # from all the items that have been voted
-    items = list(Item.objects.filter(votes__isnull=False))
+    items = list(Item.objects.filter(votes__isnull=False).distinct())
     items = [item for item in items if item.upvote_count > 0]
     items.sort(key=lambda i: i.upvote_count, reverse=True)
     items.sort(key=lambda i: i.upvote_count - i.downvote_count, reverse=True)
