@@ -22,6 +22,7 @@ class FeedData:
                  data_url,
                  source,
                  feed_parser,
+                 icon,
                  api_key="",
                  pre_load=None):
         """
@@ -41,6 +42,8 @@ class FeedData:
         feed_parser : FeedParser
             An implementation of FeedParser to get the feed
             data from the the document
+        icon : str
+            A link to the feed source icon
         api_key : str
             An optional API key if the source API requires it
         pre_load: func
@@ -53,6 +56,7 @@ class FeedData:
         self._data_url = data_url
         self._source = source
         self._parser = feed_parser
+        self.icon = icon
         self._api_key = api_key
         self._pre_load = pre_load
 
@@ -70,9 +74,9 @@ class FeedData:
         return str.format(self._data_url, feed=quote(feed_key), api_key=self._api_key)
 
     def load(self, feed_key):
-        '''Load the info from a new or existing feed.
+        """Load the info from a new or existing feed.
 
-        Returns a tuple (feed updated, error) '''
+        Returns a tuple (feed, exception)"""
 
         headers = {}
         if self._pre_load:
@@ -123,7 +127,8 @@ YOUTUBE_FEED = FeedData(
     "https://www.youtube.com/watch?v={item}",
     "http://www.youtube.com/feeds/videos.xml?channel_id={feed}",
     Config.YOUTUBE,
-    YTChannel)
+    YTChannel,
+    "https://s.ytimg.com/yts/img/favicon_144-vfliLAfaB.png")
 
 LAST_FM_FEED = FeedData(
     "https://www.last.fm/music/{feed}",
@@ -131,6 +136,7 @@ LAST_FM_FEED = FeedData(
     "http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist={feed}&limit=15&api_key={api_key}",
     Config.LASTFM,
     LastFmArtist,
+    "https://www.last.fm/static/images/logo_static.adb61955725c.png",
     LAST_FM_API_KEY)
 
 REDDIT_FEED = FeedData(
@@ -138,14 +144,16 @@ REDDIT_FEED = FeedData(
     "https://www.reddit.com/r/{feed}/comments/{item}",
     "https://www.reddit.com/r/{feed}.rss",
     Config.REDDIT,
-    Subreddit)
+    Subreddit,
+    "http://t1.gstatic.com/images?q=tbn:ANd9GcThsotATP9ktYH_-oqNK6lYSI2USCxC-9nhbqScnKqvWFyxmL64")
 
 FLICKR_FEED = FeedData(
     "https://www.flickr.com/search/?tags={feed}",
     "https://www.flickr.com/photos/{item}/",
     "https://www.flickr.com/services/feeds/photos_public.gne?tags={feed}",
     Config.FLICKR,
-    FlickrTag)
+    FlickrTag,
+    "https://cdn.kustomerhostedcontent.com/media/5aecd7338a0607779d1ec9cc/966e09a41a33f89fe18f2ab227336f09.png")
 
 GOODREADS_FEED = FeedData(
     "https://www.goodreads.com/author/show/{feed}",
@@ -153,6 +161,7 @@ GOODREADS_FEED = FeedData(
     "https://www.goodreads.com/author/list.xml?id={feed}&key={api_key}",
     Config.GOODREADS,
     GoodreadsAuthor,
+    "http://d.gr-assets.com/misc/1454549143-1454549143_goodreads_misc.png",
     GOODREADS_API_KEY,
     get_author_id)
 
@@ -162,6 +171,7 @@ SPOTIFY_FEED = FeedData(
     "https://api.spotify.com/v1/artists/{feed}/top-tracks?country=ES",
     Config.SPOTIFY,
     SpotifyArtist,
+    "https://pluspng.com/img-png/spotify-logo-png-open-2000.png",
     SPOTIFY_API_KEY,
     get_artist_id)
 

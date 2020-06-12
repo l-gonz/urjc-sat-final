@@ -27,7 +27,10 @@
             </span> </h1>
 
         <span class="row">
-            <p>{% trans "From:"%} {{ feed.source_pretty }}</p>
+            <p class="my-auto">{% trans "Data from"%}: {{ feed.source_pretty }}</p>
+            <img src="{{ source_image }}" height="40">
+        </span>
+        <span class="row">
             <p>{% trans "Total items" %}: {{feed.items.count}}</p>
             <p>{% trans "Score" %}: {{feed.score}}</p>
         </span>

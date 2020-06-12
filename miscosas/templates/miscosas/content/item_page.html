@@ -26,6 +26,12 @@
             <p>{{ item.description|safe }}</p>
         {% endif %}
 
+        <br>
+        <span class="container row">
+            <p class="my-auto">{% trans "Data from"%}: {{ feed.source_pretty }}</p>
+            <img src="{{ source_image }}" height="40">
+        </span>
+
     </div>
 
     <!-- Comments -->

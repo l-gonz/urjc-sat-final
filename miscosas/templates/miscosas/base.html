@@ -45,7 +45,7 @@
             {% if documents %}
                 <div id="documents">
                     <form method="GET" action="{{ request.path }}">
-                        <a title="{% trans "RSS Feed" %}" href="/comments" target="_blank">
+                        <a title="{% trans "RSS Feed" %}" href="/comments.rss" target="_blank">
                             <i class="material-icons">rss_feed</i></a>
                         <button type="submit" name="format" value="xml">XLM</button>
                         <button type="submit" name="format" value="json">JSON</button>
@@ -59,13 +59,16 @@
         <div id="footer">
             {% with yt='<a href="https://youtube.com">YouTube</a>' %}
             {% with lfm='<a href="https://last.fm">last.fm</a>' %}
+            {% with rd='<a href="https://goodreads.com/">Goodreads</a>' %}
+            {% with fk='<a href="https://reddit.com">Reddit</a>' %}
+            {% with gr='<a href="https://flickr.com">Flickr</a>' %}
+            {% with sp='<a href="https://spotify.com">Spotify</a>' %}
             <footer>
                 {% blocktrans trimmed %}
-                    This app uses data provided by {{yt}} and {{lfm}}.
+        This app uses data provided by {{yt}}, {{lfm}}, {{rd}}, {{fk}}, {{gr}} and {{sp}}.
                 {% endblocktrans %}
             </footer>
-            {% endwith %}
-            {% endwith %}
+            {% endwith %}{% endwith %}{% endwith %}{% endwith %}{% endwith %}{% endwith %}
         </div>
     </body>
 </html>

@@ -84,6 +84,7 @@ def feed_page(request: WSGIRequest, feed_id: str):
         'item_list': pages['set'],
         'pages': pages['pages'],
         'current_page': pages['current_page'],
+        'source_image': FEEDS_DATA[feed.source].icon,
     }
 
     return render_or_document(request, 'miscosas/content/feed_page.html', context)
@@ -113,6 +114,7 @@ def item_page(request: WSGIRequest, item_id: str):
         'form': CommentForm(),
         'pages': pages['pages'],
         'current_page': pages['current_page'],
+        'source_image': FEEDS_DATA[item.feed.source].icon,
     }
     return render_or_document(request, 'miscosas/content/item_page.html', context)
 
