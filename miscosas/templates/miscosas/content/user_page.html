@@ -11,13 +11,18 @@
     <h2>{% trans "Voted items" %}</h2>
     <div class='upvoted-items'>
         {% include 'miscosas/element/item_list.html' with list=upvoted_item_list %}
-    </div>
+    </div><hr>
     <div class='downvoted-items'>
         {% include 'miscosas/element/item_list.html' with list=downvoted_item_list %}
     </div>
+
     <div class='commented-items'>
         <h2>{% trans "Commented items" %}</h2>
         {% include 'miscosas/element/item_list.html' with list=commented_item_list %}
+    </div>
+    <div class='chosen-feeds'>
+        <h2>{% trans "Chosen feeds" %}</h2>
+        {% include 'miscosas/element/feed_list.html' with list=chosen_feeds_list %}
     </div>
     {% if user_match %}
     <div class='settings-form'>

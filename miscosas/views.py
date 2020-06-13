@@ -46,6 +46,8 @@ def feeds_page(request: WSGIRequest):
             feed = form.save(commit=False)
             feed, error = FEEDS_DATA[feed.source].load(feed.key)
             if feed:
+                if request.user.is_authenticated:
+                    request.user.profile.chosen_feeds.add(feed)
                 return redirect(f'feed/{feed.pk}')
             return not_found(request, error)
 
@@ -73,6 +75,8 @@ def feed_page(request: WSGIRequest, feed_id: str):
             if request.POST['action'] == 'unchoose':
                 feed.chosen = False
                 feed.save()
+                if request.user.is_authenticated:
+                    request.user.profile.chosen_feeds.remove(feed)
         except (KeyError, ValidationError):
             # Ignore wrong post attempts
             pass
@@ -149,6 +153,7 @@ def user_page(request: WSGIRequest, username: str):
         'upvoted_item_list': Item.objects.filter(votes__user=owner, votes__positive=True),
         'downvoted_item_list': Item.objects.filter(votes__user=owner, votes__positive=False),
         'commented_item_list': Item.objects.filter(comments__user=owner).distinct(),
+        'chosen_feeds_list': owner.profile.chosen_feeds.all(),
         'form': ProfileForm(instance=owner.profile),
         'user_match': user_match,
     }

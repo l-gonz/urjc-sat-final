@@ -8,7 +8,7 @@ from miscosas.feeds.feedhandler import *
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
 
-VALID_LAST_FM_KEY = "Cher"
+VALID_LAST_FM_KEY = "Linkin Park"
 INVALID_LAST_FM_KEY = "nj34jsdgf"
 
 VALID_REDDIT_KEY = "memes"

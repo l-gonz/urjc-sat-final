@@ -11,7 +11,6 @@ from .feeds.rssfeeds import RssFeed
 
 #TODO Name views
 #TODO Raise exception on load() en vez de (_,_)
-#TODO Feeds en Profile
 #TODO Probar en lab
 #TODO Rehacer db
 #TODO Traducir

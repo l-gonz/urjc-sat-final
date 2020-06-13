@@ -10,8 +10,19 @@ body.dm {
     color: whitesmoke;
 }
 
-body.sm { font-size: 80% }
-body.lg { font-size: 120% }
+body.sm { font-size: 80%; }
+body.lg { font-size: 120%; }
+
+.sm h1 { font-size: 2em; }
+.sm h2 { font-size: 1.6em; }
+.sm h3 { font-size: 1.4em; }
+.sm h4 { font-size: 1.2em; }
+.sm h5 { font-size: 1.1em; }
+.lg h1 { font-size: 3em; }
+.lg h2 { font-size: 2.4em; }
+.lg h3 { font-size: 2.1em; }
+.lg h4 { font-size: 1.8em; }
+.lg h5 { font-size: 1.5em; }
 
 #banner {
     height: 15%;
@@ -154,7 +165,7 @@ button:hover, button:hover a { color: salmon; }
     border: 1px solid rgba(48, 80, 80, 0.5);
 }
 
-.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1rem;
 }
 

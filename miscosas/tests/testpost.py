@@ -8,8 +8,20 @@ from miscosas.apps import MisCosasConfig as Config
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
 INVALID_YOUTUBE_KEY = "4v56789r384rgfrtg"
 
-VALID_LAST_FM_KEY = 'Cher'
+VALID_LAST_FM_KEY = 'Linkin Park'
 INVALID_LAST_FM_KEY = 'hfds8f7d'
+
+VALID_REDDIT_KEY = "memes"
+INVALID_REDDIT_KEY = "gh67g"
+
+VALID_FLICKR_KEY = "fuenlabrada"
+INVALID_FLICKR_KEY = "vkldjg48jvg"
+
+VALID_GOODREADS_KEY = "Trudi Canavan"
+INVALID_GOODREADS_KEY = "iejlgn4u5t549tgjhg"
+
+VALID_SPOTIFY_KEY = "Green Day"
+INVALID_SPOTIFY_KEY = "iej%n4u5t(549.gjhg"
 
 
 class TestPostFeedViews(TestCase):
@@ -50,6 +62,94 @@ class TestPostFeedViews(TestCase):
     def test_feed_last_fm_wrong(self):
         ''' Tests posting the feed form with an invalid key '''
         form_data = {'key': INVALID_LAST_FM_KEY, 'source': Config.LASTFM}
+        form = FeedForm(form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
+
+    def test_feed_reddit_right(self):
+        ''' Tests posting the feed form with a valid key '''
+        form_data = {'key': VALID_REDDIT_KEY, 'source': Config.REDDIT}
+        form = FeedForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertRedirects(response, '/feed/1')
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 26)
+
+    def test_feed_reddit_wrong(self):
+        ''' Tests posting the feed form with an invalid key '''
+        form_data = {'key': INVALID_REDDIT_KEY, 'source': Config.REDDIT}
+        form = FeedForm(form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
+
+    def test_feed_flickr_right(self):
+        ''' Tests posting the feed form with a valid key '''
+        form_data = {'key': VALID_FLICKR_KEY, 'source': Config.FLICKR}
+        form = FeedForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertRedirects(response, '/feed/1')
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 20)
+
+    def test_feed_flickr_wrong(self):
+        ''' Tests posting the feed form with an invalid key '''
+        form_data = {'key': INVALID_FLICKR_KEY, 'source': Config.FLICKR}
+        form = FeedForm(form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
+
+    def test_feed_goodreads_right(self):
+        ''' Tests posting the feed form with a valid key '''
+        form_data = {'key': VALID_GOODREADS_KEY, 'source': Config.GOODREADS}
+        form = FeedForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertRedirects(response, '/feed/1')
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 14)
+
+    def test_feed_goodreads_wrong(self):
+        ''' Tests posting the feed form with an invalid key '''
+        form_data = {'key': INVALID_GOODREADS_KEY, 'source': Config.GOODREADS}
+        form = FeedForm(form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('miscosas/content/not_found.html',
+            [t.name for t in response.templates])
+
+    def test_feed_spotify_right(self):
+        ''' Tests posting the feed form with a valid key '''
+        form_data = {'key': VALID_SPOTIFY_KEY, 'source': Config.SPOTIFY}
+        form = FeedForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+        response = self.client.post('/feeds', form.cleaned_data)
+        self.assertRedirects(response, '/feed/1')
+        self.assertEqual(Feed.objects.count(), 1)
+        self.assertEqual(Item.objects.count(), 10)
+
+    def test_feed_spotify_wrong(self):
+        ''' Tests posting the feed form with an invalid key '''
+        form_data = {'key': INVALID_SPOTIFY_KEY, 'source': Config.SPOTIFY}
         form = FeedForm(form_data)
         self.assertTrue(form.is_valid())
 

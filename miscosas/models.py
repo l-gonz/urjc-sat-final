@@ -142,6 +142,7 @@ class Profile(models.Model):
         default=Config.LIGHTMODE, verbose_name=_('theme'))
     font_size = models.CharField(max_length=2, choices=Config.FONT_SIZES,
         default=Config.MEDIUM_FONT, verbose_name=_('font size'))
+    chosen_feeds = models.ManyToManyField(Feed, related_name='users')
 
     class Meta:
         verbose_name = _('profile')
