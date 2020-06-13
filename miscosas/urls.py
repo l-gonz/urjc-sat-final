@@ -9,9 +9,6 @@ from . import views
 from .forms import AuthForm
 from .feeds.rssfeeds import RssFeed
 
-#TODO Name views
-#TODO Probar en lab
-#TODO Rehacer db
 
 urlpatterns = [
     # Auth

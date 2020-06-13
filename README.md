@@ -2,7 +2,7 @@
 ## Datos
 * Nombre: Laura González Fernández
 * Titulación: Doble Grado Ingeniería en Tecnologías de la Telecomunicación + Ingeniería Aeroespacial en Aeronavegación
-* Despliegue (url): [inline-style link](lauragf.pythonanywhere.com)
+* Despliegue (url): [inline-style link](https://lauragf.pythonanywhere.com)
 * Video básico (url): [inline-style link]()
 * Video parte opcional (url):
 
