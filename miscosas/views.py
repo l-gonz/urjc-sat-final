@@ -2,6 +2,8 @@
 Django views for app MisCosas
 """
 
+from urllib.error import URLError, HTTPError
+
 from django.shortcuts import render, redirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
@@ -12,6 +14,7 @@ from .models import Feed, Item, User, Vote, Comment
 from .forms import FeedForm, CommentForm, ProfileForm, RegistrationForm
 from .feeds.feedhandler import FEEDS_DATA
 from .feeds.serializepage import render_document
+from .feeds.feedparser import ParsingError
 
 
 ENTRIES_PER_PAGE = 10
@@ -44,12 +47,13 @@ def feeds_page(request: WSGIRequest):
         form = FeedForm(request.POST)
         if form.is_valid():
             feed = form.save(commit=False)
-            feed, error = FEEDS_DATA[feed.source].load(feed.key)
-            if feed:
+            try:
+                feed = FEEDS_DATA[feed.source].load(feed.key)
                 if request.user.is_authenticated:
                     request.user.profile.chosen_feeds.add(feed)
                 return redirect(f'feed/{feed.pk}')
-            return not_found(request, error)
+            except (URLError, HTTPError, ParsingError) as error:
+                return not_found(request, error)
 
     feeds = Feed.objects.all()
     pages = pagination(request, feeds)

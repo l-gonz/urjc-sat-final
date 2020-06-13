@@ -5,7 +5,7 @@ from miscosas.models import Comment
 class RssFeed(Feed):
     title = "Comments"
     link = "/"
-    feed_url = "/comments"
+    feed_url = "/comments.rss"
     description = "New comments published to the app"
 
     def items(self):

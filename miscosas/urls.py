@@ -10,23 +10,21 @@ from .forms import AuthForm
 from .feeds.rssfeeds import RssFeed
 
 #TODO Name views
-#TODO Raise exception on load() en vez de (_,_)
 #TODO Probar en lab
 #TODO Rehacer db
-#TODO Traducir
 
 urlpatterns = [
     # Auth
-    path('login/', auth_views.LoginView.as_view(authentication_form=AuthForm)),
-    path('logout/', auth_views.LogoutView.as_view()),
-    path('signup', views.signup),
+    path('login/', auth_views.LoginView.as_view(authentication_form=AuthForm), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('signup/', views.signup, name='signup'),
     # App
-    path('feeds', views.feeds_page),
-    path('feed/<str:feed_id>', views.feed_page),
-    path('item/<str:item_id>', views.item_page),
-    path('users', views.users_page),
-    path('user/<str:username>', views.user_page),
-    path('about', views.about_page),
-    path('comments.rss', RssFeed()),
-    path('', views.index),
+    path('feeds', views.feeds_page, name='feeds'),
+    path('feed/<str:feed_id>', views.feed_page, name='feed'),
+    path('item/<str:item_id>', views.item_page, name='item'),
+    path('users', views.users_page, name='users'),
+    path('user/<str:username>', views.user_page, name='user'),
+    path('about', views.about_page, name='about'),
+    path('comments.rss', RssFeed(), name='rss'),
+    path('', views.index, name='index'),
 ]

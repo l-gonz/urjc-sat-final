@@ -1,13 +1,20 @@
 {% load i18n %}
 
 <hr>
-<div class="list-brief row d-flex justify-content-between">
-    <span class="row">
-        <h5><a href='/item/{{ item.pk }}'>
-            {{ item.title }}
-        </a></h5>
-        <a title="{% trans "Open in" %} {{ item.feed.source_pretty }}" href="{{ item.link }}" target="_blank"><i class="material-icons">launch</i></a>
-        <p>{{ item.feed.title }}</p>
-    </span>
-    {% include 'miscosas/element/vote_form.html' %}
+<div class="list-brief row d-flex">
+        <div class="col text-truncate">
+            <h5><a href='/item/{{ item.pk }}'>
+                {{ item.title }}
+            </a></h5>
+        </div>
+        <div class="col col-md-auto">
+            <a title="{% trans "Open in" %} {{ item.feed.source_pretty }}" href="{{ item.link }}" target="_blank"><i class="material-icons">launch</i></a>
+        </div>
+        <div class="col text-truncate">
+            <p>{{ item.feed.title }}</p>
+        </div>
+        <div class="col col-auto">
+            {% include 'miscosas/element/vote_form.html' %}
+        </div>
+
 </div>

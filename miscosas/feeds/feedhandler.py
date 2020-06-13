@@ -1,10 +1,8 @@
 from urllib.request import urlopen, Request
 from urllib.parse import quote
-from urllib.error import URLError, HTTPError
 
 from project.secretkeys import LAST_FM_API_KEY, GOODREADS_API_KEY, SPOTIFY_API_KEY
 from miscosas.apps import MisCosasConfig as Config
-from .feedparser import ParsingError
 from .ytchannel import YTChannel
 from .lastfmartist import LastFmArtist
 from .subreddit import Subreddit
@@ -80,17 +78,11 @@ class FeedData:
 
         headers = {}
         if self._pre_load:
-            try:
-                headers, feed_key = self._pre_load(feed_key, self._api_key)
-            except (URLError, HTTPError, ParsingError) as error:
-                return None, error
+            headers, feed_key = self._pre_load(feed_key, self._api_key)
 
         url = self.get_data_url(feed_key)
         request = Request(url, headers=headers)
-        try:
-            response = urlopen(request)
-        except (URLError, HTTPError) as error:
-            return None, error
+        response = urlopen(request)
 
         return self._parse(response, feed_key)
 
@@ -98,10 +90,7 @@ class FeedData:
         """Parses an HTTPResponse into a Feed with Items."""
         from miscosas.models import Feed, Item
 
-        try:
-            parser = self._parser(response)
-        except ParsingError as error:
-            return None, error
+        parser = self._parser(response)
 
         feed, _ = Feed.objects.update_or_create(
             key=feed_key,
@@ -119,7 +108,7 @@ class FeedData:
                     'feed': feed,
                 })
 
-        return feed, None
+        return feed
 
 
 YOUTUBE_FEED = FeedData(

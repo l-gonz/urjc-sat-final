@@ -5,8 +5,14 @@
 {% block content %}
     <h4>{% trans "Sign up" %}</h4>
     {% if user.is_authenticated %}
-        <p>{% blocktrans %}Hello, {{user.username}}! You already have an account.{% endblocktrans %}</p>
-        <a href="/user/{{user.username}}">{% trans "Go to my page." %}</a>
+        <p>
+            {% with name=user.username %}
+            {% blocktrans trimmed %}
+                Hello, {{ name }}! You already have an account.
+            {% endblocktrans %}
+            {% endwith %}
+        </p>
+        <a href="/user/{{ user.username }}">{% trans "Go to my page." %}</a>
     {% else %}
         <form method="post">
             {% include 'miscosas/element/generic_form.html' %}

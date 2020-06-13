@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-10 19:08+0200\n"
+"POT-Creation-Date: 2020-06-13 13:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,111 +42,111 @@ msgstr "Grande"
 msgid "Profile picture"
 msgstr "Imágen de perfil"
 
-#: models.py:19
+#: models.py:20
 msgid "A channel identifier"
 msgstr "El identificador de un canal"
 
-#: models.py:20 models.py:24
+#: models.py:21 models.py:25
 msgid "The name of a musical artist"
 msgstr "El nombre de un artista musical"
 
-#: models.py:21
+#: models.py:22
 msgid "The name of a subreddit"
 msgstr "El nombre de un subreddit"
 
-#: models.py:22
+#: models.py:23
 msgid "A tag for pictures"
 msgstr "Una etiqueta para imágenes"
 
-#: models.py:23
+#: models.py:24
 msgid "The name of a book author"
 msgstr "El nombre de un autor literario"
 
-#: models.py:32 models.py:64
+#: models.py:33 models.py:65
 msgid "key"
 msgstr "clave"
 
-#: models.py:34 models.py:65 models.py:119
+#: models.py:35 models.py:66 models.py:120
 msgid "title"
 msgstr "título"
 
-#: models.py:38
+#: models.py:39
 msgid "source"
 msgstr "fuente"
 
-#: models.py:39
+#: models.py:40
 msgid "chosen"
 msgstr "elegido"
 
-#: models.py:42 models.py:68
+#: models.py:43 models.py:69
 msgid "feed"
 msgstr "alimentador"
 
-#: models.py:43
+#: models.py:44
 msgid "feeds"
 msgstr "alimentadores"
 
-#: models.py:69
+#: models.py:70
 msgid "description"
 msgstr "descripción"
 
-#: models.py:70 models.py:139
+#: models.py:71 models.py:140
 msgid "picture"
 msgstr "imágen"
 
-#: models.py:73 models.py:110 models.py:123
+#: models.py:74 models.py:111 models.py:124
 msgid "item"
 msgstr "ítem"
 
-#: models.py:74
+#: models.py:75
 msgid "items"
 msgstr "ítems"
 
-#: models.py:105
+#: models.py:106
 msgid "positive"
 msgstr "positivo"
 
-#: models.py:106 models.py:121
+#: models.py:107 models.py:122
 msgid "date"
 msgstr "fecha"
 
-#: models.py:108 models.py:125 models.py:138
+#: models.py:109 models.py:126 models.py:139
 msgid "user"
 msgstr "usuario"
 
-#: models.py:114
+#: models.py:115
 msgid "vote"
 msgstr "voto"
 
-#: models.py:115
+#: models.py:116
 msgid "votes"
 msgstr "votos"
 
-#: models.py:120
+#: models.py:121
 msgid "content"
 msgstr "contenido"
 
-#: models.py:131
+#: models.py:132
 msgid "comment"
 msgstr "comentario"
 
-#: models.py:132
+#: models.py:133
 msgid "comments"
 msgstr "comentarios"
 
-#: models.py:141
+#: models.py:142
 msgid "theme"
 msgstr "tema"
 
-#: models.py:143
+#: models.py:144
 msgid "font size"
 msgstr "tamaño de fuente"
 
-#: models.py:146
+#: models.py:148
 msgid "profile"
 msgstr "perfil"
 
-#: models.py:147
+#: models.py:149
 msgid "profiles"
 msgstr "perfiles"
 
@@ -154,10 +154,14 @@ msgstr "perfiles"
 msgid "RSS Feed"
 msgstr "Canal RSS"
 
-#: templates/miscosas/base.html:63
+#: templates/miscosas/base.html:67
 #, python-format
-msgid "This app uses data provided by %(yt)s and %(lfm)s."
-msgstr "Esta app utiliza datos proporcionados por %(yt)s y %(lfm)s."
+msgid ""
+"This app uses data provided by %(yt)s, %(lfm)s, %(rd)s, %(fk)s, %(gr)s and "
+"%(sp)s."
+msgstr ""
+"Esta app utiliza datos proporcionados por %(yt)s, %(lfm)s, %(rd)s, %(fk)s, "
+"%(gr)s y %(sp)s."
 
 #: templates/miscosas/content/about.html:4
 #: templates/miscosas/element/navbar.html:12
@@ -246,25 +250,26 @@ msgstr "Elegir"
 #: templates/miscosas/content/feed_page.html:26
 #: templates/miscosas/content/item_page.html:8
 #: templates/miscosas/element/feed_brief.html:7
-#: templates/miscosas/element/item_brief.html:9
+#: templates/miscosas/element/item_brief.html:11
 msgid "Open in"
 msgstr "Abrir en"
 
 #: templates/miscosas/content/feed_page.html:30
-msgid "From:"
-msgstr "Desde:"
+#: templates/miscosas/content/item_page.html:31
+msgid "Data from"
+msgstr "Datos de"
 
-#: templates/miscosas/content/feed_page.html:31
+#: templates/miscosas/content/feed_page.html:34
 #: templates/miscosas/element/feed_brief.html:8
 msgid "Total items"
 msgstr "Ítems totales"
 
-#: templates/miscosas/content/feed_page.html:32
+#: templates/miscosas/content/feed_page.html:35
 #: templates/miscosas/element/feed_brief.html:9
 msgid "Score"
 msgstr "Puntuación"
 
-#: templates/miscosas/content/feed_page.html:37
+#: templates/miscosas/content/feed_page.html:40
 msgid "Items"
 msgstr "Ítems"
 
@@ -283,28 +288,28 @@ msgstr "Ítems más populares"
 msgid "Your latest votes"
 msgstr "Tus últimos votos"
 
-#: templates/miscosas/content/item_page.html:37
+#: templates/miscosas/content/item_page.html:43
 msgid "Add new comment"
 msgstr "Añadir comentario"
 
-#: templates/miscosas/content/item_page.html:40
+#: templates/miscosas/content/item_page.html:46
 #: templates/miscosas/element/feed_forms.html:7
 msgid "Send"
 msgstr "Enviar"
 
-#: templates/miscosas/content/item_page.html:45
+#: templates/miscosas/content/item_page.html:51
 msgid "Log in"
 msgstr "Accede"
 
-#: templates/miscosas/content/item_page.html:46
+#: templates/miscosas/content/item_page.html:52
 msgid "or"
 msgstr "o"
 
-#: templates/miscosas/content/item_page.html:46
+#: templates/miscosas/content/item_page.html:52
 msgid "sign up"
 msgstr "regístrate"
 
-#: templates/miscosas/content/item_page.html:47
+#: templates/miscosas/content/item_page.html:53
 msgid "to leave a comment."
 msgstr "para dejar comentarios."
 
@@ -320,15 +325,19 @@ msgstr "Página no encontrada"
 msgid "Voted items"
 msgstr "Ítems votados"
 
-#: templates/miscosas/content/user_page.html:19
+#: templates/miscosas/content/user_page.html:20
 msgid "Commented items"
 msgstr "Ítems comentados"
 
 #: templates/miscosas/content/user_page.html:24
+msgid "Chosen feeds"
+msgstr "Alimentadores elegidos"
+
+#: templates/miscosas/content/user_page.html:29
 msgid "Settings"
 msgstr "Ajustes"
 
-#: templates/miscosas/content/user_page.html:28
+#: templates/miscosas/content/user_page.html:33
 msgid "Save"
 msgstr "Guardar"
 
@@ -384,14 +393,14 @@ msgid "Log out"
 msgstr "Salir"
 
 #: templates/miscosas/element/navbar.html:32
-#: templates/registration/login.html:6 templates/registration/login.html:13
+#: templates/registration/login.html:6 templates/registration/login.html:19
 msgctxt "navbar"
 msgid "Log in"
 msgstr "Acceder"
 
 #: templates/miscosas/element/navbar.html:34
 #: templates/registration/signup.html:4 templates/registration/signup.html:6
-#: templates/registration/signup.html:13
+#: templates/registration/signup.html:19
 msgid "Sign up"
 msgstr "Regístrate"
 
@@ -419,27 +428,30 @@ msgstr "Votos negativos"
 msgid "Login"
 msgstr "Acceder"
 
-#: templates/registration/login.html:8
-#, python-format
-msgid "Hello, %(user.username)s! You have already signed in."
-msgstr "¡Hola, %(user.username)s! Ya has iniciado sesión."
+#: templates/registration/login.html:10
+#, fuzzy, python-format
+msgid "Hello, %(name)s! You have already signed in."
+msgstr "¡Hola, %(name)s! Ya has iniciado sesión."
 
-#: templates/registration/login.html:9 templates/registration/signup.html:9
+#: templates/registration/login.html:15 templates/registration/signup.html:15
 msgid "Go to my page."
 msgstr "Ir a mi página."
 
-#: templates/registration/login.html:15
+#: templates/registration/login.html:21
 msgid "Don't have an account yet? Create one here."
 msgstr "¿Todavía no tienes una cuenta? Crea una aquí."
 
-#: templates/registration/signup.html:8
-#, python-format
-msgid "Hello, %(user.username)s! You already have an account."
-msgstr "¡Hola, %(user.username)s! Ya tienes una cuenta."
+#: templates/registration/signup.html:10
+#, fuzzy, python-format
+msgid "Hello, %(name)s! You already have an account."
+msgstr "¡Hola, %(name)s! Ya tienes una cuenta."
 
-#: templates/registration/signup.html:15
+#: templates/registration/signup.html:21
 msgid "Already have an account? Log in here."
 msgstr "¿Ya tienes una cuenta? Accede aquí."
+
+#~ msgid "From:"
+#~ msgstr "Desde:"
 
 #~ msgid "Name or id to identify the feed"
 #~ msgstr "Nombre o id para identificar el alimentador"

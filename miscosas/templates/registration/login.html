@@ -5,7 +5,13 @@
 {% block content %}
     <h4>{% trans "Log in" context "navbar" %}</h4>
     {% if user.is_authenticated %}
-        <p>{% blocktrans %}Hello, {{user.username}}! You have already signed in.{% endblocktrans %}</p>
+        <p>
+            {% with name=user.username %}
+            {% blocktrans trimmed %}
+                Hello, {{ name }}! You have already signed in.
+            {% endblocktrans %}
+            {% endwith %}
+        </p>
         <a href="/user/{{user.username}}">{% trans "Go to my page." %}</a>
     {% else %}
         <form method="post">

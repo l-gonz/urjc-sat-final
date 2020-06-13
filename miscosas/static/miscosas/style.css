@@ -148,6 +148,7 @@ button:hover, button:hover a { color: salmon; }
 
 .simple-list hr { margin-top: 0px; }
 .simple-list div { margin-left: 8px; }
+.dm .simple-list { border: 1px solid rgba(255,255,255,.2) }
 .simple-list {
     border: 1px solid rgba(0,0,0,.1);
     border-top: 0px;
@@ -202,3 +203,5 @@ a.page-link:hover {
     display: inline-block;
 }
 #documents a:hover { color: salmon; }
+
+.dm hr { border-top: 1px solid rgba(255, 255, 255, 0.2) }

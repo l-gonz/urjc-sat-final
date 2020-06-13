@@ -1,3 +1,18 @@
-# final-miscosas
+# Entrega practica
+## Datos
+* Nombre: Laura González Fernández
+* Titulación: Doble Grado Ingeniería en Tecnologías de la Telecomunicación + Ingeniería Aeroespacial en Aeronavegación
+* Despliegue (url): [inline-style link](lauragf.pythonanywhere.com)
+* Video básico (url): [inline-style link]()
+* Video parte opcional (url):
 
-Repositorio de inicio de la práctica final. Recuerda realizar una derivación (fork) de este repositorio y hacer múltiples commits al realizar tu práctica.
+## Cuenta Admin Site
+* laura/root
+
+## Cuentas usuarios
+* testuser1/AtilaEl1
+* testuser2/AtilaEl1
+
+## Resumen parte obligatoria
+## Lista partes opcionales
+* Nombre parte: * Nombre parte: * ...
