@@ -2,9 +2,10 @@
 ## Datos
 * Nombre: Laura González Fernández
 * Titulación: Doble Grado Ingeniería en Tecnologías de la Telecomunicación + Ingeniería Aeroespacial en Aeronavegación
-* Despliegue (url): [PythonAnywhere](https://lauragf.pythonanywhere.com)
-* Video básico (url): [YouTube]()
-* Video parte opcional (url): [YouTube]()
+* Despliegue: [PythonAnywhere](https://lauragf.pythonanywhere.com)
+* Video básico: [YouTube]()
+* Video parte opcional: [YouTube]()
+* Cuenta en los laboratorios: lgonz
 
 ## Cuenta Admin Site
 * laura/root
@@ -36,11 +37,13 @@ Alimentadores obligatorios:
 * Canal RSS con los 10 comentarios más recientes
 * Formato XML y JSON para la página de alimentadores, de alimentador, de ítems, de usuarios y de usuario
 * Bootstrap y más css para la apariencia de la página (iconos en los botones, dropdown para los enlaces de login/logout)
+* Iconos para votar los ítems
 * Internacionalización: la página está disponible en español e inglés según el idioma del navegador.
 * Paginación de items: alimentadores, ítems, comentarios y usuarios
-* Eliminar comentarios
-* Creación de usuarios
+* Eliminar comentarios: un usuario registrado puede eliminar sus propios comentarios de los ítems
 * Tests adicionales
 * Listado de alimentadores elegidos en la página de usuario
+* Eliminación de la anterior imágen subida por el usuario al cambiar la foto de perfil
+* Página de error personalizada para URLs de la aplicación o nuevos alimentadores con identificadores que no existan
 
 ## Claves de desarrollador de las APIs utilizadas
