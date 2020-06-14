@@ -59,22 +59,22 @@ class FeedData:
         self._pre_load = pre_load
 
     def get_feed_url(self, feed_key):
-        ''' Returns the url of the feed with the given key '''
+        """ Returns the url of the feed with the given key. """
         return str.format(self._feed_url, feed=quote(feed_key))
 
     def get_item_url(self, feed_key, item_key):
-        ''' Returns the url of the item with the given key '''
+        """ Returns the url of the item with the given key. """
         return str.format(self._item_url, feed=quote(feed_key), item=quote(item_key))
 
     def get_data_url(self, feed_key):
-        ''' Returns the url of the XML or JSON file
-        with the data from the feed with the given key '''
+        """ Returns the url of the XML or JSON file
+        with the data from the feed with the given key. """
         return str.format(self._data_url, feed=quote(feed_key), api_key=self._api_key)
 
     def load(self, feed_key):
         """Load the info from a new or existing feed.
 
-        Returns a tuple (feed, exception)"""
+        Returns the updated feed."""
 
         headers = {}
         if self._pre_load:

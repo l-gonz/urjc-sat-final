@@ -9,6 +9,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import ValidationError
 from django.db.models.query import QuerySet
 from django.contrib.auth import login
+from django.utils.translation import gettext_lazy as _
 
 from .models import Feed, Item, User, Vote, Comment
 from .forms import FeedForm, CommentForm, ProfileForm, RegistrationForm
@@ -169,7 +170,13 @@ def about_page(request: WSGIRequest):
 
 
 def not_found(request: WSGIRequest, exception=None):
-    context = {'error': exception}
+    if (isinstance(exception, HTTPError) or
+       isinstance(exception, URLError) or
+       isinstance(exception, ParsingError)):
+        context = {'error': exception}
+
+    if isinstance(exception, HTTPError):
+        context['msg'] = _("Could not connect to external server. Check that you have the proper keys and permissions to access it.")
     return render(request,
         'miscosas/content/not_found.html',
         context, status=404)
@@ -216,6 +223,8 @@ def pagination(request: WSGIRequest, qset: QuerySet):
     }
 
 def item_post(request: WSGIRequest, item: Item):
+    """Handles the content of a POST request to the item page."""
+    # Add comment to item
     if request.POST['action'] == 'comment':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -223,6 +232,7 @@ def item_post(request: WSGIRequest, item: Item):
             comment.user = request.user
             comment.item = item
             comment.save()
+    # Vote item
     elif request.POST['action'] == 'upvote' or request.POST['action'] == 'downvote':
         positive = request.POST['action'] == 'upvote'
         try:
@@ -233,6 +243,7 @@ def item_post(request: WSGIRequest, item: Item):
                 Vote(positive=positive, user=request.user, item=item).save()
         except Vote.DoesNotExist:
             Vote(positive=positive, user=request.user, item=item).save()
+    # Delete comment
     elif request.POST['action'] == 'delete':
         try:
             pk = int(request.POST['pk'])

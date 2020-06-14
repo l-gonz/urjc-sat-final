@@ -60,10 +60,9 @@ class LastFmHandler(ContentHandler):
 
 
 class LastFmArtist(FeedParser):
-    """Class to get videos in a YouTube channel.
+    """Class to get albums in a last.fm artist.
 
-    Extracts video info from the XML document for a YT channel.
-    The list of videos found can be retrieved later by calling videos()
+    Extracts video info from the XML document for a last.fm artist.
     """
 
     def __init__(self, stream):

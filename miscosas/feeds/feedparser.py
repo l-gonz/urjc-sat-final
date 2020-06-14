@@ -25,11 +25,13 @@ class FeedParser(ABC):
     def items_data(self):
         """
         Returns a list of dictionaries with entries matching the fields
-        in the Item model: key, title, description, picture
+        in the Item model: key, title, description, picture.
 
-        Description picture is optional
+        Descriptiona and picture are optional.
         """
         pass
 
 class ParsingError(RuntimeError):
+    """Exception to signal something went wrong
+    with pasing a feed document."""
     pass

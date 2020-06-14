@@ -32,7 +32,7 @@ class FlickrHandler(ContentHandler):
         """Initialization of variables for the parser
         * in_content: reading target content (leaf strings)
         * content: target content being read
-        * photos: list of photos in the subreddit,
+        * photos: list of photos in the tag,
             each photo is a dictionary (title, content, link)
         * current_entry: the information from the current photo
         """
@@ -107,7 +107,7 @@ class FlickrTag(FeedParser):
         return items
 
     def is_item_complete(self, item):
-        ''' Checks if an individual item has all expected fields '''
+        """Checks if an individual item has all expected fields."""
         return (item.get('link') and
                 item.get('title') and
                 item.get('content'))

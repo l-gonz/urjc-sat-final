@@ -5,6 +5,9 @@
 {% block content %}
     {% if error %}
         <h2>{{ error }}</h2>
+        {% if msg %}
+            <p>{{ msg }}</p>
+        {% endif %}
     {% else %}
         <h1>404</h1>
         <p>{% trans "Page not found" %}</p>
