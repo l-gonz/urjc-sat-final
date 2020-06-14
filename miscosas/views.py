@@ -44,6 +44,7 @@ def index(request: WSGIRequest):
 
 
 def feeds_page(request: WSGIRequest):
+    # New feed
     if request.method == 'POST':
         form = FeedForm(request.POST)
         if form.is_valid():
@@ -69,12 +70,14 @@ def feeds_page(request: WSGIRequest):
 
 
 def feed_page(request: WSGIRequest, feed_id: str):
+    # Get feed id
     try:
         pk = int(feed_id)
         feed = Feed.objects.get(pk=pk)
     except (Feed.DoesNotExist, ValueError):
         return not_found(request)
 
+    # Unchoose feed to not show on index
     if request.method == 'POST':
         try:
             if request.POST['action'] == 'unchoose':
@@ -100,12 +103,14 @@ def feed_page(request: WSGIRequest, feed_id: str):
 
 
 def item_page(request: WSGIRequest, item_id: str):
+    # Get item id
     try:
         pk = int(item_id)
         item = Item.objects.get(pk=pk)
     except (Item.DoesNotExist, ValueError):
         return not_found(request)
 
+    # Handle posts to this page
     if request.method == 'POST' and request.user.is_authenticated:
         try:
             path = item_post(request, item)
@@ -141,13 +146,14 @@ def users_page(request: WSGIRequest):
 
 
 def user_page(request: WSGIRequest, username: str):
+    # Get the user object that the page belongs to
     try:
         owner = User.objects.get(username=username)
     except (User.DoesNotExist, ValueError):
         return not_found(request)
 
+    # Accept posts to from the owner of the page
     user_match = request.user.is_authenticated and owner.username == request.user.username
-
     if request.method == 'POST' and user_match:
         form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
@@ -166,14 +172,17 @@ def user_page(request: WSGIRequest, username: str):
 
 
 def about_page(request: WSGIRequest):
+    """Page with information about the web app."""
     return render(request, 'miscosas/content/about.html')
 
 
 def not_found(request: WSGIRequest, exception=None):
+    """Error page."""
+    context = {}
     if (isinstance(exception, HTTPError) or
        isinstance(exception, URLError) or
        isinstance(exception, ParsingError)):
-        context = {'error': exception}
+        context['error'] = exception
 
     if isinstance(exception, HTTPError):
         context['msg'] = _("Could not connect to external server. Check that you have the proper keys and permissions to access it.")
@@ -183,6 +192,7 @@ def not_found(request: WSGIRequest, exception=None):
 
 
 def signup(request: WSGIRequest):
+    # Creates a new user
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -195,7 +205,7 @@ def signup(request: WSGIRequest):
 
 
 def render_or_document(request: WSGIRequest, template: str, context: dict):
-    ''' Renders the response in the requested format '''
+    """Renders the response in the requested format."""
     context['documents'] = True
     if request.GET.get('format'):
         return render_document(request, context, request.GET['format'])
@@ -203,9 +213,9 @@ def render_or_document(request: WSGIRequest, template: str, context: dict):
 
 
 def pagination(request: WSGIRequest, qset: QuerySet):
-    ''' Divides the entries in a query set in pages
+    """Divides the entries in a query set in pages.
 
-    Returns a dictionary with data for the context '''
+    Returns a dictionary with data for the context."""
     pages = range(1, qset.count() // ENTRIES_PER_PAGE + 2)
     if len(qset) % 10 == 0 and len(pages) > 1:
         pages = pages[:-1]

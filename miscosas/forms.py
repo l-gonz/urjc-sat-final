@@ -10,8 +10,10 @@ from .models import Profile, Feed, Comment
 
 
 class FeedForm(forms.ModelForm):
+    """Form to add new feeds to the database."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Adds bootstrap form class to all the fields
         for fieldname in self.fields:
             self.fields[fieldname].widget.attrs['class'] = 'form-control'
 
@@ -23,6 +25,10 @@ class FeedForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
+    """Form to add new comments to the database.
+
+    Makes sure fields have bootstrap form class and
+    the length limit they should."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs['class'] = 'form-control'
@@ -42,9 +48,10 @@ class CommentForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
-
+    """Form to change the profile settings."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Bootstrap form classes
         self.fields['_picture'].widget.attrs['class'] = 'form-control-file'
         self.fields['theme'].widget.attrs['class'] = 'form-control'
         self.fields['font_size'].widget.attrs['class'] = 'form-control'
@@ -58,20 +65,20 @@ class ProfileForm(forms.ModelForm):
 
 
 class RegistrationForm(UserCreationForm):
-    ''' Override of django default form for user creation '''
+    """Override of django default form for user creation."""
     username = UsernameField(max_length=32)
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-
+        # Bootstrap form classes
         for fieldname in self.fields:
             self.fields[fieldname].widget.attrs['class'] = 'form-control'
 
 
 class AuthForm(AuthenticationForm):
-    ''' Override of django default form for authenticating '''
+    """Override of django default form for authenticating."""
     def __init__(self, *args, **kwargs):
         super(AuthForm, self).__init__(*args, **kwargs)
-
+        # Bootstrap form classes
         for fieldname in self.fields:
             self.fields[fieldname].widget.attrs['class'] = 'form-control'

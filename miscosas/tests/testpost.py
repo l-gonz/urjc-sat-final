@@ -1,8 +1,10 @@
+from time import sleep
+
 from django.test import TestCase
 from django.contrib.auth.models import User
 
 from miscosas.forms import FeedForm
-from miscosas.models import Item, Feed, Comment, Profile, Vote
+from miscosas.models import Item, Feed, Comment, Vote
 from miscosas.apps import MisCosasConfig as Config
 
 VALID_YOUTUBE_KEY = "UC300utwSVAYOoRLEqmsprfg"
@@ -25,6 +27,11 @@ INVALID_SPOTIFY_KEY = "iej%n4u5t(549.gjhg"
 
 
 class TestPostFeedViews(TestCase):
+
+    def setUp(self):
+        # Some APIs refuse the connection if too many requests
+        # are made too close together
+        sleep(1)
 
     def test_feed_youtube_right(self):
         ''' Tests posting the feed form with a valid key '''

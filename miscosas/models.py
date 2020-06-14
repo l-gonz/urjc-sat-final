@@ -33,10 +33,14 @@ class Feed(models.Model):
         verbose_name=_('key'),
         help_text=get_feed_help_texts())
     title = models.CharField(max_length=64, verbose_name=_('title'))
+
+    # The code for the external web the data comes from
     source = models.CharField(max_length=32,
         choices=list(Config.SOURCES.items()),
         default=Config.YOUTUBE,
         verbose_name=_('source'))
+
+    # Whether the feed is chosen to be shown on the main page or not
     chosen = models.BooleanField(default=True, verbose_name=_('chosen'))
 
     class Meta:
@@ -48,22 +52,26 @@ class Feed(models.Model):
 
     @property
     def source_pretty(self):
+        """Full string name of the source."""
         return Config.SOURCES[self.source]
 
     @property
     def score(self):
+        """The sum of all the votes made on this feed's items."""
         upvotes = Vote.objects.filter(item__feed=self, positive=True).count()
         downvotes = Vote.objects.filter(item__feed=self, positive=False).count()
         return upvotes - downvotes
 
     @property
     def link(self):
+        """Link to the external page for this feed."""
         return FEEDS_DATA[self.source].get_feed_url(self.key)
 
 
 class Item(models.Model):
     key = models.CharField(max_length=64, verbose_name=_('key'))
     title = models.CharField(max_length=64, verbose_name=_('title'))
+    # The feed the item came from
     feed = models.ForeignKey(Feed, models.CASCADE,
         related_name="items",
         verbose_name=_('feed'))
@@ -79,30 +87,34 @@ class Item(models.Model):
 
     @property
     def upvote_count(self):
-        ''' Upvote count property for templates '''
+        """Number of upvotes to this item."""
         return self.votes.filter(positive=True).count()
 
     @property
     def downvote_count(self):
-        ''' Downvote count property for templates '''
+        """Number of downvotes to this item."""
         return self.votes.filter(positive=False).count()
 
     @property
     def upvoters(self):
+        """List of ids of users that have upvoted this item."""
         ups = self.votes.filter(positive=True)
         return [vote.user.pk for vote in ups]
 
     @property
     def downvoters(self):
+        """List of ids of users that have downvoted this item."""
         downs = self.votes.filter(positive=False)
         return [vote.user.pk for vote in downs]
 
     @property
     def link(self):
+        """Link to the external page for this item."""
         return FEEDS_DATA[self.feed.source].get_item_url(self.feed.key, self.key)
 
 
 class Vote(models.Model):
+    # Whether it was a positive or a negative vote
     positive = models.BooleanField(verbose_name=_('positive'))
     date = models.DateTimeField(auto_now=True, verbose_name=_('date'))
     user = models.ForeignKey(User, models.CASCADE,
@@ -123,7 +135,7 @@ class Comment(models.Model):
     item = models.ForeignKey(Item, models.CASCADE,
         related_name='comments', verbose_name=_('item'))
     user = models.ForeignKey(User, models.CASCADE,
-    related_name='comments', verbose_name=_('user'))
+        related_name='comments', verbose_name=_('user'))
 
     def __str__(self):
         return self.title
@@ -153,6 +165,7 @@ class Profile(models.Model):
 
     @property
     def picture(self):
+        """Current picture for the user."""
         try:
             if os.path.isfile(self._picture.path):
                 return self._picture.name
@@ -163,39 +176,39 @@ class Profile(models.Model):
 
     @property
     def vote_count(self):
+        """Amount of votes the user has made."""
         return self.user.votes.count()
 
     @property
     def comment_count(self):
+        """Amount of comments the user made."""
         return self.user.comments.count()
 
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
+    """Makes sure that a profile is created for each user."""
     if created:
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
+    """Saves the profile data when the user is saved."""
     instance.profile.save()
 
 @receiver(models.signals.post_delete, sender=Profile)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding Profile object is deleted.
-    """
+    """Deletes file from filesystem
+    when corresponding Profile object is deleted."""
     if instance.picture and instance.picture != Profile.DEFAULT_PICTURE:
         if os.path.isfile(instance._picture.path):
             os.remove(instance._picture.path)
 
 @receiver(models.signals.pre_save, sender=Profile)
 def auto_delete_file_on_change(sender, instance, **kwargs):
-    """
-    Deletes old file from filesystem
+    """Deletes old file from filesystem
     when corresponding Profile object is updated
-    with new file.
-    """
+    with new file."""
     try:
         old_profile = Profile.objects.get(pk=instance.pk)
         new_file = instance.picture

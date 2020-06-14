@@ -10,10 +10,9 @@ from django.db.models.query import QuerySet
 from django.db.models import Model
 
 from miscosas.models import Feed, Item, Comment, User
-from .feedhandler import FEEDS_DATA
 
 def render_document(request: WSGIRequest, context: dict, format: str) -> HttpResponse:
-    """ Returns the page requested as a document. """
+    """Returns the page requested as a document."""
     if format == 'xml':
         return render_xml(request, context)
     elif format == 'json':
@@ -22,7 +21,7 @@ def render_document(request: WSGIRequest, context: dict, format: str) -> HttpRes
         return Http404("Not supported")
 
 def render_xml(request: WSGIRequest, context: dict):
-    """ Returns the page context as XML. """
+    """Returns the page context as XML."""
     xml = Element('page')
     SubElement(xml, 'link', href=request.build_absolute_uri(request.path))
     for name in context:
@@ -46,13 +45,13 @@ def render_xml(request: WSGIRequest, context: dict):
     return HttpResponse(prettify(xml), content_type='text/xml')
 
 def prettify(elem):
-    """ Returns a pretty-printed XML string for the Element. """
+    """Returns a pretty-printed XML string for the Element."""
     rough_string = tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 
 def feed_xml(request: WSGIRequest, feed: Feed, detailed: bool):
-    """ Returns a Feed model as XML.  """
+    """Returns a Feed model as XML."""
     element = Element('feed')
     SubElement(element, 'title').text = feed.title
     SubElement(element, 'source').text = feed.source_pretty
@@ -64,7 +63,7 @@ def feed_xml(request: WSGIRequest, feed: Feed, detailed: bool):
     return element
 
 def item_xml(request: WSGIRequest, item: Item, detailed: bool):
-    """ Returns an Item model as XML. """
+    """Returns an Item model as XML."""
     element = Element('item')
     SubElement(element, 'title').text = item.title
     if detailed:
@@ -80,7 +79,7 @@ def item_xml(request: WSGIRequest, item: Item, detailed: bool):
     return element
 
 def comment_xml(comment: Comment):
-    """ Returns a Comment model as XML. """
+    """Returns a Comment model as XML."""
     element = Element('comment')
     SubElement(element, 'title').text = comment.title
     SubElement(element, 'content').text = comment.content
@@ -88,7 +87,7 @@ def comment_xml(comment: Comment):
     return element
 
 def user_xml(request: WSGIRequest, user: User, detailed: bool):
-    """ Returns a User model as XML. """
+    """Returns a User model as XML."""
     element = Element('user')
     SubElement(element, 'name').text = user.username
     if not detailed:
@@ -96,9 +95,11 @@ def user_xml(request: WSGIRequest, user: User, detailed: bool):
     return element
 
 def render_json(request: WSGIRequest, context: dict):
-    """ Returns the page context as JSON. """
+    """Returns the page context as JSON."""
     delete_key = []
     for name in context:
+        # Parse a query set into a list of dictionaries with the
+        # fields from the each object
         if isinstance(context[name], QuerySet):
             if any(isinstance(i, Item) for i in context[name]):
                 extra = [item_votes_json(item) for item in context[name]]
@@ -108,6 +109,7 @@ def render_json(request: WSGIRequest, context: dict):
                 context[name] = [{**d, **e} for d, e in zip(list(context[name].values('username')), extra)]
             else:
                 context[name] = list(context[name].values())
+        # Parse a model instance into a dictionary with its field
         elif isinstance(context[name], Model):
             if isinstance(context[name], Item):
                 data = json.loads(serialize('json', [context[name]]))[0]['fields']
@@ -117,6 +119,8 @@ def render_json(request: WSGIRequest, context: dict):
                 context[name] = {'username': data['username'], **user_profile_json(context[name])}
             else:
                 context[name] = json.loads(serialize('json', [context[name]]))[0]['fields']
+        # Parse a list of model instances into a list of dictionaries with
+        # each object's fields
         elif isinstance(context[name], list):
             data = json.loads(serialize('json', context[name]))
             if any(isinstance(i, Item) for i in context[name]):
@@ -127,6 +131,7 @@ def render_json(request: WSGIRequest, context: dict):
                 context[name] = [{'username': d['fields']['username'], **e} for d, e in zip(data, extra)]
             else:
                 context[name] = [d['fields'] for d in data]
+        # Delete all other keys from the context
         elif not isinstance(context[name], str):
             delete_key.append(name)
 
@@ -135,14 +140,14 @@ def render_json(request: WSGIRequest, context: dict):
     return HttpResponse(json.dumps(context, indent=4), content_type="application/json")
 
 def item_votes_json(item):
-    """ Returns dictionary with Item model extra field. """
+    """Returns dictionary with Item model extra fields for the json."""
     return {
         'upvotes': item.upvote_count,
         'downvotes': item.downvote_count
     }
 
 def user_profile_json(user):
-    """ Returns dictionary with User model extra field. """
+    """Returns dictionary with User model extra fields for the json."""
     return {
         'picture': user.profile.picture,
         'votes': user.votes.count(),

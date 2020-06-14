@@ -18,6 +18,7 @@ class SpotifyHandler:
         self.name = self.parse_name(tracks_raw)
 
     def parse_tracks(self, tracks_json: list):
+        """Selects the desired fields from the tracks list."""
         tracks = []
         for track in tracks_json:
             track_parsed = {
@@ -31,9 +32,11 @@ class SpotifyHandler:
         return tracks
 
     def parse_name(self, tracks: list):
+        """Returns the name of the artist of the feed."""
         return tracks[0]['artists'][0]['name']
 
     def parse_description(self, track: dict):
+        """Gets the track description from the json dictionary."""
         try:
             album = track['album']
             link = album['external_urls'].get('spotify')
@@ -79,7 +82,7 @@ class SpotifyArtist(FeedParser):
         return items
 
     def is_item_complete(self, item):
-        ''' Checks if an individual item has all expected fields '''
+        """Checks if an individual item has all expected fields."""
         return (item.get('id') and
                 item.get('name') and
                 'description' in item and
