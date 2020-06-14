@@ -122,6 +122,9 @@ def render_json(request: WSGIRequest, context: dict):
             if any(isinstance(i, Item) for i in context[name]):
                 extra = [item_votes_json(item) for item in context[name]]
                 context[name] = [{**(d['fields']), **e} for d, e in zip(data, extra)]
+            elif any(isinstance(i, User) for i in context[name]):
+                extra = [user_profile_json(user) for user in context[name]]
+                context[name] = [{'username': d['fields']['username'], **e} for d, e in zip(data, extra)]
             else:
                 context[name] = [d['fields'] for d in data]
         elif not isinstance(context[name], str):
