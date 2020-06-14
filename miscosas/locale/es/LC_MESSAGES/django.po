@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-13 13:01+0200\n"
+"POT-Creation-Date: 2020-06-14 16:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -317,7 +317,7 @@ msgstr "para dejar comentarios."
 msgid "Page Not Found"
 msgstr "Página no encontrada"
 
-#: templates/miscosas/content/not_found.html:10
+#: templates/miscosas/content/not_found.html:13
 msgid "Page not found"
 msgstr "Página no encontrada"
 
@@ -449,6 +449,15 @@ msgstr "¡Hola, %(name)s! Ya tienes una cuenta."
 #: templates/registration/signup.html:21
 msgid "Already have an account? Log in here."
 msgstr "¿Ya tienes una cuenta? Accede aquí."
+
+#: views.py:179
+msgid ""
+"Could not connect to external server. Check that you have the proper keys "
+"and permissions to access it."
+msgstr ""
+"No se pudo establecer la conexión con el servidor externo. Compruebe que "
+"el projecto contiene las claves necesarias y se tiene permiso para "
+"conectarse."
 
 #~ msgid "From:"
 #~ msgstr "Desde:"
