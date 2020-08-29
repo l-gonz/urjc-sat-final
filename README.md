@@ -1,4 +1,6 @@
-# Entrega practica
+# Entrega práctica final
+Proyecto final de la asignatura Sistemas y Aplicaciones Telemáticas del Grado en Ingeniería en Tecnologías de la Telecomunicación de la Universidad Rey Juan Carlos.
+
 ## Datos
 * Nombre: Laura González Fernández
 * Titulación: Doble Grado Ingeniería en Tecnologías de la Telecomunicación + Ingeniería Aeroespacial en Aeronavegación
